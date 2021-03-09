@@ -14,7 +14,7 @@ if not CONFIG_FILE.exists():
     CONFIG_FILE.touch()
     defaults = {
         "library_paths": [],
-        "extensions": [],
+        "extensions": [".mp3", ".flac", ".m4a", ".aac"],
         "exclude_paths": [],
     }
     CONFIG_FILE.write_text(
@@ -33,18 +33,19 @@ class MusicFile:
     def __init__(self, file: Path):
         metadata = get_metadata(file)
         self.file_path = metadata.filename.as_posix()
-        self.duration = metadata['#length'].value
-        self.artist = metadata['artist'].value
-        self.album_artist = metadata['albumartist'].value
-        self.title = metadata['title'].value
-        self.album = metadata['album'].value
-        self.track_number = metadata['tracknumber'].value
-        self.total_tracks = metadata['totaltracks'].value
-        self.disc_number = metadata['discnumber'].value
-        self.total_discs = metadata['discnumber'].value
-        self.year = metadata['year'].value
-        self.genre = metadata['genre'].value
+        self.duration = metadata["#length"].value
+        self.artist = metadata["artist"].value
+        self.album_artist = metadata["albumartist"].value
+        self.title = metadata["title"].value
+        self.album = metadata["album"].value
+        self.track_number = metadata["tracknumber"].value
+        self.total_tracks = metadata["totaltracks"].value
+        self.disc_number = metadata["discnumber"].value
+        self.total_discs = metadata["discnumber"].value
+        self.year = metadata["year"].value
+        self.genre = metadata["genre"].value
         self._metadata = metadata
+        self._file = file
 
 
 def main() -> None:
@@ -81,12 +82,9 @@ def main() -> None:
             try:
                 if (
                     song.album_artist
-                    and song.artist.lower()
-                    != song.album_artist.lower()
+                    and song.artist.lower() != song.album_artist.lower()
                 ):
-                    album_artist = Artist.create(
-                        name=song.album_artist
-                    )
+                    album_artist = Artist.create(name=song.album_artist)
                 else:
                     album_artist = artist
             except IntegrityError:
