@@ -12,12 +12,12 @@ from peewee import (
 
 from jukebox import APP_ROOT
 
-db = SqliteDatabase((APP_ROOT / "jukebox.db").as_posix())
+database = SqliteDatabase((APP_ROOT / "jukebox.db").as_posix())
 
 
 class BaseModel(Model):
     class Meta:
-        database = db
+        database = database
         legacy_table_names = False
 
 
@@ -26,7 +26,7 @@ class Artist(BaseModel):
     name = CharField()
 
     class Meta:
-        database = db
+        database = database
         legacy_table_names = False
         order_by = ("name",)
         constraints = [SQL('UNIQUE ("name" COLLATE NOCASE)')]
@@ -36,13 +36,13 @@ class Album(BaseModel):
     album_id = AutoField(primary_key=True)
     title = CharField()
     artist = ForeignKeyField(Artist, backref="albums")
-    tracks = IntegerField(null=True)
+    total_tracks = IntegerField(null=True)
     disc = IntegerField(null=True)
-    discs = IntegerField(null=True)
+    total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
 
     class Meta:
-        database = db
+        database = database
         legacy_table_names = False
         indexes = ((("title", "artist", "disc"), True),)
         order_by = ("artist", "title")
@@ -61,7 +61,7 @@ class Track(BaseModel):
     file_path = CharField()
 
     class Meta:
-        database = db
+        database = database
         legacy_table_names = False
         indexes = ((("title", "album", "file_path"), True),)
         order_by = ("artist", "album", "title")
@@ -72,14 +72,14 @@ class Playlist(BaseModel):
     track = ForeignKeyField(Track, backref="playlists")
 
     class Meta:
-        database = db
+        database = database
         legacy_table_names = False
         primary_key = CompositeKey("playlist_name", "track")
 
 
 def create_tables() -> None:
-    with db:
-        db.create_tables([Artist, Album, Track, Playlist])
+    with database:
+        database.create_tables([Artist, Album, Track, Playlist])
 
 
 if __name__ == "__main__":

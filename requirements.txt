@@ -1,5 +1,5 @@
 quactar
 tonberry
 json5
-tinytag
+music_tag
 peewee
