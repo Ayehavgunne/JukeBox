@@ -1,0 +1,6 @@
+recursive-include jukebox *.py
+recursive-exclude tests *
+include README.md
+include requirements.txt
+include dev_requirements.txt
+include extra_requirements.txt
