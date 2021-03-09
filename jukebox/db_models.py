@@ -36,9 +36,9 @@ class Album(BaseModel):
     album_id = AutoField(primary_key=True)
     title = CharField()
     artist = ForeignKeyField(Artist, backref="albums")
-    tracks = IntegerField(null=True)
+    total_tracks = IntegerField(null=True)
     disc = IntegerField(null=True)
-    discs = IntegerField(null=True)
+    total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
 
     class Meta:
