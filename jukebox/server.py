@@ -1,9 +1,10 @@
-import re
 from pathlib import Path
+from typing import Dict, List
 
-from quart import Quart, Response, make_response, request, send_from_directory
+from quart import Quart, Response, jsonify, make_response, request, send_from_directory
 
 from jukebox import APP_ROOT
+from jukebox.db_models import Album, Artist, Track, database
 
 app = Quart(__name__)
 
@@ -14,24 +15,58 @@ async def root() -> str:
 
 
 @app.route("/js/<path:path>")
-async def send_js(path) -> Response:
+async def send_js(path: str) -> Response:
     return await send_from_directory(APP_ROOT / "jukebox" / "js", path)
 
 
-@app.route("/play")
-async def play() -> Response:
-    song_file = Path("/Volumes/Music/Clark/Totems Flair/Growls Garden.flac")
+@app.route("/artists")
+@app.route("/artists/<int:artist_id>")
+async def get_artists(artist_id: int = None) -> Response:
+    with database.atomic():
+        if artist_id is None:
+            artists = Artist.select()
+        else:
+            artists = [Artist.get(artist_id)]
+        return jsonify([artist.to_json() for artist in artists])
+
+
+@app.route("/albums")
+@app.route("/albums/<int:album_id>")
+async def get_albums(album_id: int = None) -> Response:
+    with database.atomic():
+        if album_id is None:
+            albums = Album.select()
+        else:
+            albums = [Album.get(album_id)]
+        return jsonify([album.to_json() for album in albums])
+
+
+@app.route("/tracks/")
+@app.route("/tracks/<int:track_id>")
+async def get_tracks(track_id: int = None) -> Response:
+    with database.atomic():
+        if track_id is None:
+            tracks = Track.select()
+        else:
+            tracks = [Track.get(int(track_id))]
+    return jsonify([track.to_json() for track in tracks])
+
+
+@app.route("/play/<int:track_id>")
+async def play(track_id: int) -> Response:
+    with database.atomic():
+        track = Track.get(track_id)
+        song_file = Path(track.file_path)
     range_header = request.headers.get("Range", None)
     size = song_file.stat().st_size
     length, byte1, byte2 = 0, 0, None
 
     if range_header:
-        m = re.search("(\d+)-(\d*)", range_header)
-        g = m.groups()
-        if g[0]:
-            byte1 = int(g[0])
-        if g[1]:
-            byte2 = int(g[1])
+        byte1, byte2 = range_header.replace("bytes=", "").split("-")
+        if byte1:
+            byte1 = int(byte1)
+        if byte2:
+            byte2 = int(byte2)
         length = size - byte1
         if byte2:
             length = byte2 + 1 - byte1

@@ -1,3 +1,5 @@
+from typing import Dict, Union
+
 from peewee import (
     SQL,
     AutoField,
@@ -31,6 +33,12 @@ class Artist(BaseModel):
         order_by = ("name",)
         constraints = [SQL('UNIQUE ("name" COLLATE NOCASE)')]
 
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        return {
+            "artist_id": self.artist_id,
+            "name": self.name,
+        }
+
 
 class Album(BaseModel):
     album_id = AutoField(primary_key=True)
@@ -46,6 +54,17 @@ class Album(BaseModel):
         legacy_table_names = False
         indexes = ((("title", "artist", "disc"), True),)
         order_by = ("artist", "title")
+
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        return {
+            "album_id": self.album_id,
+            "title": self.title,
+            "artist": self.artist.name,
+            "total_tracks": self.total_tracks,
+            "disc": self.disc,
+            "total_discs": self.total_discs,
+            "year": self.year,
+        }
 
 
 class Track(BaseModel):
@@ -65,6 +84,17 @@ class Track(BaseModel):
         legacy_table_names = False
         indexes = ((("title", "album", "file_path"), True),)
         order_by = ("artist", "album", "title")
+
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        return {
+            "track_id": self.track_id,
+            "title": self.title,
+            "album": self.album.title,
+            "artist": self.artist.name,
+            "track_number": self.track_number,
+            "genre": self.genre,
+            "disk_number": self.disc_number,
+        }
 
 
 class Playlist(BaseModel):

@@ -3,24 +3,201 @@
     <head>
         <meta charset="UTF-8">
         <title>Play</title>
+        <style>
+            html, body {
+                background: #181a1b;
+                color: #e8e6e3;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #play_button {
+                width: 44px;
+                margin-right: 10px;
+            }
+            #play_button label {
+                display: block;
+                box-sizing: border-box;
+                width: 0;
+                height: 44px;
+                cursor: pointer;
+                border-color: transparent transparent transparent #8b8b8b;
+                transition: 100ms all ease;
+                will-change: border-width;
+                border-style: double;
+                border-width: 0 0 0 40px;
+                position: relative;
+                bottom: 2px;
+            }
+            #play_button input[type='checkbox'] {
+                visibility: hidden;
+            }
+            #play_button input[type='checkbox']:checked + label {
+                border-style: solid;
+                border-width: 22px 0 22px 40px;
+            }
+            #tracks {
+                height: calc(100% - 68px);
+                overflow: auto;
+                padding: 10px 10px 0 10px;
+            }
+            .track {
+                cursor: pointer;
+                display: inline-block;
+                float: left;
+                clear: left;
+            }
+            #controls {
+                position: fixed;
+                bottom: 0;
+                height: 68px;
+                width: calc(100% - 20px);
+                padding: 0 10px;
+            }
+            #controls div {
+                float: left;
+            }
+            #progress {
+                width: calc(100% - 100px);
+                height: 100%;
+            }
+            #progress_dot {
+                border-radius: 50%;
+                background-color: #8b8b8b;
+                position: relative;
+                width: 10px;
+                height: 10px;
+                top: 35px;
+                left: 0;
+            }
+            #progress_bar {
+                height: 1px;
+                width: calc(100% - 10px);
+                border-bottom: solid 1px #e8e6e3;
+                position: relative;
+                top: 38px;
+            }
+        </style>
         <script>
             window.onload = function() {
-                let playBtn = document.getElementById('play')
-                let pauseBtn = document.getElementById('pause')
-                let audio = new Audio('/play');
-
-                playBtn.addEventListener('click', function () {
-                    audio.play();
+                const track_finished_event = new Event('track_finished')
+                const track_almost_finished_event = new Event('track_almost_finished')
+                window.addEventListener('track_finished', () => {
+                    console.log('track_done')
+                })
+                window.addEventListener('track_almost_finished', () => {
+                    console.log('track_almost_done')
                 })
 
-                pauseBtn.addEventListener('click', function () {
+                let play_button = document.getElementById('playpause')
+                let progress_dot = document.getElementById('progress_dot')
+                let tracks_div = document.getElementById('tracks')
+                let audio = new Audio()
+                let progress_updater
+                let track_data
+                let album_data
+                let artist_data
+                let triggered_almost_done_event = false
+                play_button.checked = true
+
+                fetch('/tracks').then(response => {
+                    return response.json()
+                }).then(response => {
+                    track_data = response
+                    let track_html = ''
+                    for (let track of response) {
+                        track_html += '<div class="track" data-track_id="' + track.track_id + '">Artist: ' + track.artist + ' - Album: ' + track.album + ' - Title: ' + track.title + '</div>'
+                    }
+                    tracks_div.innerHTML = track_html
+                    let track_divs = document.getElementsByClassName('track')
+                    for (let track_div of track_divs) {
+                        track_div.addEventListener('click', event => {
+                            audio.src = '/play/' + event.target.getAttribute('data-track_id')
+                            play()
+                        })
+                    }
+                })
+                fetch('/albums').then(response => {
+                    return response.json()
+                }).then(response => {
+                    album_data = response
+                })
+                fetch('/artists').then(response => {
+                    return response.json()
+                }).then(response => {
+                    artist_data = response
+                })
+
+                play_button.addEventListener('click', () => {
+                    if (audio.paused) {
+                        play()
+                    }
+                    else {
+                        pause()
+                    }
+                })
+
+                let update_progress = () => {
+                    let duration = audio.duration
+                    let current_time = audio.currentTime
+                    let position = ((current_time / duration) * 100)
+                    progress_dot.style.left = position.toFixed(2) + '%'
+                    if (position >= 100) {
+                        window.dispatchEvent(track_finished_event)
+                        triggered_almost_done_event = false
+                        stop_progress_monitor()
+                        return
+                    }
+                    if (!triggered_almost_done_event && position > 90) {
+                        window.dispatchEvent(track_almost_finished_event)
+                        triggered_almost_done_event = true
+                    }
+                }
+
+                let start_progress_monitor = () => {
+                    triggered_almost_done_event = false
+                    progress_updater = setInterval(update_progress, 50)
+                }
+                let stop_progress_monitor = () => {
+                    clearInterval(progress_updater)
+                }
+
+                let play = () => {
+                    if (audio.src) {
+                        audio.play()
+                        play_button.checked = false
+                        start_progress_monitor()
+                    }
+                    else {
+                        play_button.checked = true
+                    }
+                }
+                let pause = () => {
                     audio.pause()
-                })
+                    play_button.checked = true
+                    stop_progress_monitor()
+                }
+                // let stop = () => {
+                //     audio.pause()
+                //     audio.fastSeek(0)
+                //     play_button.checked = true
+                //     stop_progress_monitor()
+                //     progress_dot.style.left = '0'
+                // }
             }
         </script>
     </head>
     <body>
-        <button id="play">Play</button>
-        <button id="pause">Pause</button>
+        <div id="tracks"></div>
+        <div id="controls">
+            <div id="play_button">
+                <input type="checkbox" value="None" id="playpause" name="check" />
+                <label for="playpause" tabindex=1></label>
+            </div>
+            <div id="progress">
+                <div id="progress_dot"></div>
+                <div id="progress_bar"></div>
+            </div>
+        </div>
     </body>
 </html>
