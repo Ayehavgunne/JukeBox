@@ -34,6 +34,7 @@ class Artist(BaseModel):
         constraints = [SQL('UNIQUE ("name" COLLATE NOCASE)')]
 
     def to_json(self) -> Dict[str, Union[str, int]]:
+        # noinspection PyTypeChecker
         return {
             "artist_id": self.artist_id,
             "name": self.name,

@@ -5,10 +5,8 @@ import music_tag
 from music_tag import AudioFile
 from peewee import IntegrityError
 
-from jukebox import APP_ROOT
+from jukebox import CONFIG_FILE, CONFIGS
 from jukebox.db_models import Album, Artist, Track, database
-
-CONFIG_FILE = APP_ROOT / "jukebox.json5"
 
 if not CONFIG_FILE.exists():
     CONFIG_FILE.touch()
@@ -16,6 +14,12 @@ if not CONFIG_FILE.exists():
         "library_paths": [],
         "extensions": [".mp3", ".flac", ".m4a", ".aac"],
         "exclude_paths": [],
+        "debug_mode": False,
+        "use_reloader": False,
+        "logging": {
+            "maxBytes": 100000,
+            "backupCount": 5,
+        },
     }
     CONFIG_FILE.write_text(
         json5.dumps(
@@ -32,7 +36,7 @@ def get_metadata(file: Path) -> AudioFile:
 class MusicFile:
     def __init__(self, file: Path):
         metadata = get_metadata(file)
-        self.file_path = metadata.filename.as_posix()
+        self.file_path = file.as_posix()
         self.duration = metadata["#length"].value
         self.artist = metadata["artist"].value
         self.album_artist = metadata["albumartist"].value
@@ -48,16 +52,15 @@ class MusicFile:
         self._file = file
 
 
-def main() -> None:
+def scan_files() -> None:
     database.connect()
-    configs = json5.loads(CONFIG_FILE.read_text())
 
-    if not configs["library_paths"]:
+    if not CONFIGS["library_paths"]:
         print("error: no library folders defined")
         return
 
-    music_folders = configs["library_paths"]
-    extensions = configs["extensions"]
+    music_folders = CONFIGS["library_paths"]
+    extensions = CONFIGS["extensions"]
     songs = []
     existing_files = [track.file_path for track in Track.select()]
     for music_folder in music_folders:
@@ -66,8 +69,8 @@ def main() -> None:
         ]:
             if song_file.as_posix() in existing_files:
                 continue
-            if configs["exclude_paths"]:
-                for exclusion in configs["exclude_paths"]:
+            if CONFIGS["exclude_paths"]:
+                for exclusion in CONFIGS["exclude_paths"]:
                     if exclusion not in song_file.as_posix():
                         songs.append(MusicFile(song_file))
             else:
@@ -114,9 +117,9 @@ def main() -> None:
                 )
             except IntegrityError:
                 pass
-    print(len(songs))
+    print(len(songs), "new files")
     database.close()
 
 
 if __name__ == "__main__":
-    main()
+    scan_files()

@@ -1,17 +1,34 @@
+from logging import getLogger
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Dict, List
+from typing import AsyncIterator
 
 from quart import Quart, Response, jsonify, make_response, request, send_from_directory
+from quart.logging import serving_handler
 
-from jukebox import APP_ROOT
-from jukebox.db_models import Album, Artist, Track, database
+from jukebox import APP_ROOT, CONFIGS
+from jukebox.db_models import Album, Artist, Track, create_tables, database
+from jukebox.scan_files import scan_files
 
 app = Quart(__name__)
+handler = RotatingFileHandler(
+    APP_ROOT / "jukebox.log",
+    maxBytes=CONFIGS["logging"]["maxBytes"],
+    backupCount=CONFIGS["logging"]["backupCount"],
+)
+handler.setFormatter(serving_handler.formatter)
+serving_logger = getLogger("quart.serving")
+serving_logger.addHandler(handler)
 
 
 @app.route("/")
-async def root() -> str:
-    return (APP_ROOT / "jukebox" / "html" / "root.html").read_text()
+async def root() -> Response:
+    return await send_from_directory(APP_ROOT / "jukebox" / "html", "root.html")
+
+
+@app.route("/css/<path:path>")
+async def send_css(path: str) -> Response:
+    return await send_from_directory(APP_ROOT / "jukebox" / "css", path)
 
 
 @app.route("/js/<path:path>")
@@ -71,7 +88,7 @@ async def play(track_id: int) -> Response:
         if byte2:
             length = byte2 + 1 - byte1
 
-    async def async_generator() -> bytes:
+    async def async_generator() -> AsyncIterator[bytes]:
         with song_file.open("rb") as play_file:
             play_file.seek(byte1)
             chunk = play_file.read(length)
@@ -93,4 +110,13 @@ async def play(track_id: int) -> Response:
     return response
 
 
-app.run(host="0.0.0.0")
+if __name__ == "__main__":
+    db_file = APP_ROOT / "jukebox.db"
+    if not db_file.exists():
+        create_tables()
+    scan_files()
+    app.run(
+        host="0.0.0.0",
+        debug=CONFIGS["debug_mode"],
+        use_reloader=CONFIGS["use_reloader"],
+    )
