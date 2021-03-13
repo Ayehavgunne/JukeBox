@@ -323,7 +323,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -453,9 +452,6 @@ test-results/
 .AppleDouble
 .LSOverride
 
-# Icon must end with two \r
-Icon
-
 # Thumbnails
 ._*
 
@@ -546,7 +542,6 @@ flycheck_*.el
 **/nbproject/private/
 **/nbproject/Makefile-*.mk
 **/nbproject/Package-*.bash
-build/
 nbbuild/
 dist/
 nbdist/
@@ -584,7 +579,6 @@ xcuserdata/
 *.xccheckout
 
 ## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
-build/
 DerivedData/
 *.moved-aside
 *.pbxuser
@@ -606,6 +600,35 @@ DerivedData/
 /.pytype/
 *.code-workspace
 .vscode/
+
+### Stencil
+dist/
+!www/favicon.ico
+www/
+
+*~
+*.sw[mnpcod]
+*.log
+*.lock
+*.tmp
+*.tmp.*
+log.txt
+*.sublime-project
+*.sublime-workspace
+
+.stencil/
+.idea/
+.vscode/
+.sass-cache/
+.versions/
+node_modules/
+$RECYCLE.BIN/
+
+.DS_Store
+Thumbs.db
+UserInterfaceState.xcuserstate
+.env
+
 
 ### PROJECT
 jukebox.json5

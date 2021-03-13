@@ -18,16 +18,19 @@ play_btn_show_pause_icon()
 
 const track_finished_event = new Event('track_finished')
 const track_almost_finished_event = new Event('track_almost_finished')
+window.addEventListener('ended', () => {
+    console.log('ended')
+})
 window.addEventListener('track_finished', () => {
     triggered_almost_done_event = false
     stop_progress_monitor()
     progress_dot.style.left = '0'
     play_btn_show_play_icon()
-    console.log('track_done')
+    console.log('track done')
 })
 window.addEventListener('track_almost_finished', () => {
     triggered_almost_done_event = true
-    console.log('track_almost_done')
+    console.log('track almost done')
 })
 audio.addEventListener('pause', () => {
     play_btn_show_pause_icon()
@@ -62,16 +65,16 @@ fetch('/tracks').then(response => {
         })
     }
 })
-fetch('/albums').then(response => {
-    return response.json()
-}).then(response => {
-    album_data = response
-})
-fetch('/artists').then(response => {
-    return response.json()
-}).then(response => {
-    artist_data = response
-})
+// fetch('/albums').then(response => {
+//     return response.json()
+// }).then(response => {
+//     album_data = response
+// })
+// fetch('/artists').then(response => {
+//     return response.json()
+// }).then(response => {
+//     artist_data = response
+// })
 
 play_button.addEventListener('click', () => {
     if (audio.paused) {
@@ -87,10 +90,10 @@ let update_progress = () => {
     let current_time = audio.currentTime
     let position = ((current_time / duration) * 100)
     progress_dot.style.left = position.toFixed(2) + '%'
-    if (position >= 100) {
+    if (position >= 99.5) {
         window.dispatchEvent(track_finished_event)
     }
-    if (!triggered_almost_done_event && position > 90) {
+    if (!triggered_almost_done_event && position > 90 && position < 99.5) {
         window.dispatchEvent(track_almost_finished_event)
     }
 }

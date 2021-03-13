@@ -98,14 +98,34 @@ class Track(BaseModel):
         }
 
 
+class User(BaseModel):
+    user_id = AutoField(primary_key=True)
+    username = CharField()
+
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        # noinspection PyTypeChecker
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+        }
+
+
 class Playlist(BaseModel):
     playlist_name = CharField()
     track = ForeignKeyField(Track, backref="playlists")
+    user = ForeignKeyField(User, backref="playlists")
 
     class Meta:
         database = database
         legacy_table_names = False
-        primary_key = CompositeKey("playlist_name", "track")
+        primary_key = CompositeKey("playlist_name", "track", "user")
+
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        return {
+            "playlist_name": self.playlist_name,
+            "track_id": self.track.track_id,
+            "user_id": self.user.user_id,
+        }
 
 
 def create_tables() -> None:

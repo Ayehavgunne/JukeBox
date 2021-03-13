@@ -14,10 +14,13 @@ if not CONFIG_FILE.exists():
         "library_paths": [],
         "extensions": [".mp3", ".flac", ".m4a", ".aac"],
         "exclude_paths": [],
+        "host": "127.0.0.1",
+        "port": 5000,
         "debug_mode": False,
         "use_reloader": False,
         "logging": {
-            "maxBytes": 100000,
+            "enabled": True,
+            "maxBytes": 10000000,
             "backupCount": 5,
         },
     }

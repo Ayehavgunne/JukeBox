@@ -9,27 +9,27 @@ html, body {
     width: 44px;
     margin-right: 10px;
 }
-#play_button label {
-    display: block;
-    box-sizing: border-box;
-    width: 0;
-    height: 44px;
-    cursor: pointer;
-    border-color: transparent transparent transparent #8b8b8b;
-    transition: 100ms all ease;
-    will-change: border-width;
-    border-style: double;
-    border-width: 0 0 0 40px;
-    position: relative;
-    bottom: 13px;
-}
-#play_button input[type='checkbox'] {
-    visibility: hidden;
-}
-#play_button input[type='checkbox']:checked + label {
-    border-style: solid;
-    border-width: 22px 0 22px 40px;
-}
+/*#play_button label {*/
+/*    display: block;*/
+/*    box-sizing: border-box;*/
+/*    width: 0;*/
+/*    height: 44px;*/
+/*    cursor: pointer;*/
+/*    border-color: transparent transparent transparent #8b8b8b;*/
+/*    transition: 100ms all ease;*/
+/*    will-change: border-width;*/
+/*    border-style: double;*/
+/*    border-width: 0 0 0 40px;*/
+/*    position: relative;*/
+/*    bottom: 13px;*/
+/*}*/
+/*#play_button input[type='checkbox'] {*/
+/*    visibility: hidden;*/
+/*}*/
+/*#play_button input[type='checkbox']:checked + label {*/
+/*    border-style: solid;*/
+/*    border-width: 22px 0 22px 40px;*/
+/*}*/
 #tracks {
     height: calc(100% - 68px);
     overflow: auto;

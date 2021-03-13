@@ -1,0 +1,54 @@
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    height: 100%;
+}
+
+header {
+    background: #000000;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px 2px rgba(0, 0, 0, 0.26);
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 56px;
+    background-color: #1d1d1d;
+}
+
+h1 {
+    padding: 0 12px;
+}
+
+h3 {
+    margin-bottom: 5px;
+}
+
+main {
+    padding: 10px;
+}
+
+nav, main {
+    float: left;
+    height: calc(100% - 56px);
+}
+
+ul {
+    padding-left: 15px;
+}
+
+li {
+    list-style: none;
+    padding-bottom: 5px;
+}
+
+a:visited, a:link, a:hover, a:active {
+    color: #ccc;
+    text-decoration: none;
+}
