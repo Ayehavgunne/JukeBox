@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import json5
@@ -8,28 +9,30 @@ from peewee import IntegrityError
 from jukebox import CONFIG_FILE, CONFIGS
 from jukebox.db_models import Album, Artist, Track, database
 
-if not CONFIG_FILE.exists():
-    CONFIG_FILE.touch()
-    defaults = {
-        "library_paths": [],
-        "extensions": [".mp3", ".flac", ".m4a", ".aac"],
-        "exclude_paths": [],
-        "host": "127.0.0.1",
-        "port": 5000,
-        "debug_mode": False,
-        "use_reloader": False,
-        "logging": {
-            "enabled": True,
-            "maxBytes": 10000000,
-            "backupCount": 5,
-        },
-    }
-    CONFIG_FILE.write_text(
-        json5.dumps(
-            defaults,
-            indent=4,
+
+def check_config_file() -> None:
+    if not CONFIG_FILE.exists():
+        CONFIG_FILE.touch()
+        defaults = {
+            "library_paths": [],
+            "extensions": [".mp3", ".flac", ".m4a", ".aac"],
+            "exclude_paths": [],
+            "host": "127.0.0.1",
+            "port": 5000,
+            "debug_mode": False,
+            "use_reloader": False,
+            "logging": {
+                "enabled": True,
+                "maxBytes": 10000000,
+                "backupCount": 5,
+            },
+        }
+        CONFIG_FILE.write_text(
+            json5.dumps(
+                defaults,
+                indent=4,
+            )
         )
-    )
 
 
 def get_metadata(file: Path) -> AudioFile:
@@ -60,7 +63,7 @@ def scan_files() -> None:
 
     if not CONFIGS["library_paths"]:
         print("error: no library folders defined")
-        return
+        sys.exit(1)
 
     music_folders = CONFIGS["library_paths"]
     extensions = CONFIGS["extensions"]
@@ -100,7 +103,7 @@ def scan_files() -> None:
                     title=song.album,
                     artist=album_artist,
                     total_tracks=song.total_tracks,
-                    disc=song.disc_number,
+                    disc_number=song.disc_number,
                     total_discs=song.total_discs,
                     year=song.year,
                 )
@@ -114,7 +117,7 @@ def scan_files() -> None:
                     album_artist=album_artist,
                     track_number=song.track_number,
                     disc_number=song.disc_number,
-                    genre=song.genre,
+                    genre=song.genre.lower().title(),
                     length=song.duration,
                     file_path=song.file_path,
                 )

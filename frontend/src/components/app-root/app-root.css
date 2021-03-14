@@ -15,11 +15,12 @@ header {
 }
 
 footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     height: 56px;
     background-color: #1d1d1d;
+    z-index: 4;
 }
 
 h1 {
@@ -32,11 +33,18 @@ h3 {
 
 main {
     padding: 10px;
+    width: calc(100% - 133px);
+}
+
+nav {
+    border-right: solid 1px #4d4d4d;
+    width: 133px;
 }
 
 nav, main {
     float: left;
     height: calc(100% - 56px);
+    overflow: auto;
 }
 
 ul {

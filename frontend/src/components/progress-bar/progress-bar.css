@@ -1,0 +1,26 @@
+* {
+    box-sizing: border-box;
+}
+
+#progress {
+    width: calc(100% - 100px);
+    height: 100%;
+}
+
+#progress_dot {
+    border-radius: 50%;
+    background-color: #8b8b8b;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    top: 24px;
+    left: 0;
+}
+
+#progress_bar {
+    height: 1px;
+    width: calc(100% - 10px);
+    border-bottom: solid 1px #e8e6e3;
+    position: relative;
+    top: 27px;
+}

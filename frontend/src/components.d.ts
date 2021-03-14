@@ -7,87 +7,90 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { MatchResults } from "@stencil/router";
 export namespace Components {
-    interface AppAlbums {
-    }
-    interface AppArtists {
-    }
-    interface AppGenres {
-    }
-    interface AppHome {
-    }
-    interface AppPlaylist {
-        "match": MatchResults;
-    }
-    interface AppProfile {
-        "match": MatchResults;
-    }
     interface AppRoot {
     }
-    interface AppTracks {
+    interface PageAlbums {
     }
-    interface PlayButton {
+    interface PageArtists {
+    }
+    interface PageGenres {
+    }
+    interface PageHome {
+    }
+    interface PagePlaylist {
+        "match": MatchResults;
+    }
+    interface PageProfile {
+        "match": MatchResults;
+    }
+    interface PageTracks {
+    }
+    interface PlayTrack {
+        "track_id": number;
     }
     interface PlayerControls {
+        "audio": HTMLAudioElement;
+        "pause": () => Promise<void>;
+        "play": () => Promise<void>;
+        "set_track": (track_number: number) => Promise<void>;
     }
-    interface TrackRow {
-    }
-    interface TrackTable {
+    interface ProgressBar {
     }
 }
 declare global {
-    interface HTMLAppAlbumsElement extends Components.AppAlbums, HTMLStencilElement {
-    }
-    var HTMLAppAlbumsElement: {
-        prototype: HTMLAppAlbumsElement;
-        new (): HTMLAppAlbumsElement;
-    };
-    interface HTMLAppArtistsElement extends Components.AppArtists, HTMLStencilElement {
-    }
-    var HTMLAppArtistsElement: {
-        prototype: HTMLAppArtistsElement;
-        new (): HTMLAppArtistsElement;
-    };
-    interface HTMLAppGenresElement extends Components.AppGenres, HTMLStencilElement {
-    }
-    var HTMLAppGenresElement: {
-        prototype: HTMLAppGenresElement;
-        new (): HTMLAppGenresElement;
-    };
-    interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
-    }
-    var HTMLAppHomeElement: {
-        prototype: HTMLAppHomeElement;
-        new (): HTMLAppHomeElement;
-    };
-    interface HTMLAppPlaylistElement extends Components.AppPlaylist, HTMLStencilElement {
-    }
-    var HTMLAppPlaylistElement: {
-        prototype: HTMLAppPlaylistElement;
-        new (): HTMLAppPlaylistElement;
-    };
-    interface HTMLAppProfileElement extends Components.AppProfile, HTMLStencilElement {
-    }
-    var HTMLAppProfileElement: {
-        prototype: HTMLAppProfileElement;
-        new (): HTMLAppProfileElement;
-    };
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
     }
     var HTMLAppRootElement: {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
-    interface HTMLAppTracksElement extends Components.AppTracks, HTMLStencilElement {
+    interface HTMLPageAlbumsElement extends Components.PageAlbums, HTMLStencilElement {
     }
-    var HTMLAppTracksElement: {
-        prototype: HTMLAppTracksElement;
-        new (): HTMLAppTracksElement;
+    var HTMLPageAlbumsElement: {
+        prototype: HTMLPageAlbumsElement;
+        new (): HTMLPageAlbumsElement;
     };
-    interface HTMLPlayButtonElement extends Components.PlayButton, HTMLStencilElement {
+    interface HTMLPageArtistsElement extends Components.PageArtists, HTMLStencilElement {
     }
-    var HTMLPlayButtonElement: {
-        prototype: HTMLPlayButtonElement;
-        new (): HTMLPlayButtonElement;
+    var HTMLPageArtistsElement: {
+        prototype: HTMLPageArtistsElement;
+        new (): HTMLPageArtistsElement;
+    };
+    interface HTMLPageGenresElement extends Components.PageGenres, HTMLStencilElement {
+    }
+    var HTMLPageGenresElement: {
+        prototype: HTMLPageGenresElement;
+        new (): HTMLPageGenresElement;
+    };
+    interface HTMLPageHomeElement extends Components.PageHome, HTMLStencilElement {
+    }
+    var HTMLPageHomeElement: {
+        prototype: HTMLPageHomeElement;
+        new (): HTMLPageHomeElement;
+    };
+    interface HTMLPagePlaylistElement extends Components.PagePlaylist, HTMLStencilElement {
+    }
+    var HTMLPagePlaylistElement: {
+        prototype: HTMLPagePlaylistElement;
+        new (): HTMLPagePlaylistElement;
+    };
+    interface HTMLPageProfileElement extends Components.PageProfile, HTMLStencilElement {
+    }
+    var HTMLPageProfileElement: {
+        prototype: HTMLPageProfileElement;
+        new (): HTMLPageProfileElement;
+    };
+    interface HTMLPageTracksElement extends Components.PageTracks, HTMLStencilElement {
+    }
+    var HTMLPageTracksElement: {
+        prototype: HTMLPageTracksElement;
+        new (): HTMLPageTracksElement;
+    };
+    interface HTMLPlayTrackElement extends Components.PlayTrack, HTMLStencilElement {
+    }
+    var HTMLPlayTrackElement: {
+        prototype: HTMLPlayTrackElement;
+        new (): HTMLPlayTrackElement;
     };
     interface HTMLPlayerControlsElement extends Components.PlayerControls, HTMLStencilElement {
     }
@@ -95,91 +98,82 @@ declare global {
         prototype: HTMLPlayerControlsElement;
         new (): HTMLPlayerControlsElement;
     };
-    interface HTMLTrackRowElement extends Components.TrackRow, HTMLStencilElement {
+    interface HTMLProgressBarElement extends Components.ProgressBar, HTMLStencilElement {
     }
-    var HTMLTrackRowElement: {
-        prototype: HTMLTrackRowElement;
-        new (): HTMLTrackRowElement;
-    };
-    interface HTMLTrackTableElement extends Components.TrackTable, HTMLStencilElement {
-    }
-    var HTMLTrackTableElement: {
-        prototype: HTMLTrackTableElement;
-        new (): HTMLTrackTableElement;
+    var HTMLProgressBarElement: {
+        prototype: HTMLProgressBarElement;
+        new (): HTMLProgressBarElement;
     };
     interface HTMLElementTagNameMap {
-        "app-albums": HTMLAppAlbumsElement;
-        "app-artists": HTMLAppArtistsElement;
-        "app-genres": HTMLAppGenresElement;
-        "app-home": HTMLAppHomeElement;
-        "app-playlist": HTMLAppPlaylistElement;
-        "app-profile": HTMLAppProfileElement;
         "app-root": HTMLAppRootElement;
-        "app-tracks": HTMLAppTracksElement;
-        "play-button": HTMLPlayButtonElement;
+        "page-albums": HTMLPageAlbumsElement;
+        "page-artists": HTMLPageArtistsElement;
+        "page-genres": HTMLPageGenresElement;
+        "page-home": HTMLPageHomeElement;
+        "page-playlist": HTMLPagePlaylistElement;
+        "page-profile": HTMLPageProfileElement;
+        "page-tracks": HTMLPageTracksElement;
+        "play-track": HTMLPlayTrackElement;
         "player-controls": HTMLPlayerControlsElement;
-        "track-row": HTMLTrackRowElement;
-        "track-table": HTMLTrackTableElement;
+        "progress-bar": HTMLProgressBarElement;
     }
 }
 declare namespace LocalJSX {
-    interface AppAlbums {
-    }
-    interface AppArtists {
-    }
-    interface AppGenres {
-    }
-    interface AppHome {
-    }
-    interface AppPlaylist {
-        "match"?: MatchResults;
-    }
-    interface AppProfile {
-        "match"?: MatchResults;
-    }
     interface AppRoot {
     }
-    interface AppTracks {
+    interface PageAlbums {
     }
-    interface PlayButton {
+    interface PageArtists {
+    }
+    interface PageGenres {
+    }
+    interface PageHome {
+    }
+    interface PagePlaylist {
+        "match"?: MatchResults;
+    }
+    interface PageProfile {
+        "match"?: MatchResults;
+    }
+    interface PageTracks {
+    }
+    interface PlayTrack {
+        "track_id"?: number;
     }
     interface PlayerControls {
+        "audio"?: HTMLAudioElement;
     }
-    interface TrackRow {
-    }
-    interface TrackTable {
+    interface ProgressBar {
     }
     interface IntrinsicElements {
-        "app-albums": AppAlbums;
-        "app-artists": AppArtists;
-        "app-genres": AppGenres;
-        "app-home": AppHome;
-        "app-playlist": AppPlaylist;
-        "app-profile": AppProfile;
         "app-root": AppRoot;
-        "app-tracks": AppTracks;
-        "play-button": PlayButton;
+        "page-albums": PageAlbums;
+        "page-artists": PageArtists;
+        "page-genres": PageGenres;
+        "page-home": PageHome;
+        "page-playlist": PagePlaylist;
+        "page-profile": PageProfile;
+        "page-tracks": PageTracks;
+        "play-track": PlayTrack;
         "player-controls": PlayerControls;
-        "track-row": TrackRow;
-        "track-table": TrackTable;
+        "progress-bar": ProgressBar;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "app-albums": LocalJSX.AppAlbums & JSXBase.HTMLAttributes<HTMLAppAlbumsElement>;
-            "app-artists": LocalJSX.AppArtists & JSXBase.HTMLAttributes<HTMLAppArtistsElement>;
-            "app-genres": LocalJSX.AppGenres & JSXBase.HTMLAttributes<HTMLAppGenresElement>;
-            "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
-            "app-playlist": LocalJSX.AppPlaylist & JSXBase.HTMLAttributes<HTMLAppPlaylistElement>;
-            "app-profile": LocalJSX.AppProfile & JSXBase.HTMLAttributes<HTMLAppProfileElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
-            "app-tracks": LocalJSX.AppTracks & JSXBase.HTMLAttributes<HTMLAppTracksElement>;
-            "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
+            "page-albums": LocalJSX.PageAlbums & JSXBase.HTMLAttributes<HTMLPageAlbumsElement>;
+            "page-artists": LocalJSX.PageArtists & JSXBase.HTMLAttributes<HTMLPageArtistsElement>;
+            "page-genres": LocalJSX.PageGenres & JSXBase.HTMLAttributes<HTMLPageGenresElement>;
+            "page-home": LocalJSX.PageHome & JSXBase.HTMLAttributes<HTMLPageHomeElement>;
+            "page-playlist": LocalJSX.PagePlaylist & JSXBase.HTMLAttributes<HTMLPagePlaylistElement>;
+            "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
+            "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
+            "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
-            "track-row": LocalJSX.TrackRow & JSXBase.HTMLAttributes<HTMLTrackRowElement>;
-            "track-table": LocalJSX.TrackTable & JSXBase.HTMLAttributes<HTMLTrackTableElement>;
+            "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
         }
     }
 }

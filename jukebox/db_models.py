@@ -9,7 +9,7 @@ from peewee import (
     ForeignKeyField,
     IntegerField,
     Model,
-    SqliteDatabase,
+    SqliteDatabase, IntegrityError,
 )
 
 from jukebox import APP_ROOT
@@ -46,15 +46,14 @@ class Album(BaseModel):
     title = CharField()
     artist = ForeignKeyField(Artist, backref="albums")
     total_tracks = IntegerField(null=True)
-    disc = IntegerField(null=True)
+    disc_number = IntegerField(null=True)
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
 
     class Meta:
         database = database
         legacy_table_names = False
-        indexes = ((("title", "artist", "disc"), True),)
-        order_by = ("artist", "title")
+        indexes = ((("title", "artist", "disc_number"), True),)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
@@ -62,7 +61,7 @@ class Album(BaseModel):
             "title": self.title,
             "artist": self.artist.name,
             "total_tracks": self.total_tracks,
-            "disc": self.disc,
+            "disc_number": self.disc_number,
             "total_discs": self.total_discs,
             "year": self.year,
         }
@@ -84,7 +83,6 @@ class Track(BaseModel):
         database = database
         legacy_table_names = False
         indexes = ((("title", "album", "file_path"), True),)
-        order_by = ("artist", "album", "title")
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
@@ -94,7 +92,8 @@ class Track(BaseModel):
             "artist": self.artist.name,
             "track_number": self.track_number,
             "genre": self.genre,
-            "disk_number": self.disc_number,
+            "disc_number": self.disc_number,
+            "length": self.length,
         }
 
 
@@ -130,7 +129,16 @@ class Playlist(BaseModel):
 
 def create_tables() -> None:
     with database:
-        database.create_tables([Artist, Album, Track, Playlist])
+        database.create_tables([Artist, Album, Track, Playlist, User])
+        try:
+            User.create(username="Anthony")
+            User.create(username="Ant")
+            Playlist.create(playlist_name='Mine', track=1, user=1)
+            Playlist.create(playlist_name='Mine', track=2, user=1)
+            Playlist.create(playlist_name='Favs', track=3, user=1)
+            Playlist.create(playlist_name='Favs', track=4, user=1)
+        except IntegrityError:
+            pass
 
 
 if __name__ == "__main__":

@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+}
+
+.table_container {
+    background-color: #181a1b;
+}
+
+.top_cover, .right_cover {
+    background-color: #181a1b;
+    position: absolute;
+}
+
+.top_cover {
+    width: calc(100% - 133px);
+    height: 10px;
+    left: 133px;
+    top: 0;
+    z-index: 3;
+}
+
+.right_cover {
+    width: 10px;
+    height: 100%;
+    left: 133px;
+    top: 0;
+    z-index: 3;
+}
+
+.second {
+    text-align: right;
+}
+
+.fifth {
+    text-align: right;
+}
+
+.last {
+    text-align: right;
+}
+
+.play_track {
+    cursor: pointer;
+    width: 18px;
+    height: 16px;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #bebebe;
+    transition: all 100ms ease-in-out;
+}
+
+table {
+    white-space: nowrap;
+}
+
+th:first-child {
+    border-right: 0;
+}
+
+th {
+    border-right: solid 1px #4a4a4a;
+    padding: 0 8px;
+    position: sticky;
+    top: 0;
+    background-color: #181a1b;
+    z-index: 1;
+}
+
+th:first-child {
+    position: sticky;
+    left: 0;
+}
+
+th:last-child {
+    border-right: 0;
+}
+
+tr:first-child td {
+    border-top: 0;
+}
+
+td:first-child {
+    border-top: 0;
+    position: sticky;
+    left: 0;
+    background-color: #181a1b;
+}
+
+td {
+    border-top: solid 1px #4a4a4a;
+    padding: 0 8px;
+}

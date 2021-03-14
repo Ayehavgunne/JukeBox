@@ -6,4 +6,7 @@ import json5
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_FILE = APP_ROOT / "jukebox.json5"
-CONFIGS = json5.loads(CONFIG_FILE.read_text())
+try:
+    CONFIGS = json5.loads(CONFIG_FILE.read_text())
+except FileNotFoundError:
+    CONFIGS = {}

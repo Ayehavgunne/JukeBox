@@ -9,7 +9,9 @@ from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import scan_files
+from jukebox.scan_files import scan_files, check_config_file
+
+check_config_file()
 
 app = Quart(__name__)
 if CONFIGS["logging"]["enabled"]:
@@ -28,13 +30,13 @@ if CONFIGS["logging"]["enabled"]:
 #     return await send_from_directory(APP_ROOT / "jukebox" / "html", "root.html")
 
 
-@app.route("/genres_page")
-@app.route("/artists_page")
-@app.route("/albums_page")
-@app.route("/tracks_page")
-@app.route("/profile_page/<string:_>")
-@app.route("/playlist_page/<string:_>")
 @app.route("/")
+@app.route("/page/genres")
+@app.route("/page/artists")
+@app.route("/page/albums")
+@app.route("/page/tracks")
+@app.route("/page/profile/<string:_>")
+@app.route("/page/playlist/<string:_>")
 async def root(_: str = None) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "www", "index.html")
 
@@ -89,8 +91,8 @@ async def get_tracks(track_id: int = None) -> Response:
             tracks = (
                 Track.select()
                 .distinct()
-                .join(Artist)
                 .join(Album)
+                .join(Artist)
                 .order_by(
                     fn.Lower(Artist.name), fn.Lower(Album.title), Track.track_number
                 )
