@@ -9,6 +9,10 @@ import { MatchResults } from "@stencil/router";
 export namespace Components {
     interface AppRoot {
     }
+    interface MenuToggle {
+        "showing": boolean;
+        "toggle": () => void;
+    }
     interface PageAlbums {
     }
     interface PageArtists {
@@ -16,6 +20,8 @@ export namespace Components {
     interface PageGenres {
     }
     interface PageHome {
+    }
+    interface PageNowPlaying {
     }
     interface PagePlaylist {
         "match": MatchResults;
@@ -35,6 +41,7 @@ export namespace Components {
         "set_track": (track_number: number) => Promise<void>;
     }
     interface ProgressBar {
+        "progress": number;
     }
 }
 declare global {
@@ -43,6 +50,12 @@ declare global {
     var HTMLAppRootElement: {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
+    };
+    interface HTMLMenuToggleElement extends Components.MenuToggle, HTMLStencilElement {
+    }
+    var HTMLMenuToggleElement: {
+        prototype: HTMLMenuToggleElement;
+        new (): HTMLMenuToggleElement;
     };
     interface HTMLPageAlbumsElement extends Components.PageAlbums, HTMLStencilElement {
     }
@@ -67,6 +80,12 @@ declare global {
     var HTMLPageHomeElement: {
         prototype: HTMLPageHomeElement;
         new (): HTMLPageHomeElement;
+    };
+    interface HTMLPageNowPlayingElement extends Components.PageNowPlaying, HTMLStencilElement {
+    }
+    var HTMLPageNowPlayingElement: {
+        prototype: HTMLPageNowPlayingElement;
+        new (): HTMLPageNowPlayingElement;
     };
     interface HTMLPagePlaylistElement extends Components.PagePlaylist, HTMLStencilElement {
     }
@@ -106,10 +125,12 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
+        "menu-toggle": HTMLMenuToggleElement;
         "page-albums": HTMLPageAlbumsElement;
         "page-artists": HTMLPageArtistsElement;
         "page-genres": HTMLPageGenresElement;
         "page-home": HTMLPageHomeElement;
+        "page-now-playing": HTMLPageNowPlayingElement;
         "page-playlist": HTMLPagePlaylistElement;
         "page-profile": HTMLPageProfileElement;
         "page-tracks": HTMLPageTracksElement;
@@ -121,6 +142,11 @@ declare global {
 declare namespace LocalJSX {
     interface AppRoot {
     }
+    interface MenuToggle {
+        "onToggling"?: (event: CustomEvent<boolean>) => void;
+        "showing"?: boolean;
+        "toggle"?: () => void;
+    }
     interface PageAlbums {
     }
     interface PageArtists {
@@ -128,6 +154,8 @@ declare namespace LocalJSX {
     interface PageGenres {
     }
     interface PageHome {
+    }
+    interface PageNowPlaying {
     }
     interface PagePlaylist {
         "match"?: MatchResults;
@@ -144,13 +172,16 @@ declare namespace LocalJSX {
         "audio"?: HTMLAudioElement;
     }
     interface ProgressBar {
+        "progress"?: number;
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
+        "menu-toggle": MenuToggle;
         "page-albums": PageAlbums;
         "page-artists": PageArtists;
         "page-genres": PageGenres;
         "page-home": PageHome;
+        "page-now-playing": PageNowPlaying;
         "page-playlist": PagePlaylist;
         "page-profile": PageProfile;
         "page-tracks": PageTracks;
@@ -164,10 +195,12 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "menu-toggle": LocalJSX.MenuToggle & JSXBase.HTMLAttributes<HTMLMenuToggleElement>;
             "page-albums": LocalJSX.PageAlbums & JSXBase.HTMLAttributes<HTMLPageAlbumsElement>;
             "page-artists": LocalJSX.PageArtists & JSXBase.HTMLAttributes<HTMLPageArtistsElement>;
             "page-genres": LocalJSX.PageGenres & JSXBase.HTMLAttributes<HTMLPageGenresElement>;
             "page-home": LocalJSX.PageHome & JSXBase.HTMLAttributes<HTMLPageHomeElement>;
+            "page-now-playing": LocalJSX.PageNowPlaying & JSXBase.HTMLAttributes<HTMLPageNowPlayingElement>;
             "page-playlist": LocalJSX.PagePlaylist & JSXBase.HTMLAttributes<HTMLPagePlaylistElement>;
             "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;

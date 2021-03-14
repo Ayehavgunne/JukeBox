@@ -1,4 +1,4 @@
-import {Component, h, State} from "@stencil/core"
+import {Component, h, Host, State} from "@stencil/core"
 import {Track} from "../../global/models"
 
 @Component({
@@ -16,9 +16,8 @@ export class PageTracks {
 
 	render() {
 		return (
-			<div class="table_container">
-				<div class="top_cover" />
-				<div class="right_cover" />
+			<Host>
+				<h3>Tracks</h3>
 				<table>
 					<thead>
 						<th />
@@ -61,7 +60,7 @@ export class PageTracks {
 						})}
 					</tbody>
 				</table>
-			</div>
+			</Host>
 		)
 	}
 }

@@ -20,7 +20,7 @@ export class PagePlaylist {
 		if (this.match && this.match.params.name) {
 			return (
 				<div>
-					<h1>{this.normalize(this.match.params.name)}</h1>
+					<h3>{this.normalize(this.match.params.name)}</h3>
 					<div>Nothing here yet. Move along.</div>
 				</div>
 			)

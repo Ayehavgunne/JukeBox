@@ -12,9 +12,10 @@
     border-color: transparent transparent transparent #bebebe;
     transition: all 100ms ease-in-out;
     transform: translate(10px, 8px);
+    float: left;
 }
 
-.pause {
+.paused {
     border-style: double;
     border-width: 0 0 0 40px;
 }

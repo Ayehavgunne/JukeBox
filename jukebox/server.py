@@ -35,6 +35,7 @@ if CONFIGS["logging"]["enabled"]:
 @app.route("/page/artists")
 @app.route("/page/albums")
 @app.route("/page/tracks")
+@app.route("/page/now_playing")
 @app.route("/page/profile/<string:_>")
 @app.route("/page/playlist/<string:_>")
 async def root(_: str = None) -> Response:
@@ -94,7 +95,7 @@ async def get_tracks(track_id: int = None) -> Response:
                 .join(Album)
                 .join(Artist)
                 .order_by(
-                    fn.Lower(Artist.name), fn.Lower(Album.title), Track.track_number
+                    fn.Lower(Artist.name), fn.Lower(Album.title), Album.disc_number, Track.track_number
                 )
             )
         else:

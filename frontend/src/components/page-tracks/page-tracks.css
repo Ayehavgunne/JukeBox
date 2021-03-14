@@ -2,29 +2,12 @@
     box-sizing: border-box;
 }
 
-.table_container {
+:host {
     background-color: #181a1b;
 }
 
-.top_cover, .right_cover {
-    background-color: #181a1b;
-    position: absolute;
-}
-
-.top_cover {
-    width: calc(100% - 133px);
-    height: 10px;
-    left: 133px;
-    top: 0;
-    z-index: 3;
-}
-
-.right_cover {
-    width: 10px;
-    height: 100%;
-    left: 133px;
-    top: 0;
-    z-index: 3;
+h3 {
+    margin-top: 7px;
 }
 
 .second {
@@ -52,6 +35,9 @@
 
 table {
     white-space: nowrap;
+    overflow: auto;
+    height: calc(100% - 51px);
+    display: block;
 }
 
 th:first-child {

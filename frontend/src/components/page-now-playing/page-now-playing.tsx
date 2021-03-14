@@ -1,15 +1,15 @@
 import {Component, h} from "@stencil/core"
 
 @Component({
-	tag: "page-genres",
-	styleUrl: "page-genres.css",
+	tag: "page-now-playing",
+	styleUrl: "page-now-playing.css",
 	shadow: true,
 })
-export class PageGenres {
+export class PageNowPlaying {
 	render() {
 		return (
 			<div>
-				<h3>Genres</h3>
+				<h3>Now Playing</h3>
 				Nothing here yet. Move along.
 			</div>
 		)

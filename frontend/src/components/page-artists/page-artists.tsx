@@ -9,7 +9,7 @@ export class PageArtists {
 	render() {
 		return (
 			<div>
-				<h1>Artists</h1>
+				<h3>Artists</h3>
 				Nothing here yet. Move along.
 			</div>
 		)

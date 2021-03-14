@@ -2,8 +2,13 @@
     box-sizing: border-box;
 }
 
-#progress {
+:host {
+    float: left;
     width: calc(100% - 100px);
+    transform: translate(20px, 18px);
+}
+
+#progress {
     height: 100%;
 }
 
@@ -13,14 +18,13 @@
     position: relative;
     width: 10px;
     height: 10px;
-    top: 24px;
+    top: 6px;
     left: 0;
+    transform: translate(-5px, 0);
 }
 
 #progress_bar {
     height: 1px;
-    width: calc(100% - 10px);
+    /*width: calc(100% - 10px);*/
     border-bottom: solid 1px #e8e6e3;
-    position: relative;
-    top: 27px;
 }

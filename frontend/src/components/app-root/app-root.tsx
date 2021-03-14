@@ -1,4 +1,4 @@
-import {Component, h, State} from "@stencil/core"
+import {Component, Element, h, Host, Listen, State} from "@stencil/core"
 
 @Component({
 	tag: "app-root",
@@ -6,17 +6,30 @@ import {Component, h, State} from "@stencil/core"
 	shadow: false,
 })
 export class AppRoot {
-	@State() playlist_names: Array<string> = []
+	@Element() el: HTMLElement
+	@State() nav_showing: boolean = true
+	playlist_names: Array<string> = []
+	classes: string = ""
 
 	async componentWillLoad() {
 		let result = await fetch("/playlists")
 		this.playlist_names = await result.json()
 	}
 
+	@Listen("toggling")
+	async toggling_handler(event: CustomEvent<boolean>) {
+		this.nav_showing = event.detail
+	}
+
 	render() {
+		let classes = ""
+		if (!this.nav_showing) {
+			classes = "nav_closed"
+		}
+
 		return (
-			<div class="container">
-				<nav>
+			<Host>
+				<nav class={classes}>
 					<header>
 						<h1>JukeBox</h1>
 					</header>
@@ -28,6 +41,11 @@ export class AppRoot {
 						<li>
 							<stencil-route-link url="/page/profile/Anthony">
 								Profile
+							</stencil-route-link>
+						</li>
+						<li>
+							<stencil-route-link url="/page/now_playing">
+								Now Playing
 							</stencil-route-link>
 						</li>
 						<li>
@@ -76,10 +94,14 @@ export class AppRoot {
 					</ul>
 				</nav>
 
-				<main>
+				<main class={classes}>
 					<stencil-router>
 						<stencil-route-switch scrollTopOffset={0}>
 							<stencil-route url="/" component="page-home" exact={true} />
+							<stencil-route
+								url="/page/now_playing"
+								component="page-now-playing"
+							/>
 							<stencil-route url="/page/tracks" component="page-tracks" />
 							<stencil-route url="/page/albums" component="page-albums" />
 							<stencil-route
@@ -99,10 +121,11 @@ export class AppRoot {
 					</stencil-router>
 				</main>
 
-				<footer>
+				<footer class={classes}>
+					<menu-toggle class={classes} showing={this.nav_showing} />
 					<player-controls />
 				</footer>
-			</div>
+			</Host>
 		)
 	}
 }

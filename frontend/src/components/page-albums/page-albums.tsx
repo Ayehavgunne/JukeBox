@@ -9,7 +9,7 @@ export class PageAlbums {
 	render() {
 		return (
 			<div>
-				<h1>Albums</h1>
+				<h3>Albums</h3>
 				Nothing here yet. Move along.
 			</div>
 		)
