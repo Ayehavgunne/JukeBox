@@ -1,4 +1,4 @@
-import {Component, Element, h, Host, Listen, State} from "@stencil/core"
+import {Component, Element, h, Host, State} from "@stencil/core"
 
 @Component({
 	tag: "app-root",
@@ -11,14 +11,17 @@ export class AppRoot {
 	playlist_names: Array<string> = []
 	classes: string = ""
 
+	constructor() {
+		this.toggle_nav = this.toggle_nav.bind(this)
+	}
+
 	async componentWillLoad() {
 		let result = await fetch("/playlists")
 		this.playlist_names = await result.json()
 	}
 
-	@Listen("toggling")
-	async toggling_handler(event: CustomEvent<boolean>) {
-		this.nav_showing = event.detail
+	async toggle_nav() {
+		this.nav_showing = !this.nav_showing
 	}
 
 	render() {
@@ -122,7 +125,11 @@ export class AppRoot {
 				</main>
 
 				<footer class={classes}>
-					<menu-toggle class={classes} showing={this.nav_showing} />
+					<menu-toggle
+						class={classes}
+						showing={this.nav_showing}
+						toggling={this.toggle_nav}
+					/>
 					<player-controls />
 				</footer>
 			</Host>

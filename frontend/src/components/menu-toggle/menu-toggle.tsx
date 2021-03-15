@@ -1,4 +1,4 @@
-import {Component, Event, EventEmitter, h, Listen, Prop} from "@stencil/core"
+import {Component, h, Listen, Prop} from "@stencil/core"
 
 @Component({
 	tag: "menu-toggle",
@@ -6,14 +6,13 @@ import {Component, Event, EventEmitter, h, Listen, Prop} from "@stencil/core"
 	shadow: true,
 })
 export class MenuToggle {
-	@Event() toggling: EventEmitter<boolean>
 	@Prop() showing: boolean = true
 	@Prop() toggle: () => void
+	@Prop() toggling: () => void
 
 	@Listen("click")
 	async toggle_menu() {
-		this.showing = !this.showing
-		this.toggling.emit(this.showing)
+		this.toggling()
 	}
 
 	render() {

@@ -1,5 +1,6 @@
 import {Component, h, Host, State} from "@stencil/core"
 import {Track} from "../../global/models"
+import {get_player_controls} from "../../global/app"
 
 @Component({
 	tag: "page-tracks",
@@ -12,6 +13,11 @@ export class PageTracks {
 	async componentWillLoad() {
 		let result = await fetch("/tracks")
 		this.tracks = await result.json()
+	}
+
+	playing_track_handler = async () => {
+		const controler = await get_player_controls()
+		await controler.set_playlist(this.tracks)
 	}
 
 	render() {
@@ -38,20 +44,23 @@ export class PageTracks {
 						<th>Length</th>
 					</thead>
 					<tbody>
-						{this.tracks.map(row => {
+						{this.tracks.map(track => {
 							return (
-								<tr>
+								<tr key={track.track_id}>
 									<td class="first">
-										<play-track track_id={row.track_id} />
+										<play-track
+											track={track}
+											clickHandler={this.playing_track_handler}
+										/>
 									</td>
-									<td class="second">{row.track_number}</td>
-									<td>{row.title}</td>
-									<td>{row.artist}</td>
-									<td>{row.album}</td>
-									<td class="fifth">{row.disc_number}</td>
-									<td>{row.genre}</td>
+									<td class="second">{track.track_number}</td>
+									<td>{track.title}</td>
+									<td>{track.artist}</td>
+									<td>{track.album}</td>
+									<td class="fifth">{track.disc_number}</td>
+									<td>{track.genre}</td>
 									<td class="last">
-										{new Date(row.length * 1000)
+										{new Date(track.length * 1000)
 											.toISOString()
 											.substr(14, 5)}
 									</td>

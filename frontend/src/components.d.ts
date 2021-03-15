@@ -6,12 +6,14 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { MatchResults } from "@stencil/router";
+import { Track } from "./global/models";
 export namespace Components {
     interface AppRoot {
     }
     interface MenuToggle {
         "showing": boolean;
         "toggle": () => void;
+        "toggling": () => void;
     }
     interface PageAlbums {
     }
@@ -31,17 +33,25 @@ export namespace Components {
     }
     interface PageTracks {
     }
+    interface PlayButton {
+        "paused": boolean;
+        "toggle_playing": () => void;
+    }
     interface PlayTrack {
-        "track_id": number;
+        "clickHandler": () => void;
+        "track": Track;
     }
     interface PlayerControls {
-        "audio": HTMLAudioElement;
         "pause": () => Promise<void>;
         "play": () => Promise<void>;
-        "set_track": (track_number: number) => Promise<void>;
+        "set_playlist": (tracks: Array<Track>) => Promise<void>;
+        "set_track": (track: Track) => Promise<void>;
     }
     interface ProgressBar {
         "progress": number;
+    }
+    interface TrackStats {
+        "track": Track;
     }
 }
 declare global {
@@ -105,6 +115,12 @@ declare global {
         prototype: HTMLPageTracksElement;
         new (): HTMLPageTracksElement;
     };
+    interface HTMLPlayButtonElement extends Components.PlayButton, HTMLStencilElement {
+    }
+    var HTMLPlayButtonElement: {
+        prototype: HTMLPlayButtonElement;
+        new (): HTMLPlayButtonElement;
+    };
     interface HTMLPlayTrackElement extends Components.PlayTrack, HTMLStencilElement {
     }
     var HTMLPlayTrackElement: {
@@ -123,6 +139,12 @@ declare global {
         prototype: HTMLProgressBarElement;
         new (): HTMLProgressBarElement;
     };
+    interface HTMLTrackStatsElement extends Components.TrackStats, HTMLStencilElement {
+    }
+    var HTMLTrackStatsElement: {
+        prototype: HTMLTrackStatsElement;
+        new (): HTMLTrackStatsElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "menu-toggle": HTMLMenuToggleElement;
@@ -134,18 +156,20 @@ declare global {
         "page-playlist": HTMLPagePlaylistElement;
         "page-profile": HTMLPageProfileElement;
         "page-tracks": HTMLPageTracksElement;
+        "play-button": HTMLPlayButtonElement;
         "play-track": HTMLPlayTrackElement;
         "player-controls": HTMLPlayerControlsElement;
         "progress-bar": HTMLProgressBarElement;
+        "track-stats": HTMLTrackStatsElement;
     }
 }
 declare namespace LocalJSX {
     interface AppRoot {
     }
     interface MenuToggle {
-        "onToggling"?: (event: CustomEvent<boolean>) => void;
         "showing"?: boolean;
         "toggle"?: () => void;
+        "toggling"?: () => void;
     }
     interface PageAlbums {
     }
@@ -165,14 +189,23 @@ declare namespace LocalJSX {
     }
     interface PageTracks {
     }
+    interface PlayButton {
+        "paused"?: boolean;
+        "toggle_playing"?: () => void;
+    }
     interface PlayTrack {
-        "track_id"?: number;
+        "clickHandler"?: () => void;
+        "onPlaying_track"?: (event: CustomEvent<number>) => void;
+        "track"?: Track;
     }
     interface PlayerControls {
-        "audio"?: HTMLAudioElement;
+        "onChanging_track"?: (event: CustomEvent<number>) => void;
     }
     interface ProgressBar {
         "progress"?: number;
+    }
+    interface TrackStats {
+        "track"?: Track;
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
@@ -185,9 +218,11 @@ declare namespace LocalJSX {
         "page-playlist": PagePlaylist;
         "page-profile": PageProfile;
         "page-tracks": PageTracks;
+        "play-button": PlayButton;
         "play-track": PlayTrack;
         "player-controls": PlayerControls;
         "progress-bar": ProgressBar;
+        "track-stats": TrackStats;
     }
 }
 export { LocalJSX as JSX };
@@ -204,9 +239,11 @@ declare module "@stencil/core" {
             "page-playlist": LocalJSX.PagePlaylist & JSXBase.HTMLAttributes<HTMLPagePlaylistElement>;
             "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
+            "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
             "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
+            "track-stats": LocalJSX.TrackStats & JSXBase.HTMLAttributes<HTMLTrackStatsElement>;
         }
     }
 }

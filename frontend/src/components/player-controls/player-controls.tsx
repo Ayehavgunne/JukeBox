@@ -1,6 +1,7 @@
-import {Component, Element, h, Listen, Method, Prop, State} from "@stencil/core"
+import {Component, Element, Event, EventEmitter, h, Method, State} from "@stencil/core"
 import {Components} from "../../components"
 import ProgressBar = Components.ProgressBar
+import {Track} from "../../global/models"
 
 @Component({
 	tag: "player-controls",
@@ -9,10 +10,21 @@ import ProgressBar = Components.ProgressBar
 })
 export class PlayerControls {
 	@Element() el: HTMLDivElement
+	@Event() changing_track: EventEmitter<number>
+	@State() current_track: Track
+	@State() current_track_index: number = -1
 	@State() paused: boolean = true
-	@Prop() audio: HTMLAudioElement = new Audio()
+	@State() shuffle: boolean = false
+	@State() nearing_track_end: boolean = false
+	@State() playlist: Array<Track> = []
+	@State() ordered_playlist: Array<Track> = []
+	@State() audio: HTMLAudioElement = new Audio()
+	@State() next_track: HTMLAudioElement
 	progress_interval: number
-	progress: number
+
+	constructor() {
+		this.add_event_listeners(this.audio)
+	}
 
 	@Method()
 	async play() {
@@ -30,7 +42,10 @@ export class PlayerControls {
 				"progress-bar",
 			)
 			progres_bar.progress = progress
-			this.progress = progress
+			if (!this.nearing_track_end && duration - current_time < 30) {
+				this.nearing_track_end = true
+				this.preload_next_track()
+			}
 		}, 50)
 	}
 
@@ -42,12 +57,33 @@ export class PlayerControls {
 	}
 
 	@Method()
-	async set_track(track_number: number) {
-		this.audio.src = "/play/" + track_number
+	async set_track(track: Track) {
+		this.audio.src = "/play/" + track.track_id
+		this.current_track = track
 	}
 
-	@Listen("click")
-	async toggle() {
+	@Method()
+	async set_playlist(tracks: Array<Track>) {
+		this.playlist = tracks
+		this.ordered_playlist = tracks
+		this.current_track_index = this.playlist.indexOf(this.current_track)
+	}
+
+	track_done = async () => {
+		this.nearing_track_end = false
+		await this.change_to_next_track()
+	}
+
+	change_to_next_track = async () => {
+		this.current_track_index += 1
+		if (this.current_track_index < this.playlist.length) {
+			this.audio = this.next_track
+			await this.audio.play()
+			this.current_track = this.playlist[this.current_track_index]
+		}
+	}
+
+	toggle_playing = async () => {
 		if (this.paused) {
 			await this.play()
 		} else {
@@ -55,14 +91,55 @@ export class PlayerControls {
 		}
 	}
 
+	toggle_shuffle = async () => {
+		this.shuffle = !this.shuffle
+		if (this.shuffle) {
+			await this.shuffle_playlist()
+		} else {
+			this.playlist = this.ordered_playlist
+		}
+	}
+
+	preload_next_track = async () => {
+		if (this.current_track_index + 1 < this.playlist.length) {
+			console.log("preloading next track")
+			this.next_track = new Audio(
+				"/play/" + this.playlist[this.current_track_index + 1].track_id,
+			)
+			this.add_event_listeners(this.next_track)
+		}
+	}
+
+	add_event_listeners = (audio: HTMLAudioElement) => {
+		audio.addEventListener("ended", this.track_done)
+		// audio.addEventListener("canplaythrough", () => {
+		// 	console.log("can play through")
+		// })
+	}
+
+	shuffle_playlist = async () => {
+		let currentIndex = this.ordered_playlist.length,
+			temporaryValue,
+			randomIndex
+
+		while (0 !== currentIndex) {
+			randomIndex = Math.floor(Math.random() * currentIndex)
+			currentIndex -= 1
+
+			temporaryValue = this.ordered_playlist[currentIndex]
+			this.playlist[currentIndex] = this.ordered_playlist[randomIndex]
+			this.playlist[randomIndex] = temporaryValue
+		}
+	}
+
 	render() {
 		return (
 			<div>
-				{this.paused ? (
-					<div class="play_button" />
-				) : (
-					<div class="play_button paused" />
-				)}
+				<play-button
+					paused={this.paused}
+					toggle_playing={this.toggle_playing}
+				/>
+				<track-stats track={this.current_track} />
 				<progress-bar />
 			</div>
 		)

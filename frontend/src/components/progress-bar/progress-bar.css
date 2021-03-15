@@ -3,9 +3,10 @@
 }
 
 :host {
-    float: left;
-    width: calc(100% - 100px);
-    transform: translate(20px, 18px);
+    float: right;
+    width: calc(100% - 260px);
+    margin-top: 8px;
+    /*transform: translate(20px, 18px);*/
 }
 
 #progress {
