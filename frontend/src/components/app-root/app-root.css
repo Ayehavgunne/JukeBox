@@ -83,3 +83,26 @@ menu-toggle {
 menu-toggle.nav_closed {
     left: -54px;
 }
+
+@media (max-width: 600px) {
+    body {
+        font-size: 12px;
+    }
+
+    footer {
+        height: 80px;
+    }
+
+    nav, main {
+        height: calc(100% - 92px);
+    }
+
+    menu-toggle {
+        bottom: 28px;
+        left: -100px;
+    }
+
+    menu-toggle.nav_closed {
+        left: -64px;
+    }
+}

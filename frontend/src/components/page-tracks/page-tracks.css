@@ -77,3 +77,9 @@ td {
     border-top: solid 1px #4a4a4a;
     padding: 0 8px;
 }
+
+@media (max-width: 600px) {
+    tbody {
+        font-size: 9px;
+    }
+}

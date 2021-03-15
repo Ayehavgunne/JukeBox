@@ -35,7 +35,6 @@
 .slider {
     animation-fill-mode: forwards;
     animation-timing-function: linear;
-    /*animation-duration: 10s;*/
     animation-iteration-count: infinite;
     animation-delay: 1.5s;
     position: relative;
@@ -47,4 +46,11 @@
 
 .slide {
     animation-name: show-text;
+}
+
+@media (max-width: 600px) {
+    :host {
+        width: calc(100% - 135px);
+        font-size: 15px;
+    }
 }
