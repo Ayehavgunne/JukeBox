@@ -38,7 +38,7 @@ export namespace Components {
         "toggle_playing": () => void;
     }
     interface PlayTrack {
-        "clickHandler": () => void;
+        "click_handler": () => void;
         "track": Track;
     }
     interface PlayerControls {
@@ -194,7 +194,7 @@ declare namespace LocalJSX {
         "toggle_playing"?: () => void;
     }
     interface PlayTrack {
-        "clickHandler"?: () => void;
+        "click_handler"?: () => void;
         "onPlaying_track"?: (event: CustomEvent<number>) => void;
         "track"?: Track;
     }

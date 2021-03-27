@@ -9,7 +9,8 @@ from peewee import (
     ForeignKeyField,
     IntegerField,
     Model,
-    SqliteDatabase, IntegrityError,
+    SqliteDatabase,
+    IntegrityError,
 )
 
 from jukebox import APP_ROOT
@@ -133,10 +134,10 @@ def create_tables() -> None:
         try:
             User.create(username="Anthony")
             User.create(username="Ant")
-            Playlist.create(playlist_name='Mine', track=1, user=1)
-            Playlist.create(playlist_name='Mine', track=2, user=1)
-            Playlist.create(playlist_name='Favs', track=3, user=1)
-            Playlist.create(playlist_name='Favs', track=4, user=1)
+            Playlist.create(playlist_name="Mine", track=1, user=1)
+            Playlist.create(playlist_name="Mine", track=2, user=1)
+            Playlist.create(playlist_name="Favs", track=3, user=1)
+            Playlist.create(playlist_name="Favs", track=4, user=1)
         except IntegrityError:
             pass
 

@@ -4,12 +4,20 @@ from pathlib import Path
 from typing import AsyncIterator
 
 from peewee import fn
-from quart import Quart, Response, jsonify, make_response, request, send_from_directory
+from quart import (
+    Quart,
+    Response,
+    jsonify,
+    make_response,
+    request,
+    send_file,
+    send_from_directory,
+)
 from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import scan_files, check_config_file
+from jukebox.scan_files import check_config_file, scan_files
 
 check_config_file()
 
@@ -95,7 +103,10 @@ async def get_tracks(track_id: int = None) -> Response:
                 .join(Album)
                 .join(Artist)
                 .order_by(
-                    fn.Lower(Artist.name), fn.Lower(Album.title), Album.disc_number, Track.track_number
+                    fn.Lower(Artist.name),
+                    fn.Lower(Album.title),
+                    Album.disc_number,
+                    Track.track_number,
                 )
             )
         else:
@@ -169,13 +180,57 @@ async def play(track_id: int) -> Response:
 
     response = await make_response(async_generator())
     response.timeout = None
-    response.mimetype = "audio/flac"
+    response.mimetype = f"audio/{song_file.suffix.replace('.', '')}"
     response.headers.add("Accept-Ranges", "bytes")
     if range_header:
         response.headers.add(
-            "Content-Range", "bytes {0}-{1}/{2}".format(byte1, byte1 + length - 1, size)
+            "Content-Range", f"bytes {byte1}-{byte1 + length - 1}/{size}"
         )
     return response
+
+
+@app.route("/duration/<int:track_id>")
+async def duration(track_id: int) -> str:
+    with database.atomic():
+        track = Track.get(track_id)
+    return str(track.length)
+
+
+@app.route("/bytes/<int:track_id>")
+async def bytes_length(track_id: int) -> str:
+    with database.atomic():
+        track = Track.get(track_id)
+        song_file = Path(track.file_path)
+    return str(song_file.stat().st_size)
+
+
+@app.route("/get/<int:track_id>")
+@app.route("/get/<int:track_id>/<int:range_start>")
+@app.route("/get/<int:track_id>/<int:range_start>/<int:range_end>")
+async def get(
+    track_id: int, range_start: int = None, range_end: int = None
+) -> Response:
+    with database.atomic():
+        track = Track.get(track_id)
+        song_file = Path(track.file_path)
+    if range_start is not None:
+        size = song_file.stat().st_size
+        length = size - range_start
+        if range_end is not None:
+            length = range_end + 1 - range_start
+        with song_file.open("rb") as play_file:
+            play_file.seek(range_start)
+            chunk = play_file.read(length)
+            return Response(
+                chunk,
+                headers={
+                    "Content-Type": f"audio/{song_file.suffix.replace('.', '')}",
+                    "Accept-Ranges": "bytes",
+                    "Content-Range": f"bytes {range_start}-{range_start + length - 1}/"
+                    f"{size}",
+                },
+            )
+    return await send_file(song_file)
 
 
 if __name__ == "__main__":
