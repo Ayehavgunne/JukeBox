@@ -6,7 +6,12 @@ export interface Track {
 	track_number: number
 	disc_number: number
 	genre: string
+	compilation: string
 	length: number
+	mimetype: string
+	codec: string
+	bitrate: number
+	size: number
 }
 
 export interface Album {

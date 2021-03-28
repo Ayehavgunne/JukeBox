@@ -12,16 +12,16 @@
     height: 100%;
 }
 
-#progress_dot {
-    border-radius: 50%;
-    background-color: #8b8b8b;
-    position: relative;
-    width: 10px;
-    height: 10px;
-    top: 6px;
-    left: 0;
-    transform: translate(-5px, 0);
-}
+/*#progress_dot {*/
+/*    border-radius: 50%;*/
+/*    background-color: #8b8b8b;*/
+/*    position: relative;*/
+/*    width: 10px;*/
+/*    height: 10px;*/
+/*    top: 6px;*/
+/*    left: 0;*/
+/*    transform: translate(-5px, 0);*/
+/*}*/
 
 #progress_bar {
     height: 1px;

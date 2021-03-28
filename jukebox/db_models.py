@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, Union
 
 from peewee import (
@@ -9,7 +10,8 @@ from peewee import (
     ForeignKeyField,
     IntegerField,
     Model,
-    SqliteDatabase, IntegrityError,
+    SqliteDatabase,
+    IntegrityError, BooleanField,
 )
 
 from jukebox import APP_ROOT
@@ -76,7 +78,12 @@ class Track(BaseModel):
     track_number = IntegerField(null=True)
     disc_number = IntegerField(null=True)
     genre = CharField(null=True)
+    compilation = BooleanField(default=False)
     length = FloatField()
+    mimetype = CharField()
+    codec = CharField()
+    bitrate = IntegerField()
+    size = IntegerField()
     file_path = CharField()
 
     class Meta:
@@ -92,8 +99,13 @@ class Track(BaseModel):
             "artist": self.artist.name,
             "track_number": self.track_number,
             "genre": self.genre,
+            "compilation": self.compilation,
             "disc_number": self.disc_number,
             "length": self.length,
+            "mimetype": self.mimetype,
+            "codec": self.codec,
+            "bitrate": self.bitrate,
+            "size": self.size,
         }
 
 
@@ -133,10 +145,10 @@ def create_tables() -> None:
         try:
             User.create(username="Anthony")
             User.create(username="Ant")
-            Playlist.create(playlist_name='Mine', track=1, user=1)
-            Playlist.create(playlist_name='Mine', track=2, user=1)
-            Playlist.create(playlist_name='Favs', track=3, user=1)
-            Playlist.create(playlist_name='Favs', track=4, user=1)
+            Playlist.create(playlist_name="Mine", track=1, user=1)
+            Playlist.create(playlist_name="Mine", track=2, user=1)
+            Playlist.create(playlist_name="Favs", track=3, user=1)
+            Playlist.create(playlist_name="Favs", track=4, user=1)
         except IntegrityError:
             pass
 

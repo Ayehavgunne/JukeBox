@@ -4,12 +4,20 @@ from pathlib import Path
 from typing import AsyncIterator
 
 from peewee import fn
-from quart import Quart, Response, jsonify, make_response, request, send_from_directory
+from quart import (
+    Quart,
+    Response,
+    jsonify,
+    make_response,
+    request,
+    send_file,
+    send_from_directory,
+)
 from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import scan_files, check_config_file
+from jukebox.scan_files import check_config_file, scan_files
 
 check_config_file()
 
@@ -25,11 +33,6 @@ if CONFIGS["logging"]["enabled"]:
     serving_logger.addHandler(handler)
 
 
-# @app.route("/")
-# async def root() -> Response:
-#     return await send_from_directory(APP_ROOT / "jukebox" / "html", "root.html")
-
-
 @app.route("/")
 @app.route("/page/genres")
 @app.route("/page/artists")
@@ -40,16 +43,6 @@ if CONFIGS["logging"]["enabled"]:
 @app.route("/page/playlist/<string:_>")
 async def root(_: str = None) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "www", "index.html")
-
-
-# @app.route("/css/<path:path>")
-# async def send_css(path: str) -> Response:
-#     return await send_from_directory(APP_ROOT / "jukebox" / "css", path)
-#
-#
-# @app.route("/js/<path:path>")
-# async def send_js(path: str) -> Response:
-#     return await send_from_directory(APP_ROOT / "jukebox" / "js", path)
 
 
 @app.route("/assets/<path:path>")
@@ -95,7 +88,10 @@ async def get_tracks(track_id: int = None) -> Response:
                 .join(Album)
                 .join(Artist)
                 .order_by(
-                    fn.Lower(Artist.name), fn.Lower(Album.title), Album.disc_number, Track.track_number
+                    fn.Lower(Artist.name),
+                    fn.Lower(Album.title),
+                    Album.disc_number,
+                    Track.track_number,
                 )
             )
         else:
@@ -137,13 +133,13 @@ async def get_playlists(playlist_name: str = None) -> Response:
             return jsonify([playlist.to_json() for playlist in playlists])
 
 
-@app.route("/play/<int:track_id>")
-async def play(track_id: int) -> Response:
+@app.route("/stream/<int:track_id>")
+async def stream(track_id: int) -> Response:
     with database.atomic():
         track = Track.get(track_id)
         song_file = Path(track.file_path)
     range_header = request.headers.get("Range", None)
-    size = song_file.stat().st_size
+    size = track.size
     length, byte1, byte2 = 0, 0, None
 
     if range_header:
@@ -169,13 +165,43 @@ async def play(track_id: int) -> Response:
 
     response = await make_response(async_generator())
     response.timeout = None
-    response.mimetype = "audio/flac"
+    response.mimetype = track.mimetype
     response.headers.add("Accept-Ranges", "bytes")
     if range_header:
         response.headers.add(
-            "Content-Range", "bytes {0}-{1}/{2}".format(byte1, byte1 + length - 1, size)
+            "Content-Range", f"bytes {byte1}-{byte1 + length - 1}/{size}"
         )
     return response
+
+
+@app.route("/get/<int:track_id>")
+@app.route("/get/<int:track_id>/<int:range_start>")
+@app.route("/get/<int:track_id>/<int:range_start>/<int:range_end>")
+async def get(
+    track_id: int, range_start: int = None, range_end: int = None
+) -> Response:
+    with database.atomic():
+        track = Track.get(track_id)
+        song_file = Path(track.file_path)
+    if range_start is not None:
+        size = track.size
+        length = size - range_start
+        if range_end is not None:
+            length = range_end + 1 - range_start
+        with song_file.open("rb") as play_file:
+            play_file.seek(range_start)
+            chunk = play_file.read(length)
+
+            return Response(
+                chunk,
+                headers={
+                    "Content-Type": track.mimetype,
+                    "Accept-Ranges": "bytes",
+                    "Content-Range": f"bytes {range_start}-{range_start + length - 1}/"
+                    f"{size}",
+                },
+            )
+    return await send_file(song_file)
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ export class PageTracks {
 									<td class="first">
 										<play-track
 											track={track}
-											clickHandler={this.playing_track_handler}
+											click_handler={this.playing_track_handler}
 										/>
 									</td>
 									<td class="second">{track.track_number}</td>

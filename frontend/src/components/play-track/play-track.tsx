@@ -10,14 +10,14 @@ import {Track} from "../../global/models"
 export class PlayTrack {
 	@Event() playing_track: EventEmitter<number>
 	@Prop() track: Track
-	@Prop() clickHandler: () => void
+	@Prop() click_handler: () => void
 
 	@Listen("click")
 	async play() {
 		const controler = await get_player_controls()
 		await controler.set_track(this.track)
 		await controler.play()
-		this.clickHandler()
+		this.click_handler()
 	}
 
 	render() {

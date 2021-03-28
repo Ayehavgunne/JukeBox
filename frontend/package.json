@@ -15,5 +15,9 @@
     "@stencil/router": "^1.0.1",
     "prettier": "^2.2.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/howler": "^2.2.1",
+    "howler": "^2.2.1"
+  }
 }
