@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, Union
 
 from peewee import (
@@ -10,7 +11,7 @@ from peewee import (
     IntegerField,
     Model,
     SqliteDatabase,
-    IntegrityError,
+    IntegrityError, BooleanField,
 )
 
 from jukebox import APP_ROOT
@@ -77,7 +78,12 @@ class Track(BaseModel):
     track_number = IntegerField(null=True)
     disc_number = IntegerField(null=True)
     genre = CharField(null=True)
+    compilation = BooleanField(default=False)
     length = FloatField()
+    mimetype = CharField()
+    codec = CharField()
+    bitrate = IntegerField()
+    size = IntegerField()
     file_path = CharField()
 
     class Meta:
@@ -93,8 +99,13 @@ class Track(BaseModel):
             "artist": self.artist.name,
             "track_number": self.track_number,
             "genre": self.genre,
+            "compilation": self.compilation,
             "disc_number": self.disc_number,
             "length": self.length,
+            "mimetype": self.mimetype,
+            "codec": self.codec,
+            "bitrate": self.bitrate,
+            "size": self.size,
         }
 
 

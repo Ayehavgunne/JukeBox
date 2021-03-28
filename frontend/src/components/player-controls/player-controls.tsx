@@ -16,17 +16,15 @@ export class PlayerControls {
 	@Element() el: HTMLDivElement
 	@Event() changing_track: EventEmitter<number>
 	@State() current_track_data: Track
+	@State() next_track_data: Track
 	@State() playlist_index: number = -1
 	@State() paused: boolean = true
 	@State() shuffle: boolean = false
 	@State() nearing_track_end: boolean = false
 	@State() playlist: Array<Track> = []
 	@State() ordered_playlist: Array<Track> = []
-	current_track: Howl
-	current_track_chunks: Array<number>
+	current_track
 	next_track: Howl
-	duration: number = 0
-	next_duration: number = 0
 
 	constructor() {
 		worker.addEventListener("message", async event => {
@@ -57,18 +55,12 @@ export class PlayerControls {
 			delete this.current_track
 		}
 		this.current_track = new Howl({
-			src: "/get/" + track.track_id,
+			src: "/stream/" + track.track_id,
 			format: formats,
 			volume: 0.6,
+			html5: true,
 		})
 		this.add_event_listeners(this.current_track)
-		fetch("/duration/" + track.track_id)
-			.then(response => {
-				return response.text()
-			})
-			.then(response => {
-				this.duration = parseFloat(response)
-			})
 		this.current_track_data = track
 	}
 
@@ -93,7 +85,6 @@ export class PlayerControls {
 		if (this.playlist_index < this.playlist.length) {
 			this.current_track = this.next_track
 			delete this.next_track
-			this.duration = this.next_duration
 			this.play().then(() => {
 				// nothin
 			})
@@ -121,16 +112,9 @@ export class PlayerControls {
 	preload_next_track = async () => {
 		if (this.playlist_index + 1 < this.playlist.length) {
 			console.log("preloading next track")
-			let track_id = this.playlist[this.playlist_index + 1].track_id
-			fetch("/duration/" + track_id)
-				.then(response => {
-					return response.text()
-				})
-				.then(response => {
-					this.next_duration = parseFloat(response)
-				})
+			this.next_track_data = this.playlist[this.playlist_index + 1]
 			this.next_track = new Howl({
-				src: "/get/" + track_id,
+				src: "/get/" + this.next_track_data.track_id,
 				format: formats,
 				volume: 0.6,
 			})
@@ -139,7 +123,7 @@ export class PlayerControls {
 	}
 
 	timeupdate_handler = async () => {
-		let duration = this.duration
+		let duration = this.current_track_data.length
 		// @ts-ignore
 		let current_time: number = this.current_track.seek() || 0
 		let progress = (current_time / duration) * 100

@@ -1,4 +1,5 @@
 import sys
+import mimetypes
 from pathlib import Path
 
 import json5
@@ -54,8 +55,16 @@ class MusicFile:
         self.total_discs = metadata["discnumber"].value
         self.year = metadata["year"].value
         self.genre = metadata["genre"].value
+        self.compilation = metadata['compilation'].value
+        self.mimetype = mimetypes.guess_type(file)[0].replace('x-', '')
+        self.codec = metadata['#codec'].value
+        self.bitrate = metadata['#bitrate'].value
         self._metadata = metadata
         self._file = file
+
+    @property
+    def size(self):
+        return self._file.stat().st_size
 
 
 def scan_files() -> None:
@@ -118,7 +127,12 @@ def scan_files() -> None:
                     track_number=song.track_number,
                     disc_number=song.disc_number,
                     genre=song.genre.lower().title(),
+                    compilation=song.compilation,
                     length=song.duration,
+                    mimetype=song.mimetype,
+                    bitrate=song.bitrate,
+                    codec=song.codec,
+                    size=song.size,
                     file_path=song.file_path,
                 )
             except IntegrityError:

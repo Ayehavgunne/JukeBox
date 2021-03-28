@@ -50,6 +50,9 @@ export namespace Components {
     interface ProgressBar {
         "progress": number;
     }
+    interface ProgressDot {
+        "progress": number;
+    }
     interface TrackStats {
         "track": Track;
     }
@@ -139,6 +142,12 @@ declare global {
         prototype: HTMLProgressBarElement;
         new (): HTMLProgressBarElement;
     };
+    interface HTMLProgressDotElement extends Components.ProgressDot, HTMLStencilElement {
+    }
+    var HTMLProgressDotElement: {
+        prototype: HTMLProgressDotElement;
+        new (): HTMLProgressDotElement;
+    };
     interface HTMLTrackStatsElement extends Components.TrackStats, HTMLStencilElement {
     }
     var HTMLTrackStatsElement: {
@@ -160,6 +169,7 @@ declare global {
         "play-track": HTMLPlayTrackElement;
         "player-controls": HTMLPlayerControlsElement;
         "progress-bar": HTMLProgressBarElement;
+        "progress-dot": HTMLProgressDotElement;
         "track-stats": HTMLTrackStatsElement;
     }
 }
@@ -204,6 +214,9 @@ declare namespace LocalJSX {
     interface ProgressBar {
         "progress"?: number;
     }
+    interface ProgressDot {
+        "progress"?: number;
+    }
     interface TrackStats {
         "track"?: Track;
     }
@@ -222,6 +235,7 @@ declare namespace LocalJSX {
         "play-track": PlayTrack;
         "player-controls": PlayerControls;
         "progress-bar": ProgressBar;
+        "progress-dot": ProgressDot;
         "track-stats": TrackStats;
     }
 }
@@ -243,6 +257,7 @@ declare module "@stencil/core" {
             "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
+            "progress-dot": LocalJSX.ProgressDot & JSXBase.HTMLAttributes<HTMLProgressDotElement>;
             "track-stats": LocalJSX.TrackStats & JSXBase.HTMLAttributes<HTMLTrackStatsElement>;
         }
     }
