@@ -41,6 +41,7 @@ export class PageTracks {
 							No.
 						</th>
 						<th>Genre</th>
+						<th>Type</th>
 						<th>Length</th>
 					</thead>
 					<tbody>
@@ -59,6 +60,7 @@ export class PageTracks {
 									<td>{track.album}</td>
 									<td class="fifth">{track.disc_number}</td>
 									<td>{track.genre}</td>
+									<td>{track.codec}</td>
 									<td class="last">
 										{new Date(track.length * 1000)
 											.toISOString()
