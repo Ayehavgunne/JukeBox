@@ -23,7 +23,7 @@ export class PlayerControls {
 	@State() nearing_track_end: boolean = false
 	@State() playlist: Array<Track> = []
 	@State() ordered_playlist: Array<Track> = []
-	current_track
+	current_track: Howl
 	next_track: Howl
 
 	constructor() {
@@ -124,14 +124,18 @@ export class PlayerControls {
 
 	timeupdate_handler = async () => {
 		let duration = this.current_track_data.length
-		// @ts-ignore
-		let current_time: number = this.current_track.seek() || 0
-		let progress = (current_time / duration) * 100
-		let progres_bar: ProgressBar = this.el.shadowRoot.querySelector("progress-bar")
-		progres_bar.progress = progress
-		if (!this.nearing_track_end && duration - current_time < 30) {
-			this.nearing_track_end = true
-			await this.preload_next_track()
+		if (this.current_track) {
+			// @ts-ignore
+			let current_time: number = this.current_track.seek() || 0
+			let progress = (current_time / duration) * 100
+			let progres_bar: ProgressBar = this.el.shadowRoot.querySelector(
+				"progress-bar",
+			)
+			progres_bar.progress = progress
+			if (!this.nearing_track_end && duration - current_time < 30) {
+				this.nearing_track_end = true
+				await this.preload_next_track()
+			}
 		}
 	}
 

@@ -11,6 +11,9 @@ from jukebox import CONFIG_FILE, CONFIGS
 from jukebox.db_models import Album, Artist, Track, database
 
 
+mimetypes.add_type('audio/flac', '.flac')
+
+
 def check_config_file() -> None:
     if not CONFIG_FILE.exists():
         CONFIG_FILE.touch()
@@ -57,7 +60,7 @@ class MusicFile:
         self.year = metadata["year"].value
         self.genre = metadata["genre"].value
         self.compilation = metadata['compilation'].value
-        self.mimetype = mimetype.replace('x-', '')
+        self.mimetype = mimetype
         self.codec = metadata['#codec'].value
         self.bitrate = metadata['#bitrate'].value
         self._metadata = metadata
