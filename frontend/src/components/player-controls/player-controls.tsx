@@ -13,8 +13,8 @@ const formats = ["flac", "mp3", "m4a"]
 	shadow: true,
 })
 export class PlayerControls {
-	@Element() el: HTMLDivElement
-	@Event() changing_track: EventEmitter<number>
+	@Element() el: HTMLPlayerControlsElement
+	@Event({eventName: "changing_track"}) changing_track: EventEmitter<Track>
 	@State() current_track_data: Track
 	@State() next_track_data: Track
 	@State() playlist_index: number = -1
@@ -23,8 +23,13 @@ export class PlayerControls {
 	@State() nearing_track_end: boolean = false
 	@State() playlist: Array<Track> = []
 	@State() ordered_playlist: Array<Track> = []
+	@State() volume_bar_hidden = true
+	@State() volume = 0.6
 	current_track: Howl
 	next_track: Howl
+	volume_button: HTMLDivElement
+	volume_wrapper: HTMLDivElement
+	volume_bar: HTMLDivElement
 
 	constructor() {
 		worker.addEventListener("message", async event => {
@@ -35,10 +40,22 @@ export class PlayerControls {
 		})
 	}
 
+	componentDidRender() {
+		if (!this.volume_bar_hidden) {
+			document.addEventListener("click", this.doc_hide_volume_bar)
+		}
+	}
+
+	doc_hide_volume_bar = event => {
+		if (event.target !== this.volume_button && !this.el.contains(event.target)) {
+			this.volume_bar_hidden = true
+			document.removeEventListener("click", this.doc_hide_volume_bar)
+		}
+	}
+
 	@Method()
 	async play() {
 		this.current_track.play()
-		this.paused = false
 		worker.postMessage("start_progress")
 	}
 
@@ -57,11 +74,12 @@ export class PlayerControls {
 		this.current_track = new Howl({
 			src: "/stream/" + track.track_id,
 			format: formats,
-			volume: 0.6,
+			volume: this.volume,
 			html5: true,
 		})
 		this.add_event_listeners(this.current_track)
 		this.current_track_data = track
+		this.changing_track.emit(this.current_track_data)
 	}
 
 	@Method()
@@ -69,6 +87,10 @@ export class PlayerControls {
 		this.playlist = tracks
 		this.ordered_playlist = tracks
 		this.playlist_index = this.playlist.indexOf(this.current_track_data)
+	}
+
+	play_handler = async () => {
+		this.paused = false
 	}
 
 	pause_handler = async () => {
@@ -89,6 +111,7 @@ export class PlayerControls {
 				// nothin
 			})
 			this.current_track_data = this.playlist[this.playlist_index]
+			this.changing_track.emit(this.current_track_data)
 		}
 	}
 
@@ -116,7 +139,7 @@ export class PlayerControls {
 			this.next_track = new Howl({
 				src: "/get/" + this.next_track_data.track_id,
 				format: formats,
-				volume: 0.6,
+				volume: this.volume,
 			})
 			this.add_event_listeners(this.next_track)
 		}
@@ -140,8 +163,9 @@ export class PlayerControls {
 	}
 
 	add_event_listeners = (audio: Howl) => {
-		audio.on("end", this.track_done)
+		audio.on("play", this.play_handler)
 		audio.on("pause", this.pause_handler)
+		audio.on("end", this.track_done)
 	}
 
 	shuffle_playlist = async () => {
@@ -159,6 +183,23 @@ export class PlayerControls {
 		}
 	}
 
+	toggle_volume_showing = event => {
+		if (
+			event.target !== this.volume_wrapper &&
+			!this.volume_wrapper.contains(event.target)
+		) {
+			this.volume_bar_hidden = !this.volume_bar_hidden
+		}
+	}
+
+	change_volume = volume => {
+		this.volume = volume
+		this.current_track.volume(this.volume)
+		if (this.next_track) {
+			this.next_track.volume(this.volume)
+		}
+	}
+
 	// var clickPosition = (e.pageX  - this.offsetLeft) / this.offsetWidth;
 	// var clickTime = clickPosition * myAudio.duration;
 	//
@@ -166,13 +207,43 @@ export class PlayerControls {
 	// myAudio.currentTime = clickTime;
 
 	render() {
+		let speaker_class = "speaker -on"
+		if (this.volume === 0) {
+			speaker_class = "speaker -off"
+		}
+		let wrapper_class = "wrapper hidden"
+		if (!this.volume_bar_hidden) {
+			wrapper_class = "wrapper showing"
+		}
 		return (
-			<div>
+			<div class="container">
 				<play-button
 					paused={this.paused}
 					toggle_playing={this.toggle_playing}
 				/>
 				<track-stats track={this.current_track_data} />
+				<div
+					class="volume"
+					onClick={this.toggle_volume_showing}
+					ref={el => (this.volume_button = el as HTMLDivElement)}
+				>
+					<div class={speaker_class} />
+					<div
+						class={wrapper_class}
+						ref={el => (this.volume_wrapper = el as HTMLDivElement)}
+					>
+						<div
+							class="bar"
+							ref={el => (this.volume_bar = el as HTMLDivElement)}
+						>
+							<volume-dot
+								volume={this.volume}
+								parent={this.volume_bar}
+								volume_handler={this.change_volume}
+							/>
+						</div>
+					</div>
+				</div>
 				<progress-bar />
 			</div>
 		)

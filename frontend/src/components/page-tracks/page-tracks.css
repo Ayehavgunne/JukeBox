@@ -66,6 +66,14 @@ tr:first-child td {
     border-top: 0;
 }
 
+tr:hover {
+    background-color: #373737;
+}
+
+.playing_row {
+    background-color: #696969;
+}
+
 td:first-child {
     border-top: 0;
     position: sticky;
@@ -76,6 +84,41 @@ td:first-child {
 td {
     border-top: solid 1px #4a4a4a;
     padding: 0 8px;
+}
+
+.playing {
+    position: relative;
+    right: 2px;
+}
+
+.playing_bar {
+    float: left;
+    width: 3px;
+    height: 12px;
+    margin-right: 3px;
+    background-color: #15dea5;
+    animation: bars 500ms backwards infinite ease-in-out alternate;
+}
+
+.bar-1 {
+    animation-delay: 100ms;
+}
+
+.bar-2 {
+    animation-delay: 200ms;
+}
+
+.bar-3 {
+    animation-delay: 300ms;
+}
+
+@keyframes bars {
+    0% {
+        transform: scaleY(0.5);
+    }
+    100% {
+        transform: scaleY(1.0);
+    }
 }
 
 @media (max-width: 600px) {

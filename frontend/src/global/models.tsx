@@ -5,6 +5,7 @@ export interface Track {
 	artist: string
 	track_number: number
 	disc_number: number
+	year: number
 	genre: string
 	compilation: string
 	length: number

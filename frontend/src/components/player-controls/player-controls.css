@@ -2,8 +2,89 @@
     box-sizing: border-box;
 }
 
-div {
+.container {
     padding-left: 10px;
     padding-top: 8px;
     padding-right: 10px;
+}
+
+.volume {
+    float: right;
+    width: 28px;
+    margin-left: 10px;
+    margin-top: 6px;
+}
+
+.wrapper {
+    background-color: rgba(77, 77, 77, .66);
+    width: 22px;
+    height: 200px;
+    position: relative;
+    bottom: 218px;
+    right: 3px;
+    box-shadow: 0 0 1px 1px rgba(77, 77, 77, .66);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.hidden {
+    display: none;
+}
+
+.bar {
+    width: 1px;
+    height: 95%;
+    border-left: solid 1px #e8e6e3;
+    position: absolute;
+    left: 10px;
+    bottom: 2px;
+}
+
+.speaker {
+    vertical-align: middle;
+    box-sizing: border-box;
+    display: inline-block;
+    background: currentColor;
+    background-clip: content-box;
+    width: 1em;
+    height: 1em;
+    border: .333em solid transparent;
+    border-right-color: currentColor;
+    position: relative;
+    left: -.337em;
+}
+
+.speaker.-on:before, .speaker.-on:after {
+    content: '';
+    background: currentColor;
+    width: .1em;
+    position: absolute;
+}
+
+.speaker.-on:before {
+    height: .333em;
+    right: -.533em;
+}
+
+.speaker.-on:after {
+    height: .667em;
+    right: -.733em;
+    top: -50%;
+}
+
+.speaker.-off:before, .speaker.-off:after {
+    content: '';
+    background: currentColor;
+    width: .1em;
+    position: absolute;
+    height: 1.2em;
+    margin-top: -.333em;
+    top: -.1em;
+    left: .1em;
+    transform: translateX(.333em) rotate(-45deg);
+}
+
+.speaker.-off:before {
+    background: #04233D;
+    left: .2em;
 }

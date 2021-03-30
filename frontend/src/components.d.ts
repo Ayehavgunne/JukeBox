@@ -56,6 +56,11 @@ export namespace Components {
     interface TrackStats {
         "track": Track;
     }
+    interface VolumeDot {
+        "parent": HTMLDivElement;
+        "volume": number;
+        "volume_handler": (volume: number) => void;
+    }
 }
 declare global {
     interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
@@ -154,6 +159,12 @@ declare global {
         prototype: HTMLTrackStatsElement;
         new (): HTMLTrackStatsElement;
     };
+    interface HTMLVolumeDotElement extends Components.VolumeDot, HTMLStencilElement {
+    }
+    var HTMLVolumeDotElement: {
+        prototype: HTMLVolumeDotElement;
+        new (): HTMLVolumeDotElement;
+    };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
         "menu-toggle": HTMLMenuToggleElement;
@@ -171,6 +182,7 @@ declare global {
         "progress-bar": HTMLProgressBarElement;
         "progress-dot": HTMLProgressDotElement;
         "track-stats": HTMLTrackStatsElement;
+        "volume-dot": HTMLVolumeDotElement;
     }
 }
 declare namespace LocalJSX {
@@ -209,7 +221,7 @@ declare namespace LocalJSX {
         "track"?: Track;
     }
     interface PlayerControls {
-        "onChanging_track"?: (event: CustomEvent<number>) => void;
+        "onChanging_track"?: (event: CustomEvent<Track>) => void;
     }
     interface ProgressBar {
         "progress"?: number;
@@ -219,6 +231,11 @@ declare namespace LocalJSX {
     }
     interface TrackStats {
         "track"?: Track;
+    }
+    interface VolumeDot {
+        "parent"?: HTMLDivElement;
+        "volume"?: number;
+        "volume_handler"?: (volume: number) => void;
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
@@ -237,6 +254,7 @@ declare namespace LocalJSX {
         "progress-bar": ProgressBar;
         "progress-dot": ProgressDot;
         "track-stats": TrackStats;
+        "volume-dot": VolumeDot;
     }
 }
 export { LocalJSX as JSX };
@@ -259,6 +277,7 @@ declare module "@stencil/core" {
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
             "progress-dot": LocalJSX.ProgressDot & JSXBase.HTMLAttributes<HTMLProgressDotElement>;
             "track-stats": LocalJSX.TrackStats & JSXBase.HTMLAttributes<HTMLTrackStatsElement>;
+            "volume-dot": LocalJSX.VolumeDot & JSXBase.HTMLAttributes<HTMLVolumeDotElement>;
         }
     }
 }

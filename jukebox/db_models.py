@@ -99,6 +99,7 @@ class Track(BaseModel):
             "artist": self.artist.name,
             "track_number": self.track_number,
             "genre": self.genre,
+            "year": self.album.year,
             "compilation": self.compilation,
             "disc_number": self.disc_number,
             "length": self.length,

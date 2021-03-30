@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+}
+
+:host {
+    width: 9px;
+    height: 9px;
+    position: absolute;
+    display: block;
+    bottom: 60%;
+    right: -4px;
+    z-index: 2;
+}
+
+div {
+    border-radius: 50%;
+    background-color: #15dea5;
+    width: 9px;
+    height: 9px;
+    cursor: pointer;
+}
