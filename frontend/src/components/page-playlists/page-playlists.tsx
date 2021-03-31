@@ -2,11 +2,11 @@ import {Component, h, Prop} from "@stencil/core"
 import {MatchResults} from "@stencil/router"
 
 @Component({
-	tag: "page-playlist",
-	styleUrl: "page-playlist.css",
+	tag: "page-playlists",
+	styleUrl: "page-playlists.css",
 	shadow: true,
 })
-export class PagePlaylist {
+export class PagePlaylists {
 	@Prop() match: MatchResults
 
 	normalize(name: string): string {

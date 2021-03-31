@@ -1,17 +1,18 @@
-from pathlib import Path
 from typing import Dict, Union
 
 from peewee import (
     SQL,
     AutoField,
+    BlobField,
+    BooleanField,
     CharField,
     CompositeKey,
     FloatField,
     ForeignKeyField,
     IntegerField,
+    IntegrityError,
     Model,
     SqliteDatabase,
-    IntegrityError, BooleanField,
 )
 
 from jukebox import APP_ROOT
@@ -28,6 +29,7 @@ class BaseModel(Model):
 class Artist(BaseModel):
     artist_id = AutoField(primary_key=True)
     name = CharField()
+    audio_db_id = IntegerField(null=True)
 
     class Meta:
         database = database
@@ -43,10 +45,18 @@ class Artist(BaseModel):
         }
 
 
+class ArtistImage(BaseModel):
+    artist_image_id = AutoField(primary_key=True)
+    artist = ForeignKeyField(Artist, backref="images")
+    small = BlobField(null=True)
+    not_found = BooleanField(default=False)
+
+
 class Album(BaseModel):
     album_id = AutoField(primary_key=True)
     title = CharField()
     artist = ForeignKeyField(Artist, backref="albums")
+    album_artist = CharField(null=True)
     total_tracks = IntegerField(null=True)
     disc_number = IntegerField(null=True)
     total_discs = IntegerField(null=True)
@@ -62,6 +72,7 @@ class Album(BaseModel):
             "album_id": self.album_id,
             "title": self.title,
             "artist": self.artist.name,
+            "album_artist": self.album_artist,
             "total_tracks": self.total_tracks,
             "disc_number": self.disc_number,
             "total_discs": self.total_discs,
@@ -74,7 +85,6 @@ class Track(BaseModel):
     title = CharField()
     album = ForeignKeyField(Album, backref="tracks")
     artist = ForeignKeyField(Artist, backref="tracks")
-    album_artist = ForeignKeyField(Artist)
     track_number = IntegerField(null=True)
     disc_number = IntegerField(null=True)
     genre = CharField(null=True)
@@ -97,6 +107,7 @@ class Track(BaseModel):
             "title": self.title,
             "album": self.album.title,
             "artist": self.artist.name,
+            "album_artist": self.album.album_artist,
             "track_number": self.track_number,
             "genre": self.genre,
             "year": self.album.year,
@@ -142,7 +153,7 @@ class Playlist(BaseModel):
 
 def create_tables() -> None:
     with database:
-        database.create_tables([Artist, Album, Track, Playlist, User])
+        database.create_tables([Artist, ArtistImage, Album, Track, Playlist, User])
         try:
             User.create(username="Anthony")
             User.create(username="Ant")

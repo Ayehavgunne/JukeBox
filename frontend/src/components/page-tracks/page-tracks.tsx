@@ -1,6 +1,7 @@
-import {Component, h, Host, Listen, State} from "@stencil/core"
+import {Component, h, Host, Listen, Prop, State} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls} from "../../global/app"
+import {MatchResults} from "@stencil/router"
 
 @Component({
 	tag: "page-tracks",
@@ -8,11 +9,16 @@ import {get_player_controls} from "../../global/app"
 	shadow: true,
 })
 export class PageTracks {
+	@Prop() match: MatchResults
 	@State() tracks: Array<Track>
 	@State() current_track: Track
 
 	async componentWillLoad() {
-		let result = await fetch("/tracks")
+		let url = "/tracks"
+		if (this.match && this.match.params.album_id) {
+			url = `/albums/${this.match.params.album_id}/tracks`
+		}
+		let result = await fetch(url)
 		this.tracks = await result.json()
 	}
 
@@ -23,7 +29,6 @@ export class PageTracks {
 
 	@Listen("changing_track", {target: "body"})
 	changing_track_handler(event: CustomEvent<Track>) {
-		console.log(event.detail)
 		this.current_track = event.detail
 	}
 

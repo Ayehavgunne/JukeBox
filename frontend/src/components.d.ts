@@ -16,6 +16,7 @@ export namespace Components {
         "toggling": () => void;
     }
     interface PageAlbums {
+        "match": MatchResults;
     }
     interface PageArtists {
     }
@@ -25,13 +26,14 @@ export namespace Components {
     }
     interface PageNowPlaying {
     }
-    interface PagePlaylist {
+    interface PagePlaylists {
         "match": MatchResults;
     }
     interface PageProfile {
         "match": MatchResults;
     }
     interface PageTracks {
+        "match": MatchResults;
     }
     interface PlayButton {
         "paused": boolean;
@@ -105,11 +107,11 @@ declare global {
         prototype: HTMLPageNowPlayingElement;
         new (): HTMLPageNowPlayingElement;
     };
-    interface HTMLPagePlaylistElement extends Components.PagePlaylist, HTMLStencilElement {
+    interface HTMLPagePlaylistsElement extends Components.PagePlaylists, HTMLStencilElement {
     }
-    var HTMLPagePlaylistElement: {
-        prototype: HTMLPagePlaylistElement;
-        new (): HTMLPagePlaylistElement;
+    var HTMLPagePlaylistsElement: {
+        prototype: HTMLPagePlaylistsElement;
+        new (): HTMLPagePlaylistsElement;
     };
     interface HTMLPageProfileElement extends Components.PageProfile, HTMLStencilElement {
     }
@@ -173,7 +175,7 @@ declare global {
         "page-genres": HTMLPageGenresElement;
         "page-home": HTMLPageHomeElement;
         "page-now-playing": HTMLPageNowPlayingElement;
-        "page-playlist": HTMLPagePlaylistElement;
+        "page-playlists": HTMLPagePlaylistsElement;
         "page-profile": HTMLPageProfileElement;
         "page-tracks": HTMLPageTracksElement;
         "play-button": HTMLPlayButtonElement;
@@ -194,6 +196,7 @@ declare namespace LocalJSX {
         "toggling"?: () => void;
     }
     interface PageAlbums {
+        "match"?: MatchResults;
     }
     interface PageArtists {
     }
@@ -203,13 +206,14 @@ declare namespace LocalJSX {
     }
     interface PageNowPlaying {
     }
-    interface PagePlaylist {
+    interface PagePlaylists {
         "match"?: MatchResults;
     }
     interface PageProfile {
         "match"?: MatchResults;
     }
     interface PageTracks {
+        "match"?: MatchResults;
     }
     interface PlayButton {
         "paused"?: boolean;
@@ -245,7 +249,7 @@ declare namespace LocalJSX {
         "page-genres": PageGenres;
         "page-home": PageHome;
         "page-now-playing": PageNowPlaying;
-        "page-playlist": PagePlaylist;
+        "page-playlists": PagePlaylists;
         "page-profile": PageProfile;
         "page-tracks": PageTracks;
         "play-button": PlayButton;
@@ -268,7 +272,7 @@ declare module "@stencil/core" {
             "page-genres": LocalJSX.PageGenres & JSXBase.HTMLAttributes<HTMLPageGenresElement>;
             "page-home": LocalJSX.PageHome & JSXBase.HTMLAttributes<HTMLPageHomeElement>;
             "page-now-playing": LocalJSX.PageNowPlaying & JSXBase.HTMLAttributes<HTMLPageNowPlayingElement>;
-            "page-playlist": LocalJSX.PagePlaylist & JSXBase.HTMLAttributes<HTMLPagePlaylistElement>;
+            "page-playlists": LocalJSX.PagePlaylists & JSXBase.HTMLAttributes<HTMLPagePlaylistsElement>;
             "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
             "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;

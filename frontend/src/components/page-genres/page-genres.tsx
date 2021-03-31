@@ -1,4 +1,4 @@
-import {Component, h} from "@stencil/core"
+import {Component, h, State} from "@stencil/core"
 
 @Component({
 	tag: "page-genres",
@@ -6,11 +6,26 @@ import {Component, h} from "@stencil/core"
 	shadow: true,
 })
 export class PageGenres {
+	@State() genres: Array<string>
+
+	async componentWillLoad() {
+		let result = await fetch("/genres")
+		this.genres = await result.json()
+	}
+
 	render() {
 		return (
 			<div>
 				<h3>Genres</h3>
-				Nothing here yet. Move along.
+				{this.genres.map(genre => {
+					return (
+						<li>
+							{/*<stencil-route-link url={`/page/tracks/${album.album_id}`}>*/}
+							{genre}
+							{/*</stencil-route-link>*/}
+						</li>
+					)
+				})}
 			</div>
 		)
 	}

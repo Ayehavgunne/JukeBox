@@ -103,6 +103,8 @@ export class PlayerControls {
 	}
 
 	change_to_next_track = async () => {
+		// this.playlist_index = // loops index around when gets too big
+		// 	(this.playlist_index + 1 + this.playlist.length) % this.playlist.length
 		this.playlist_index += 1
 		if (this.playlist_index < this.playlist.length) {
 			this.current_track = this.next_track

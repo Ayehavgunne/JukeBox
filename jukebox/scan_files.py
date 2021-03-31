@@ -1,5 +1,6 @@
-import sys
+import asyncio
 import mimetypes
+import sys
 from pathlib import Path
 
 import json5
@@ -7,11 +8,11 @@ import music_tag
 from music_tag import AudioFile
 from peewee import IntegrityError
 
-from jukebox import CONFIG_FILE, CONFIGS
-from jukebox.db_models import Album, Artist, Track, database
+from jukebox import APP_ROOT, CONFIG_FILE, CONFIGS
+from jukebox.audio_db_api import AudioDBApi
+from jukebox.db_models import Album, Artist, ArtistImage, Track, create_tables, database
 
-
-mimetypes.add_type('audio/flac', '.flac')
+mimetypes.add_type("audio/flac", ".flac")
 
 
 def check_config_file() -> None:
@@ -46,7 +47,7 @@ def get_metadata(file: Path) -> AudioFile:
 class MusicFile:
     def __init__(self, file: Path):
         metadata = get_metadata(file)
-        mimetype = mimetypes.guess_type(file)[0] or ''
+        mimetype = mimetypes.guess_type(file)[0] or ""
         self.file_path = file.as_posix()
         self.duration = metadata["#length"].value
         self.artist = metadata["artist"].value
@@ -59,15 +60,16 @@ class MusicFile:
         self.total_discs = metadata["discnumber"].value
         self.year = metadata["year"].value
         self.genre = metadata["genre"].value
-        self.compilation = metadata['compilation'].value
+        self.compilation = metadata["compilation"].value
         self.mimetype = mimetype
-        self.codec = metadata['#codec'].value
-        self.bitrate = metadata['#bitrate'].value
+        self.codec = metadata["#codec"].value
+        self.bitrate = metadata["#bitrate"].value
+        self.artwork = metadata["artwork"]
         self._metadata = metadata
         self._file = file
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self._file.stat().st_size
 
 
@@ -102,19 +104,10 @@ def scan_files() -> None:
             except IntegrityError:
                 artist = Artist.get(name=song.artist)
             try:
-                if (
-                    song.album_artist
-                    and song.artist.lower() != song.album_artist.lower()
-                ):
-                    album_artist = Artist.create(name=song.album_artist)
-                else:
-                    album_artist = artist
-            except IntegrityError:
-                album_artist = Artist.get(name=song.album_artist)
-            try:
                 album = Album.create(
                     title=song.album,
-                    artist=album_artist,
+                    artist=artist,
+                    album_artist=song.album_artist,
                     total_tracks=song.total_tracks,
                     disc_number=song.disc_number,
                     total_discs=song.total_discs,
@@ -127,7 +120,6 @@ def scan_files() -> None:
                     title=song.title,
                     album=album,
                     artist=artist,
-                    album_artist=album_artist,
                     track_number=song.track_number,
                     disc_number=song.disc_number,
                     genre=song.genre.lower().title(),
@@ -145,5 +137,44 @@ def scan_files() -> None:
     database.close()
 
 
+async def get_artist_images() -> None:
+    database.connect()
+    audio_api = AudioDBApi()
+    artists = Artist.select()
+    for artist in artists:
+        print(artist.name)
+        artist_info = None
+        if artist.audio_db_id is None:
+            if artist_info is None:
+                artist_info = await audio_api.search_artist(artist.name, 0)
+            if artist_info is not None:
+                print(artist_info["idArtist"])
+                audio_db_artist_id = artist_info["idArtist"]
+                artist.audio_db_id = audio_db_artist_id
+                artist.save()
+            else:
+                artist.audio_db_id = 0
+                artist.save()
+        if len(artist.images) == 0 or not artist.images[0].not_found:
+            image = await audio_api.get_artist_image(
+                artist.name, existing_result=artist_info
+            )
+            if image is not None:
+                ArtistImage.create(
+                    artist=artist,
+                    small=image,
+                )
+            else:
+                ArtistImage.create(
+                    artist=artist,
+                    not_found=True,
+                )
+    database.close()
+
+
 if __name__ == "__main__":
+    db_file = APP_ROOT / "jukebox.db"
+    if not db_file.exists():
+        create_tables()
     scan_files()
+    asyncio.run(get_artist_images())

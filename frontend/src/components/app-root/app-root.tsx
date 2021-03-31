@@ -70,11 +70,11 @@ export class AppRoot {
 										Artists
 									</stencil-route-link>
 								</li>
-								<li>
-									<stencil-route-link url="/page/genres">
-										Genres
-									</stencil-route-link>
-								</li>
+								{/*<li>*/}
+								{/*	<stencil-route-link url="/page/genres">*/}
+								{/*		Genres*/}
+								{/*	</stencil-route-link>*/}
+								{/*</li>*/}
 							</ul>
 						</li>
 						<li>
@@ -105,19 +105,28 @@ export class AppRoot {
 								url="/page/now_playing"
 								component="page-now-playing"
 							/>
-							<stencil-route url="/page/tracks" component="page-tracks" />
-							<stencil-route url="/page/albums" component="page-albums" />
+							<stencil-route
+								url="/page/tracks/:album_id?"
+								component="page-tracks"
+							/>
+							<stencil-route
+								url="/page/albums/:artist_id?"
+								component="page-albums"
+							/>
 							<stencil-route
 								url="/page/artists"
 								component="page-artists"
 							/>
-							<stencil-route url="/page/genres" component="page-genres" />
 							<stencil-route
-								url="/page/playlist/:name"
-								component="page-playlist"
+								url="/page/genres/:name?"
+								component="page-genres"
 							/>
 							<stencil-route
-								url="/page/profile/:name"
+								url="/page/playlists/:name?"
+								component="page-playlists"
+							/>
+							<stencil-route
+								url="/page/profile/:name?"
 								component="page-profile"
 							/>
 						</stencil-route-switch>

@@ -1,3 +1,4 @@
+from io import BytesIO
 from logging import getLogger
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -17,7 +18,7 @@ from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import check_config_file, scan_files
+from jukebox.scan_files import MusicFile, check_config_file, scan_files
 
 check_config_file()
 
@@ -34,13 +35,7 @@ if CONFIGS["logging"]["enabled"]:
 
 
 @app.route("/")
-@app.route("/page/genres")
-@app.route("/page/artists")
-@app.route("/page/albums")
-@app.route("/page/tracks")
-@app.route("/page/now_playing")
-@app.route("/page/profile/<string:_>")
-@app.route("/page/playlist/<string:_>")
+@app.route("/page/<path:_>")
 async def root(_: str = None) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "www", "index.html")
 
@@ -60,10 +55,42 @@ async def send_build(path: str) -> Response:
 async def get_artists(artist_id: int = None) -> Response:
     with database.atomic():
         if artist_id is None:
-            artists = Artist.select()
+            artists = Artist.select().order_by(fn.Lower(Artist.name))
         else:
             artists = [Artist.get(artist_id)]
         return jsonify([artist.to_json() for artist in artists])
+
+
+@app.route("/artists/<int:artist_id>/image")
+async def get_artist_image(artist_id: int) -> Response:
+    with database.atomic():
+        artist = Artist.get(artist_id)
+        if len(artist.images) > 0 and not artist.images[0].not_found:
+            image = BytesIO(artist.images[0].small)
+            return await send_file(image, mimetype="image/jpg")
+        else:
+            return await send_file(
+                APP_ROOT / "frontend" / "www" / "assets" / "generic_artist.png",
+                mimetype="image/png",
+            )
+
+
+@app.route("/artists/<int:artist_id>/albums")
+async def get_artist_albums(artist_id: int) -> Response:
+    with database.atomic():
+        albums = (
+            Album.select()
+            .join(Artist)
+            .where(Artist.artist_id == artist_id)
+            .order_by(fn.Lower(Album.title))
+        )
+        album_names = []
+        filtered_albums = []
+        for album in albums:
+            if album.title not in album_names:
+                album_names.append(album.title)
+                filtered_albums.append(album.to_json())
+        return jsonify(filtered_albums)
 
 
 @app.route("/albums")
@@ -71,10 +98,45 @@ async def get_artists(artist_id: int = None) -> Response:
 async def get_albums(album_id: int = None) -> Response:
     with database.atomic():
         if album_id is None:
-            albums = Album.select()
+            albums = Album.select().order_by(fn.Lower(Album.title))
         else:
             albums = [Album.get(album_id)]
-        return jsonify([album.to_json() for album in albums])
+        album_names = []
+        filtered_albums = []
+        for album in albums:
+            if album.title not in album_names:
+                album_names.append(album.title)
+                filtered_albums.append(album.to_json())
+        return jsonify(filtered_albums)
+
+
+@app.route("/albums/<int:album_id>/image")
+async def get_album_image(album_id: int) -> Response:
+    with database.atomic():
+        album = Album.get(album_id)
+        music_file = MusicFile(Path(album.tracks[0].file_path))
+        try:
+            image = BytesIO(music_file.artwork.val.data)
+            return await send_file(image, mimetype=music_file.artwork.val.mime)
+        except Exception as err:
+            print(err)
+            return await send_file(
+                APP_ROOT / "frontend" / "www" / "assets" / "generic_album.png",
+                mimetype="image/png",
+            )
+
+
+@app.route("/albums/<int:album_id>/tracks")
+async def get_albums_tracks(album_id: int) -> Response:
+    with database.atomic():
+        tracks = (
+            Track.select()
+            .distinct()
+            .join(Album)
+            .where(Album.album_id == album_id)
+            .order_by(Track.disc_number, Track.track_number)
+        )
+        return jsonify([track.to_json() for track in tracks])
 
 
 @app.route("/tracks/")

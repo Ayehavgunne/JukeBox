@@ -2,3 +2,6 @@ quart
 json5
 music_tag
 peewee
+aiohttp
+python3-discogs-client
+pillow

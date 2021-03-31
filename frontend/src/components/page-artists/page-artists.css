@@ -2,6 +2,31 @@
     box-sizing: border-box;
 }
 
+.container {
+    height: 100%;
+    overflow: auto;
+}
+
 h3 {
     margin-top: 7px;
+}
+
+li {
+    list-style: none;
+    font-size: 2em;
+}
+
+a:visited, a:link, a:hover, a:active {
+    color: #fff;
+    text-decoration: none;
+    height: 100%;
+    display: inline-block;
+}
+
+img {
+    margin-right: 12px;
+}
+
+img.small {
+    width: 100px;
 }
