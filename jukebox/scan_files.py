@@ -3,14 +3,24 @@ import mimetypes
 import sys
 from pathlib import Path
 
+import aiohttp
+import discogs_client
 import json5
 import music_tag
 from music_tag import AudioFile
 from peewee import IntegrityError
 
-from jukebox import APP_ROOT, CONFIG_FILE, CONFIGS
-from jukebox.audio_db_api import AudioDBApi
-from jukebox.db_models import Album, Artist, ArtistImage, Track, create_tables, database
+from jukebox import APP_ROOT, CONFIG_FILE, CONFIGS, __version__
+from jukebox.db_models import (
+    Album,
+    AlbumDisc,
+    Artist,
+    ArtistImage,
+    ArtistInfoMismatches,
+    Track,
+    create_tables,
+    database,
+)
 
 mimetypes.add_type("audio/flac", ".flac")
 
@@ -30,6 +40,11 @@ def check_config_file() -> None:
                 "enabled": True,
                 "maxBytes": 10000000,
                 "backupCount": 5,
+            },
+            "discogs": {
+                "consumer_key": "",
+                "consumer_secret": "",
+                "user_token": "",
             },
         }
         CONFIG_FILE.write_text(
@@ -64,7 +79,10 @@ class MusicFile:
         self.mimetype = mimetype
         self.codec = metadata["#codec"].value
         self.bitrate = metadata["#bitrate"].value
-        self.artwork = metadata["artwork"]
+        # self.artwork = metadata["artwork"]
+        self.album_art_path = (
+            f"{'/'.join(file.parts[:-1]).replace('/', '', 1)}/artwork.jpg"
+        )
         self._metadata = metadata
         self._file = file
 
@@ -108,21 +126,28 @@ def scan_files() -> None:
                     title=song.album,
                     artist=artist,
                     album_artist=song.album_artist,
-                    total_tracks=song.total_tracks,
-                    disc_number=song.disc_number,
                     total_discs=song.total_discs,
                     year=song.year,
+                    album_art_path=song.album_art_path,
                 )
             except IntegrityError:
                 album = Album.get(title=song.album)
             try:
+                album_disc = AlbumDisc.create(
+                    album=album,
+                    total_tracks=song.total_tracks,
+                    disc_number=song.disc_number,
+                )
+            except IntegrityError:
+                album_disc = AlbumDisc.get(album=album)
+            try:
                 Track.create(
                     title=song.title,
                     album=album,
+                    album_disc=album_disc,
                     artist=artist,
                     track_number=song.track_number,
                     disc_number=song.disc_number,
-                    genre=song.genre.lower().title(),
                     compilation=song.compilation,
                     length=song.duration,
                     mimetype=song.mimetype,
@@ -139,36 +164,63 @@ def scan_files() -> None:
 
 async def get_artist_images() -> None:
     database.connect()
-    audio_api = AudioDBApi()
     artists = Artist.select()
+    api_client = discogs_client.Client(
+        f"JukeBox/{__version__}",
+        user_token=CONFIGS["discogs"]["user_token"],
+    )
     for artist in artists:
-        print(artist.name)
         artist_info = None
-        if artist.audio_db_id is None:
+        if artist.api_id is None:
             if artist_info is None:
-                artist_info = await audio_api.search_artist(artist.name, 0)
-            if artist_info is not None:
-                print(artist_info["idArtist"])
-                audio_db_artist_id = artist_info["idArtist"]
-                artist.audio_db_id = audio_db_artist_id
-                artist.save()
-            else:
-                artist.audio_db_id = 0
+                artist_info = api_client.search(artist.name, type="artist")
+                if len(artist_info):
+                    artist_info = artist_info[0]
+                    if artist_info.name.lower() == artist.name.lower():
+                        audio_db_artist_id = artist_info.id
+                        artist.api_id = audio_db_artist_id
+                    else:
+                        try:
+                            ArtistInfoMismatches.create(
+                                artist_id=artist.artist_id,
+                                artist_name=artist.name,
+                                found_api_id=artist_info.id,
+                                found_name=artist_info.name,
+                            )
+                        except IntegrityError:
+                            pass
+                else:
+                    artist_info = None
+                    artist.api_id = 0
                 artist.save()
         if len(artist.images) == 0 or not artist.images[0].not_found:
-            image = await audio_api.get_artist_image(
-                artist.name, existing_result=artist_info
+            if artist_info is None:
+                if artist.api_id:
+                    artist_info = api_client.artist(artist.api_id)
+                else:
+                    artist_info = api_client.search(artist.name, type="artist")
+                    if len(artist_info):
+                        artist_info = artist_info[0]
+                    else:
+                        artist_info = None
+            if (
+                artist_info
+                and artist_info.images
+                and artist_info.name.lower() == artist.name.lower()
+            ):
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(artist_info.images[0]["uri150"]) as response:
+                        image = await response.read()
+                        if image is not None:
+                            ArtistImage.create(
+                                artist=artist,
+                                small=image,
+                            )
+                            continue
+            ArtistImage.create(
+                artist=artist,
+                not_found=True,
             )
-            if image is not None:
-                ArtistImage.create(
-                    artist=artist,
-                    small=image,
-                )
-            else:
-                ArtistImage.create(
-                    artist=artist,
-                    not_found=True,
-                )
     database.close()
 
 

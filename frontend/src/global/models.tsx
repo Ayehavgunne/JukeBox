@@ -2,6 +2,7 @@ export interface Track {
 	track_id: number
 	title: string
 	album: string
+	album_disc: number
 	artist: string
 	track_number: number
 	disc_number: number

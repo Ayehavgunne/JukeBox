@@ -168,6 +168,14 @@ export class PlayerControls {
 		audio.on("play", this.play_handler)
 		audio.on("pause", this.pause_handler)
 		audio.on("end", this.track_done)
+		// @ts-ignore
+		let node = audio._sounds[0]._node
+		node.onpause = async function () {
+			await this.pause_handler()
+		}.bind(this)
+		node.onplaying = async function () {
+			await this.play_handler()
+		}.bind(this)
 	}
 
 	shuffle_playlist = async () => {
@@ -196,10 +204,8 @@ export class PlayerControls {
 
 	change_volume = volume => {
 		this.volume = volume
-		this.current_track.volume(this.volume)
-		if (this.next_track) {
-			this.next_track.volume(this.volume)
-		}
+		this.current_track?.volume(this.volume)
+		this.next_track?.volume(this.volume)
 	}
 
 	// var clickPosition = (e.pageX  - this.offsetLeft) / this.offsetWidth;

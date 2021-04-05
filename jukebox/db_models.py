@@ -29,7 +29,7 @@ class BaseModel(Model):
 class Artist(BaseModel):
     artist_id = AutoField(primary_key=True)
     name = CharField()
-    audio_db_id = IntegerField(null=True)
+    api_id = IntegerField(null=True)
 
     class Meta:
         database = database
@@ -52,20 +52,26 @@ class ArtistImage(BaseModel):
     not_found = BooleanField(default=False)
 
 
+class ArtistInfoMismatches(BaseModel):
+    artist_id = IntegerField(primary_key=True)
+    artist_name = CharField()
+    found_api_id = IntegerField()
+    found_name = CharField()
+
+
 class Album(BaseModel):
     album_id = AutoField(primary_key=True)
     title = CharField()
     artist = ForeignKeyField(Artist, backref="albums")
     album_artist = CharField(null=True)
-    total_tracks = IntegerField(null=True)
-    disc_number = IntegerField(null=True)
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
+    album_art_path = CharField(null=True)
 
     class Meta:
         database = database
         legacy_table_names = False
-        indexes = ((("title", "artist", "disc_number"), True),)
+        indexes = ((("title", "artist"), True),)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
@@ -73,10 +79,24 @@ class Album(BaseModel):
             "title": self.title,
             "artist": self.artist.name,
             "album_artist": self.album_artist,
-            "total_tracks": self.total_tracks,
-            "disc_number": self.disc_number,
             "total_discs": self.total_discs,
             "year": self.year,
+        }
+
+
+class AlbumDisc(BaseModel):
+    album_disc_id = AutoField(primary_key=True)
+    album = ForeignKeyField(Album, backref="disks")
+    disc_number = IntegerField(null=True)
+    total_tracks = IntegerField(null=True)
+
+    def to_json(self) -> Dict[str, Union[str, int]]:
+        return {
+            "album_disc_id": self.album_disc_id,
+            "album": self.album.name,
+            "album_id": self.album.album_id,
+            "disc_number": self.disc_number,
+            "total_tracks": self.total_tracks,
         }
 
 
@@ -84,6 +104,7 @@ class Track(BaseModel):
     track_id = AutoField(primary_key=True)
     title = CharField()
     album = ForeignKeyField(Album, backref="tracks")
+    album_disc = ForeignKeyField(AlbumDisc, backref="tracks")
     artist = ForeignKeyField(Artist, backref="tracks")
     track_number = IntegerField(null=True)
     disc_number = IntegerField(null=True)
@@ -106,6 +127,7 @@ class Track(BaseModel):
             "track_id": self.track_id,
             "title": self.title,
             "album": self.album.title,
+            "album_disc": self.album_disc.album_disc_id,
             "artist": self.artist.name,
             "album_artist": self.album.album_artist,
             "track_number": self.track_number,
@@ -153,7 +175,18 @@ class Playlist(BaseModel):
 
 def create_tables() -> None:
     with database:
-        database.create_tables([Artist, ArtistImage, Album, Track, Playlist, User])
+        database.create_tables(
+            [
+                Artist,
+                ArtistImage,
+                ArtistInfoMismatches,
+                Album,
+                AlbumDisc,
+                Track,
+                Playlist,
+                User,
+            ]
+        )
         try:
             User.create(username="Anthony")
             User.create(username="Ant")

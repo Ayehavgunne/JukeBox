@@ -1,3 +1,4 @@
+import asyncio
 from io import BytesIO
 from logging import getLogger
 from logging.handlers import RotatingFileHandler
@@ -18,7 +19,12 @@ from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import MusicFile, check_config_file, scan_files
+from jukebox.scan_files import (
+    MusicFile,
+    check_config_file,
+    get_artist_images,
+    scan_files,
+)
 
 check_config_file()
 
@@ -114,12 +120,10 @@ async def get_albums(album_id: int = None) -> Response:
 async def get_album_image(album_id: int) -> Response:
     with database.atomic():
         album = Album.get(album_id)
-        music_file = MusicFile(Path(album.tracks[0].file_path))
-        try:
-            image = BytesIO(music_file.artwork.val.data)
-            return await send_file(image, mimetype=music_file.artwork.val.mime)
-        except Exception as err:
-            print(err)
+        album_art_file = Path(album.album_art_path)
+        if album_art_file.exists():
+            return await send_file(album.album_art_path)
+        else:
             return await send_file(
                 APP_ROOT / "frontend" / "www" / "assets" / "generic_album.png",
                 mimetype="image/png",
@@ -152,7 +156,7 @@ async def get_tracks(track_id: int = None) -> Response:
                 .order_by(
                     fn.Lower(Artist.name),
                     fn.Lower(Album.title),
-                    Album.disc_number,
+                    Track.disc_number,
                     Track.track_number,
                 )
             )
@@ -271,6 +275,7 @@ if __name__ == "__main__":
     if not db_file.exists():
         create_tables()
     scan_files()
+    # asyncio.run(get_artist_images())
     app.run(
         host=CONFIGS["host"],
         port=CONFIGS["port"],

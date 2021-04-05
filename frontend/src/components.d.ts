@@ -33,6 +33,7 @@ export namespace Components {
         "match": MatchResults;
     }
     interface PageTracks {
+        "current_track": Track;
         "match": MatchResults;
     }
     interface PlayButton {
@@ -213,6 +214,7 @@ declare namespace LocalJSX {
         "match"?: MatchResults;
     }
     interface PageTracks {
+        "current_track"?: Track;
         "match"?: MatchResults;
     }
     interface PlayButton {
