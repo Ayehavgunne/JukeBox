@@ -177,6 +177,20 @@ async def get_tracks(track_id: int = None) -> Response:
     return jsonify([track.to_json() for track in tracks])
 
 
+@app.route("/tracks/<int:track_id>/image")
+async def get_track_image(track_id: int) -> Response:
+    with database.atomic():
+        track = Track.get(track_id)
+        album_art_file = Path(track.album.album_art_path)
+        if album_art_file.exists():
+            return await send_file(track.album.album_art_path)
+        else:
+            return await send_file(
+                APP_ROOT / "frontend" / "www" / "assets" / "generic_album.png",
+                mimetype="image/png",
+            )
+
+
 @app.route("/genres/")
 @app.route("/genres/<string:genre>")
 async def get_genres(genre: str = None) -> Response:

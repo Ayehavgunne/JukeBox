@@ -42,6 +42,10 @@ export namespace Components {
         "paused": boolean;
         "toggle_playing": () => void;
     }
+    interface PlayContainer {
+        "click_handler": () => void;
+        "track": Track;
+    }
     interface PlayTrack {
         "click_handler": () => void;
         "track": Track;
@@ -140,6 +144,12 @@ declare global {
         prototype: HTMLPlayButtonElement;
         new (): HTMLPlayButtonElement;
     };
+    interface HTMLPlayContainerElement extends Components.PlayContainer, HTMLStencilElement {
+    }
+    var HTMLPlayContainerElement: {
+        prototype: HTMLPlayContainerElement;
+        new (): HTMLPlayContainerElement;
+    };
     interface HTMLPlayTrackElement extends Components.PlayTrack, HTMLStencilElement {
     }
     var HTMLPlayTrackElement: {
@@ -189,6 +199,7 @@ declare global {
         "page-settings": HTMLPageSettingsElement;
         "page-tracks": HTMLPageTracksElement;
         "play-button": HTMLPlayButtonElement;
+        "play-container": HTMLPlayContainerElement;
         "play-track": HTMLPlayTrackElement;
         "player-controls": HTMLPlayerControlsElement;
         "progress-bar": HTMLProgressBarElement;
@@ -232,6 +243,11 @@ declare namespace LocalJSX {
         "paused"?: boolean;
         "toggle_playing"?: () => void;
     }
+    interface PlayContainer {
+        "click_handler"?: () => void;
+        "onPlaying_track"?: (event: CustomEvent<number>) => void;
+        "track"?: Track;
+    }
     interface PlayTrack {
         "click_handler"?: () => void;
         "onPlaying_track"?: (event: CustomEvent<number>) => void;
@@ -267,6 +283,7 @@ declare namespace LocalJSX {
         "page-settings": PageSettings;
         "page-tracks": PageTracks;
         "play-button": PlayButton;
+        "play-container": PlayContainer;
         "play-track": PlayTrack;
         "player-controls": PlayerControls;
         "progress-bar": ProgressBar;
@@ -291,6 +308,7 @@ declare module "@stencil/core" {
             "page-settings": LocalJSX.PageSettings & JSXBase.HTMLAttributes<HTMLPageSettingsElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
             "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
+            "play-container": LocalJSX.PlayContainer & JSXBase.HTMLAttributes<HTMLPlayContainerElement>;
             "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;

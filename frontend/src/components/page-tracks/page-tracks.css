@@ -125,6 +125,45 @@ td {
     }
 }
 
+.albumart, .info, .title, .artist {
+    float: left;
+}
+
+ul {
+    padding-left: 2px;
+    height: calc(100% - 51px);
+    overflow: auto;
+}
+
+li {
+    list-style: none;
+    height: 55px
+}
+
+.info {
+    margin-left: 3px;
+    width: calc(100% - 55px);
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    font-size: 1.15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist {
+    clear: left;
+    font-size: .8em;
+}
+
+img.small {
+    height: 50px;
+}
+
 @media (max-width: 600px) {
     tbody {
         font-size: 9px;

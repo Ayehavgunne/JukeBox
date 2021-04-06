@@ -18,6 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "@types/howler": "^2.2.1",
-    "howler": "^2.2.1"
+    "@types/ua-parser-js": "^0.7.35",
+    "howler": "^2.2.1",
+    "ua-parser-js": "^0.7.27"
   }
 }

@@ -2,6 +2,7 @@ import {Component, h, Host, Listen, Prop, State} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls} from "../../global/app"
 import {MatchResults} from "@stencil/router"
+import {UAParser} from "ua-parser-js"
 
 @Component({
 	tag: "page-tracks",
@@ -12,6 +13,7 @@ export class PageTracks {
 	@Prop() match: MatchResults
 	@Prop({mutable: true}) current_track: Track
 	@State() tracks: Array<Track>
+	@State() device_type: string
 
 	async componentWillLoad() {
 		let url = "/tracks"
@@ -20,6 +22,10 @@ export class PageTracks {
 		}
 		let result = await fetch(url)
 		this.tracks = await result.json()
+		let ua_parser = new UAParser()
+		ua_parser.setUA(navigator.userAgent)
+		let device = ua_parser.getDevice()
+		this.device_type = device.type
 	}
 
 	playing_track_handler = async () => {
@@ -33,6 +39,44 @@ export class PageTracks {
 	}
 
 	render() {
+		if (this.device_type === "mobile") {
+			return (
+				<Host>
+					<h3>Tracks</h3>
+					<ul>
+						{this.tracks.map(track => {
+							return (
+								<li>
+									<play-container
+										track={track}
+										click_handler={this.playing_track_handler}
+									>
+										<div class="albumart">
+											<img
+												src={`/tracks/${track.track_id}/image`}
+												alt={`image of ${track.title} album`}
+												class="small"
+											/>
+										</div>
+									</play-container>
+									<play-container
+										track={track}
+										click_handler={this.playing_track_handler}
+									>
+										<div class="info">
+											<div class="title">
+												{track.track_number} - {track.title}
+											</div>
+											<div class="artist">{track.artist}</div>
+										</div>
+									</play-container>
+								</li>
+							)
+						})}
+					</ul>
+				</Host>
+			)
+		}
 		return (
 			<Host>
 				<h3>Tracks</h3>
