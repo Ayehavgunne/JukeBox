@@ -8,11 +8,12 @@ import discogs_client
 import json5
 import music_tag
 from music_tag import AudioFile
-from peewee import IntegrityError
+from peewee import IntegrityError, OperationalError
 
 from jukebox import APP_ROOT, CONFIG_FILE, CONFIGS, __version__
 from jukebox.db_models import (
     Album,
+    AlbumArtist,
     AlbumDisc,
     Artist,
     ArtistImage,
@@ -79,9 +80,8 @@ class MusicFile:
         self.mimetype = mimetype
         self.codec = metadata["#codec"].value
         self.bitrate = metadata["#bitrate"].value
-        # self.artwork = metadata["artwork"]
         self.album_art_path = (
-            f"{'/'.join(file.parts[:-1]).replace('/', '', 1)}/artwork.jpg"
+            f"{'/'.join(file.parts[:-1]).replace('/', '', 1)}/artwork.jpeg"
         )
         self._metadata = metadata
         self._file = file
@@ -124,14 +124,19 @@ def scan_files() -> None:
             try:
                 album = Album.create(
                     title=song.album,
-                    artist=artist,
-                    album_artist=song.album_artist,
                     total_discs=song.total_discs,
                     year=song.year,
                     album_art_path=song.album_art_path,
                 )
             except IntegrityError:
                 album = Album.get(title=song.album)
+            try:
+                AlbumArtist.create(
+                    album=album,
+                    artist=artist,
+                )
+            except IntegrityError:
+                pass
             try:
                 album_disc = AlbumDisc.create(
                     album=album,
@@ -163,7 +168,11 @@ def scan_files() -> None:
 
 
 async def get_artist_images() -> None:
-    database.connect()
+    print("getting artist images")
+    try:
+        database.connect()
+    except OperationalError as err:
+        print(err)
     artists = Artist.select()
     api_client = discogs_client.Client(
         f"JukeBox/{__version__}",
@@ -221,6 +230,8 @@ async def get_artist_images() -> None:
                 artist=artist,
                 not_found=True,
             )
+        await asyncio.sleep(0.1)
+    print("done getting artist images")
     database.close()
 
 

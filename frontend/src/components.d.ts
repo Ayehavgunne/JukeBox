@@ -32,6 +32,8 @@ export namespace Components {
     interface PageProfile {
         "match": MatchResults;
     }
+    interface PageSettings {
+    }
     interface PageTracks {
         "current_track": Track;
         "match": MatchResults;
@@ -120,6 +122,12 @@ declare global {
         prototype: HTMLPageProfileElement;
         new (): HTMLPageProfileElement;
     };
+    interface HTMLPageSettingsElement extends Components.PageSettings, HTMLStencilElement {
+    }
+    var HTMLPageSettingsElement: {
+        prototype: HTMLPageSettingsElement;
+        new (): HTMLPageSettingsElement;
+    };
     interface HTMLPageTracksElement extends Components.PageTracks, HTMLStencilElement {
     }
     var HTMLPageTracksElement: {
@@ -178,6 +186,7 @@ declare global {
         "page-now-playing": HTMLPageNowPlayingElement;
         "page-playlists": HTMLPagePlaylistsElement;
         "page-profile": HTMLPageProfileElement;
+        "page-settings": HTMLPageSettingsElement;
         "page-tracks": HTMLPageTracksElement;
         "play-button": HTMLPlayButtonElement;
         "play-track": HTMLPlayTrackElement;
@@ -212,6 +221,8 @@ declare namespace LocalJSX {
     }
     interface PageProfile {
         "match"?: MatchResults;
+    }
+    interface PageSettings {
     }
     interface PageTracks {
         "current_track"?: Track;
@@ -253,6 +264,7 @@ declare namespace LocalJSX {
         "page-now-playing": PageNowPlaying;
         "page-playlists": PagePlaylists;
         "page-profile": PageProfile;
+        "page-settings": PageSettings;
         "page-tracks": PageTracks;
         "play-button": PlayButton;
         "play-track": PlayTrack;
@@ -276,6 +288,7 @@ declare module "@stencil/core" {
             "page-now-playing": LocalJSX.PageNowPlaying & JSXBase.HTMLAttributes<HTMLPageNowPlayingElement>;
             "page-playlists": LocalJSX.PagePlaylists & JSXBase.HTMLAttributes<HTMLPagePlaylistsElement>;
             "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
+            "page-settings": LocalJSX.PageSettings & JSXBase.HTMLAttributes<HTMLPageSettingsElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
             "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
             "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;

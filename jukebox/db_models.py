@@ -62,8 +62,6 @@ class ArtistInfoMismatches(BaseModel):
 class Album(BaseModel):
     album_id = AutoField(primary_key=True)
     title = CharField()
-    artist = ForeignKeyField(Artist, backref="albums")
-    album_artist = CharField(null=True)
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
     album_art_path = CharField(null=True)
@@ -71,17 +69,27 @@ class Album(BaseModel):
     class Meta:
         database = database
         legacy_table_names = False
-        indexes = ((("title", "artist"), True),)
+        indexes = ((("title",), True),)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
+        # noinspection PyTypeChecker
         return {
             "album_id": self.album_id,
             "title": self.title,
-            "artist": self.artist.name,
-            "album_artist": self.album_artist,
             "total_discs": self.total_discs,
             "year": self.year,
         }
+
+
+class AlbumArtist(BaseModel):
+    album_artist_id = AutoField(primary_key=True)
+    artist = ForeignKeyField(Artist)
+    album = ForeignKeyField(Album, backref="album_artists")
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        indexes = ((("album", "artist"), True),)
 
 
 class AlbumDisc(BaseModel):
@@ -89,6 +97,11 @@ class AlbumDisc(BaseModel):
     album = ForeignKeyField(Album, backref="disks")
     disc_number = IntegerField(null=True)
     total_tracks = IntegerField(null=True)
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        indexes = ((("album", "disc_number"), True),)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
@@ -129,7 +142,6 @@ class Track(BaseModel):
             "album": self.album.title,
             "album_disc": self.album_disc.album_disc_id,
             "artist": self.artist.name,
-            "album_artist": self.album.album_artist,
             "track_number": self.track_number,
             "genre": self.genre,
             "year": self.album.year,
@@ -181,6 +193,7 @@ def create_tables() -> None:
                 ArtistImage,
                 ArtistInfoMismatches,
                 Album,
+                AlbumArtist,
                 AlbumDisc,
                 Track,
                 Playlist,

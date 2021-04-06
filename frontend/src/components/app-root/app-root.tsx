@@ -59,6 +59,11 @@ export class AppRoot {
 							</stencil-route-link>
 						</li>
 						<li>
+							<stencil-route-link url="/page/settings">
+								Settings
+							</stencil-route-link>
+						</li>
+						<li>
 							<h3>Library</h3>
 
 							<ul>
@@ -111,6 +116,10 @@ export class AppRoot {
 							<stencil-route
 								url="/page/now_playing"
 								component="page-now-playing"
+							/>
+							<stencil-route
+								url="/page/settings"
+								component="page-settings"
 							/>
 							<stencil-route
 								url="/page/tracks/:album_id?"

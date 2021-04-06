@@ -18,13 +18,16 @@ from quart import (
 from quart.logging import serving_handler
 
 from jukebox import APP_ROOT, CONFIGS
-from jukebox.db_models import Album, Artist, Playlist, Track, create_tables, database
-from jukebox.scan_files import (
-    MusicFile,
-    check_config_file,
-    get_artist_images,
-    scan_files,
+from jukebox.db_models import (
+    Album,
+    AlbumArtist,
+    Artist,
+    Playlist,
+    Track,
+    create_tables,
+    database,
 )
+from jukebox.scan_files import check_config_file, get_artist_images, scan_files
 
 check_config_file()
 
@@ -38,6 +41,13 @@ if CONFIGS["logging"]["enabled"]:
     handler.setFormatter(serving_handler.formatter)
     serving_logger = getLogger("quart.serving")
     serving_logger.addHandler(handler)
+
+
+@app.before_serving
+async def get_images() -> None:
+    asyncio.create_task(get_artist_images())
+    loop = asyncio.get_running_loop()
+    loop.run_in_executor(None, scan_files)
 
 
 @app.route("/")
@@ -54,6 +64,19 @@ async def send_assets(path: str) -> Response:
 @app.route("/build/<path:path>")
 async def send_build(path: str) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "www" / "build", path)
+
+
+@app.route("/task/get_artist_images")
+async def get_images() -> str:
+    asyncio.create_task(get_artist_images())
+    return "Success"
+
+
+@app.route("/task/scan_files")
+async def update_files() -> str:
+    loop = asyncio.get_running_loop()
+    loop.run_in_executor(None, scan_files)
+    return "Success"
 
 
 @app.route("/artists")
@@ -86,17 +109,11 @@ async def get_artist_albums(artist_id: int) -> Response:
     with database.atomic():
         albums = (
             Album.select()
-            .join(Artist)
-            .where(Artist.artist_id == artist_id)
+            .join(AlbumArtist)
+            .where(AlbumArtist.artist_id == artist_id)
             .order_by(fn.Lower(Album.title))
         )
-        album_names = []
-        filtered_albums = []
-        for album in albums:
-            if album.title not in album_names:
-                album_names.append(album.title)
-                filtered_albums.append(album.to_json())
-        return jsonify(filtered_albums)
+        return jsonify([album.to_json() for album in albums])
 
 
 @app.route("/albums")
@@ -107,13 +124,7 @@ async def get_albums(album_id: int = None) -> Response:
             albums = Album.select().order_by(fn.Lower(Album.title))
         else:
             albums = [Album.get(album_id)]
-        album_names = []
-        filtered_albums = []
-        for album in albums:
-            if album.title not in album_names:
-                album_names.append(album.title)
-                filtered_albums.append(album.to_json())
-        return jsonify(filtered_albums)
+        return jsonify([album.to_json() for album in albums])
 
 
 @app.route("/albums/<int:album_id>/image")
@@ -151,8 +162,9 @@ async def get_tracks(track_id: int = None) -> Response:
             tracks = (
                 Track.select()
                 .distinct()
-                .join(Album)
                 .join(Artist)
+                .switch(Track)
+                .join(Album)
                 .order_by(
                     fn.Lower(Artist.name),
                     fn.Lower(Album.title),
@@ -274,8 +286,7 @@ if __name__ == "__main__":
     db_file = APP_ROOT / "jukebox.db"
     if not db_file.exists():
         create_tables()
-    scan_files()
-    # asyncio.run(get_artist_images())
+        # scan_files()
     app.run(
         host=CONFIGS["host"],
         port=CONFIGS["port"],
