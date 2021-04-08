@@ -41,6 +41,7 @@ main {
     padding: 10px;
     width: calc(100% - 133px);
     transition: all 500ms ease-in-out;
+    overflow: auto;
 }
 
 main.nav_closed {

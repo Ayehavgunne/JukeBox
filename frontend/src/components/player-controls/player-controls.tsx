@@ -62,8 +62,7 @@ export class PlayerControls {
 	@Method()
 	async play_previous_track() {
 		if (this.current_track) {
-			console.log()
-			if (this.current_track.duration() > 3) {
+			if (this.current_track.seek() > 1.5) {
 				this.current_track.seek(0)
 			} else {
 				await this.change_to_track(this.playlist_index - 1)
@@ -260,6 +259,8 @@ export class PlayerControls {
 	//
 	// // move the playhead to the correct position
 	// this.current_track?.currentTime = clickTime;
+
+	// cache.delete
 
 	render() {
 		let speaker_class = "speaker -on"

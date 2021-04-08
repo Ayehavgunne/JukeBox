@@ -7,10 +7,12 @@
 }
 
 h3 {
-    margin-top: 7px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 1.4em;
 }
 
-.second {
+.third {
     text-align: right;
 }
 
@@ -23,21 +25,17 @@ h3 {
 }
 
 .play_track {
-    cursor: pointer;
     width: 18px;
     height: 16px;
     box-sizing: border-box;
     border-style: solid;
-    border-width: 8px 0 8px 14px;
+    border-width: 10px 0 10px 18px;
     border-color: transparent transparent transparent #bebebe;
     transition: all 100ms ease-in-out;
 }
 
 table {
-    white-space: nowrap;
-    overflow: auto;
-    height: calc(100% - 51px);
-    display: block;
+    border-collapse: collapse;
 }
 
 th:first-child {
@@ -83,11 +81,10 @@ td:first-child {
 
 td {
     border-top: solid 1px #4a4a4a;
-    padding: 0 8px;
+    padding: 4px 8px 0 8px;
 }
 
 .play_track {
-    cursor: pointer;
     width: 18px;
     height: 16px;
     box-sizing: border-box;
@@ -100,6 +97,19 @@ td {
 .playing {
     position: relative;
     right: 2px;
+}
+
+.on_image {
+    position: absolute;
+    left: calc(50% - 10px);
+    bottom: calc(50% - 10px);
+    width: 24px;
+}
+
+.on_image > .playing_bar {
+    width: 5px;
+    height: 22px;
+    box-shadow: 1px 1px 2px black;
 }
 
 .playing_bar {
@@ -134,6 +144,10 @@ td {
     100% {
         transform: scaleY(1.0);
     }
+}
+
+.albumart {
+    position: relative;
 }
 
 .albumart, .info, .title, .artist {
@@ -173,6 +187,7 @@ li {
 
 img.small {
     height: 50px;
+    width: 50px;
 }
 
 @media (max-width: 600px) {

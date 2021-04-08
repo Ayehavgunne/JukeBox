@@ -1,4 +1,4 @@
-import {Component, h, Host, Listen, Prop, State} from "@stencil/core"
+import {Component, h, Host, Element, Listen, Prop, State} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
@@ -9,6 +9,7 @@ import {MatchResults} from "@stencil/router"
 	shadow: true,
 })
 export class PageTracks {
+	@Element() el: HTMLPageTracksElement
 	@Prop() match: MatchResults
 	@Prop({mutable: true}) current_track: Track
 	@State() tracks: Array<Track>
@@ -24,6 +25,10 @@ export class PageTracks {
 		this.device_type = ua_parser.getDevice().type
 	}
 
+	async componentDidRender() {
+		await this.lazy_load()
+	}
+
 	playing_track_handler = async () => {
 		const controler = await get_player_controls()
 		await controler.set_playlist(this.tracks)
@@ -37,7 +42,7 @@ export class PageTracks {
 	lazy_load = async () => {
 		let lazyloadImages
 		if ("IntersectionObserver" in window) {
-			lazyloadImages = document.querySelectorAll(".lazy")
+			lazyloadImages = this.el.shadowRoot.querySelectorAll(".lazy")
 			let imageObserver = new IntersectionObserver(function (entries) {
 				entries.forEach(function (entry) {
 					if (entry.isIntersecting) {
@@ -90,7 +95,29 @@ export class PageTracks {
 				<Host>
 					<h3>Tracks</h3>
 					<ul>
-						{this.tracks.map(track => {
+						{this.tracks.map((track, index) => {
+							let playing_track =
+								this.current_track &&
+								this.current_track.track_id == track.track_id
+							let image
+							if (index < 15) {
+								image = (
+									<img
+										src={`/tracks/${track.track_id}/image`}
+										alt={`image of ${track.title} album`}
+										class="small"
+									/>
+								)
+							} else {
+								image = (
+									<img
+										src=""
+										data-src={`/tracks/${track.track_id}/image`}
+										alt={`image of ${track.title} album`}
+										class="small lazy"
+									/>
+								)
+							}
 							return (
 								<li>
 									<play-container
@@ -98,11 +125,14 @@ export class PageTracks {
 										click_handler={this.playing_track_handler}
 									>
 										<div class="albumart">
-											<img
-												src={`/tracks/${track.track_id}/image`}
-												alt={`image of ${track.title} album`}
-												class="small"
-											/>
+											{image}
+											{playing_track && (
+												<div class="playing on_image">
+													<div class="playing_bar bar-1" />
+													<div class="playing_bar bar-2" />
+													<div class="playing_bar bar-3" />
+												</div>
+											)}
 										</div>
 									</play-container>
 									<play-container
@@ -131,30 +161,42 @@ export class PageTracks {
 				<table>
 					<thead>
 						<th />
-						<th>
-							Track
-							<br />
-							No.
-						</th>
+						<th />
+						<th>No.</th>
 						<th>Title</th>
 						<th>Artist</th>
 						<th>Album</th>
-						<th>
-							Disc
-							<br />
-							No.
-						</th>
+						<th>Disc</th>
 						<th>Year</th>
 						<th>Length</th>
 					</thead>
 					<tbody>
-						{this.tracks.map(track => {
+						{this.tracks.map((track, index) => {
 							let tr_class = ""
 							let playing_track =
 								this.current_track &&
 								this.current_track.track_id == track.track_id
 							if (playing_track) {
 								tr_class = "playing_row"
+							}
+							let image
+							if (index < 30) {
+								image = (
+									<img
+										src={`/tracks/${track.track_id}/image`}
+										alt={`image of ${track.title} album`}
+										class="small"
+									/>
+								)
+							} else {
+								image = (
+									<img
+										src=""
+										data-src={`/tracks/${track.track_id}/image`}
+										alt={`image of ${track.title} album`}
+										class="small lazy"
+									/>
+								)
 							}
 							return (
 								<tr key={track.track_id} class={tr_class}>
@@ -176,7 +218,15 @@ export class PageTracks {
 											</play-container>
 										)}
 									</td>
-									<td class="second">{track.track_number}</td>
+									<td>
+										<play-container
+											track={track}
+											click_handler={this.playing_track_handler}
+										>
+											{image}
+										</play-container>
+									</td>
+									<td class="third">{track.track_number}</td>
 									<td>{track.title}</td>
 									<td>{track.artist}</td>
 									<td>{track.album}</td>

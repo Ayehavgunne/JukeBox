@@ -8,7 +8,13 @@
 }
 
 h3 {
-    margin-top: 7px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 1.4em;
+}
+
+ul {
+    padding-left: 0;
 }
 
 li {
@@ -31,6 +37,7 @@ img {
 
 img.small {
     height: 100px;
+    width: 100px;
 }
 
 .albumart {
