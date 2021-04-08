@@ -86,6 +86,17 @@ td {
     padding: 0 8px;
 }
 
+.play_track {
+    cursor: pointer;
+    width: 18px;
+    height: 16px;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #bebebe;
+    transition: all 100ms ease-in-out;
+}
+
 .playing {
     position: relative;
     right: 2px;

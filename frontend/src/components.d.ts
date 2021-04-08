@@ -46,13 +46,11 @@ export namespace Components {
         "click_handler": () => void;
         "track": Track;
     }
-    interface PlayTrack {
-        "click_handler": () => void;
-        "track": Track;
-    }
     interface PlayerControls {
         "pause": () => Promise<void>;
         "play": () => Promise<void>;
+        "play_next_track": () => Promise<void>;
+        "play_previous_track": () => Promise<void>;
         "set_playlist": (tracks: Array<Track>) => Promise<void>;
         "set_track": (track: Track) => Promise<void>;
     }
@@ -150,12 +148,6 @@ declare global {
         prototype: HTMLPlayContainerElement;
         new (): HTMLPlayContainerElement;
     };
-    interface HTMLPlayTrackElement extends Components.PlayTrack, HTMLStencilElement {
-    }
-    var HTMLPlayTrackElement: {
-        prototype: HTMLPlayTrackElement;
-        new (): HTMLPlayTrackElement;
-    };
     interface HTMLPlayerControlsElement extends Components.PlayerControls, HTMLStencilElement {
     }
     var HTMLPlayerControlsElement: {
@@ -200,7 +192,6 @@ declare global {
         "page-tracks": HTMLPageTracksElement;
         "play-button": HTMLPlayButtonElement;
         "play-container": HTMLPlayContainerElement;
-        "play-track": HTMLPlayTrackElement;
         "player-controls": HTMLPlayerControlsElement;
         "progress-bar": HTMLProgressBarElement;
         "progress-dot": HTMLProgressDotElement;
@@ -248,11 +239,6 @@ declare namespace LocalJSX {
         "onPlaying_track"?: (event: CustomEvent<number>) => void;
         "track"?: Track;
     }
-    interface PlayTrack {
-        "click_handler"?: () => void;
-        "onPlaying_track"?: (event: CustomEvent<number>) => void;
-        "track"?: Track;
-    }
     interface PlayerControls {
         "onChanging_track"?: (event: CustomEvent<Track>) => void;
     }
@@ -284,7 +270,6 @@ declare namespace LocalJSX {
         "page-tracks": PageTracks;
         "play-button": PlayButton;
         "play-container": PlayContainer;
-        "play-track": PlayTrack;
         "player-controls": PlayerControls;
         "progress-bar": ProgressBar;
         "progress-dot": ProgressDot;
@@ -309,7 +294,6 @@ declare module "@stencil/core" {
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
             "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
             "play-container": LocalJSX.PlayContainer & JSXBase.HTMLAttributes<HTMLPlayContainerElement>;
-            "play-track": LocalJSX.PlayTrack & JSXBase.HTMLAttributes<HTMLPlayTrackElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
             "progress-dot": LocalJSX.ProgressDot & JSXBase.HTMLAttributes<HTMLProgressDotElement>;

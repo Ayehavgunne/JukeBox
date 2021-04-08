@@ -16,15 +16,16 @@ export class VolumeDot {
 
 	@Listen("touchstart")
 	@Listen("mousedown")
-	async drag_start(e) {
+	async drag_start(event) {
 		document.querySelector("body").classList.add("noselect")
-		if (e.type === "touchstart") {
-			this.initial_y = e.touches[0].clientY
+		document.documentElement.style.overflow = "hidden"
+		if (event.type === "touchstart") {
+			this.initial_y = event.touches[0].clientY
 		} else {
-			this.initial_y = e.clientY
+			this.initial_y = event.clientY
 		}
 
-		if (e.target === this.el) {
+		if (event.target === this.el) {
 			this.active = true
 		}
 	}
@@ -33,18 +34,25 @@ export class VolumeDot {
 	@Listen("mouseup", {target: "body"})
 	async drag_end() {
 		document.querySelector("body").classList.remove("noselect")
+		document.documentElement.style.overflow = "auto"
 		this.initial_y = this.y_shift
 		this.active = false
 	}
 
 	@Listen("touchmove", {target: "body"})
 	@Listen("mousemove", {target: "body"})
-	async drag(e) {
+	async drag(event) {
 		if (this.active) {
-			e.preventDefault()
+			event.preventDefault()
 			let parent_bounds = this.parent.getBoundingClientRect()
-			let new_volume =
-				(parent_bounds.height - (e.clientY - parent_bounds.top)) /
+			let new_volume, client_y
+			if (event.type === "touchmove") {
+				client_y = event.touches[0].clientY
+			} else {
+				client_y = event.clientY
+			}
+			new_volume =
+				(parent_bounds.height - (client_y - parent_bounds.top)) /
 				parent_bounds.height
 			if (new_volume >= 0 && new_volume <= 1) {
 				this.volume_handler(new_volume)

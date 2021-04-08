@@ -50,7 +50,7 @@
 
 @media (max-width: 600px) {
     :host {
-        width: calc(100% - 135px);
+        width: calc(100% - 131px);
         font-size: 15px;
     }
 }

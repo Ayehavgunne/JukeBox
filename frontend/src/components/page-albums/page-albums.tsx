@@ -28,12 +28,14 @@ export class PageAlbums {
 					return (
 						<li>
 							<stencil-route-link url={`/page/tracks/${album.album_id}`}>
-								<img
-									src={`/albums/${album.album_id}/image`}
-									alt={`image of ${album.title}`}
-									class="small"
-								/>
-								{album.title}
+								<div class="albumart">
+									<img
+										src={`/albums/${album.album_id}/image`}
+										alt={`image of ${album.title}`}
+										class="small"
+									/>
+								</div>
+								<div class="name">{album.title}</div>
 							</stencil-route-link>
 						</li>
 					)

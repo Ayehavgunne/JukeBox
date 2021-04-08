@@ -1,8 +1,7 @@
 import {Component, h, Host, Listen, Prop, State} from "@stencil/core"
 import {Track} from "../../global/models"
-import {get_player_controls} from "../../global/app"
+import {get_player_controls, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
-import {UAParser} from "ua-parser-js"
 
 @Component({
 	tag: "page-tracks",
@@ -22,10 +21,7 @@ export class PageTracks {
 		}
 		let result = await fetch(url)
 		this.tracks = await result.json()
-		let ua_parser = new UAParser()
-		ua_parser.setUA(navigator.userAgent)
-		let device = ua_parser.getDevice()
-		this.device_type = device.type
+		this.device_type = ua_parser.getDevice().type
 	}
 
 	playing_track_handler = async () => {
@@ -36,6 +32,56 @@ export class PageTracks {
 	@Listen("changing_track", {target: "body"})
 	changing_track_handler(event: CustomEvent<Track>) {
 		this.current_track = event.detail
+	}
+
+	lazy_load = async () => {
+		let lazyloadImages
+		if ("IntersectionObserver" in window) {
+			lazyloadImages = document.querySelectorAll(".lazy")
+			let imageObserver = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (entry.isIntersecting) {
+						// @ts-ignore
+						let image: HTMLImageElement = entry.target
+						image.src = image.dataset.src
+						image.classList.remove("lazy")
+						imageObserver.unobserve(image)
+					}
+				})
+			})
+
+			lazyloadImages.forEach(function (image) {
+				imageObserver.observe(image)
+			})
+		} else {
+			let lazyloadThrottleTimeout
+			lazyloadImages = document.querySelectorAll(".lazy")
+
+			let lazyload = () => {
+				if (lazyloadThrottleTimeout) {
+					clearTimeout(lazyloadThrottleTimeout)
+				}
+
+				lazyloadThrottleTimeout = setTimeout(function () {
+					let scrollTop = window.pageYOffset
+					lazyloadImages.forEach(function (img) {
+						if (img.offsetTop < window.innerHeight + scrollTop) {
+							img.src = img.dataset.src
+							img.classList.remove("lazy")
+						}
+					})
+					if (lazyloadImages.length == 0) {
+						document.removeEventListener("scroll", lazyload)
+						window.removeEventListener("resize", lazyload)
+						window.removeEventListener("orientationChange", lazyload)
+					}
+				}, 20)
+			}
+
+			document.addEventListener("scroll", lazyload)
+			window.addEventListener("resize", lazyload)
+			window.addEventListener("orientationChange", lazyload)
+		}
 	}
 
 	render() {
@@ -67,7 +113,9 @@ export class PageTracks {
 											<div class="title">
 												{track.track_number} - {track.title}
 											</div>
-											<div class="artist">{track.artist}</div>
+											<div class="artist">
+												{track.artist} - {track.album}
+											</div>
 										</div>
 									</play-container>
 								</li>
@@ -118,12 +166,14 @@ export class PageTracks {
 												<div class="playing_bar bar-3" />
 											</div>
 										) : (
-											<play-track
+											<play-container
 												track={track}
 												click_handler={
 													this.playing_track_handler
 												}
-											/>
+											>
+												<div class="play_track" />
+											</play-container>
 										)}
 									</td>
 									<td class="second">{track.track_number}</td>

@@ -19,3 +19,19 @@ div {
     height: 9px;
     cursor: pointer;
 }
+
+@media (max-width: 600px) {
+    :host {
+        width: 30px;
+        height: 15px;
+        right: -15px;
+    }
+
+    div {
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        right: 8px;
+        /*bottom: 8px;*/
+    }
+}

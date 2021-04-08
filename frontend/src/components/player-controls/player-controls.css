@@ -15,6 +15,53 @@
     margin-top: 6px;
 }
 
+.prev {
+    cursor: pointer;
+    float: left;
+    position: relative;
+    margin-top: 4px;
+    margin-right: 42px;
+    border-top: 16px solid;
+    border-bottom: 16px solid;
+    border-right: 28px solid;
+    border-color: transparent #bebebe transparent transparent;
+}
+
+.prev::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 28px;
+    bottom: -16px;
+    border-top: 16px solid;
+    border-bottom: 16px solid;
+    border-right: 28px solid;
+    border-color: transparent #bebebe transparent transparent;
+}
+
+.next {
+    cursor: pointer;
+    float: left;
+    position: relative;
+    margin-top: 4px;
+    margin-right: 32px;
+    border-top: 16px solid;
+    border-bottom: 16px solid;
+    border-left: 28px solid;
+    border-color: transparent transparent transparent #bebebe;
+}
+
+.next::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -16px;
+    border-top: 16px solid;
+    border-bottom: 16px solid;
+    border-left: 28px solid;
+    border-color: transparent transparent transparent #bebebe;
+}
+
 .wrapper {
     background-color: rgba(77, 77, 77, .66);
     width: 22px;
@@ -87,4 +134,53 @@
 .speaker.-off:before {
     background: #04233D;
     left: .2em;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 0;
+    }
+
+    .wrapper {
+        position: absolute;
+        bottom: 68px;
+        right: 19px;
+    }
+
+    .speaker {
+        transform: scale(1.5);
+    }
+
+    .prev {
+        /*border-top: 10px solid;*/
+        /*border-bottom: 10px solid;*/
+        /*border-right: 20px solid;*/
+        margin-right: 15px;
+        transform: scale(.6);
+    }
+
+    .prev::after {
+        /*border-top: 10px solid;*/
+        /*border-bottom: 10px solid;*/
+        /*border-right: 20px solid;*/
+        /*bottom: -10px;*/
+        /*left: 20px;*/
+        /*transform: scale(.7);*/
+    }
+
+    .next {
+        /*border-top: 10px solid;*/
+        /*border-bottom: 10px solid;*/
+        /*border-left: 20px solid;*/
+        margin-right: 10px;
+        transform: scale(.6);
+    }
+
+    .next::after {
+        /*border-top: 10px solid;*/
+        /*border-bottom: 10px solid;*/
+        /*border-left: 20px solid;*/
+        /*bottom: -10px;*/
+        /*transform: scale(.7);*/
+    }
 }

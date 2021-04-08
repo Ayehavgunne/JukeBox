@@ -38,13 +38,13 @@ h3 {
 }
 
 main {
-    margin: 10px;
-    width: calc(100% - 153px);
+    padding: 10px;
+    width: calc(100% - 133px);
     transition: all 500ms ease-in-out;
 }
 
 main.nav_closed {
-    width: calc(100% - 21px);
+    width: 100%;
 }
 
 nav {
@@ -57,11 +57,12 @@ nav {
 
 nav.nav_closed {
     width: 0;
+    border-right: 0;
 }
 
 nav, main {
     float: left;
-    height: calc(100% - 66px);
+    height: calc(100% - 56px);
 }
 
 ul {
@@ -77,7 +78,7 @@ menu-toggle {
     position: absolute;
     bottom: 9px;
     left: -95px;
-    transition: all 500ms ease-in-out;;
+    transition: all 500ms ease-in-out;
 }
 
 menu-toggle.nav_closed {
@@ -93,8 +94,12 @@ menu-toggle.nav_closed {
         height: 80px;
     }
 
+    nav {
+        font-size: 1.3em;
+    }
+
     nav, main {
-        height: calc(100% - 92px);
+        height: calc(100% - 80px);
     }
 
     menu-toggle {

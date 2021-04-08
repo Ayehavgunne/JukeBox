@@ -4,7 +4,7 @@
 
 :host {
     float: right;
-    width: calc(100% - 300px);
+    width: calc(100% - 460px);
     margin-top: 8px;
 }
 
@@ -23,5 +23,7 @@
         width: 100%;
         margin-top: 8px;
         clear: left;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }

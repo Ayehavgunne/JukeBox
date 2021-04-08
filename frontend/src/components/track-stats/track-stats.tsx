@@ -1,4 +1,4 @@
-import {Component, Host, h, Prop} from "@stencil/core"
+import {Component, Host, h, Prop, Listen} from "@stencil/core"
 import {Track} from "../../global/models"
 
 @Component({
@@ -11,7 +11,15 @@ export class TrackStats {
 	title_div: HTMLDivElement
 	artist_div: HTMLDivElement
 
-	componentDidRender() {
+	async componentDidRender() {
+		await this.check_slide()
+	}
+
+	async componentWillUpdate() {
+		await this.clear_slide()
+	}
+
+	check_slide = async () => {
 		if (this.is_overflowing(this.title_div)) {
 			this.scroll_info(this.title_div)
 		}
@@ -20,7 +28,7 @@ export class TrackStats {
 		}
 	}
 
-	componentWillUpdate() {
+	clear_slide = async () => {
 		try {
 			this.title_div.classList.remove("slide")
 			this.title_div.style.width = ""
@@ -29,6 +37,12 @@ export class TrackStats {
 		} catch {
 			// Ignore
 		}
+	}
+
+	@Listen("transitionend", {target: "body"})
+	async done_animating() {
+		await this.clear_slide()
+		await this.check_slide()
 	}
 
 	scroll_info = (element: HTMLDivElement) => {
