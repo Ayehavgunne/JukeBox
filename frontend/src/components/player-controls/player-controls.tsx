@@ -82,6 +82,7 @@ export class PlayerControls {
 	@Method()
 	async play_next_track() {
 		if (this.current_track) {
+			// check if this.next_track has been loaded
 			await this.change_to_track(this.playlist_index + 1)
 			worker.postMessage("start_progress")
 		}
@@ -115,6 +116,12 @@ export class PlayerControls {
 		this.playlist = tracks
 		this.ordered_playlist = tracks
 		this.playlist_index = this.playlist.indexOf(this.current_track_data)
+	}
+
+	seek = async (percent: number) => {
+		if (this.current_track) {
+			this.current_track.seek((percent / 100) * this.current_track_data.length)
+		}
 	}
 
 	play_handler = async () => {
@@ -304,7 +311,7 @@ export class PlayerControls {
 						</div>
 					</div>
 				)}
-				<progress-bar />
+				<progress-bar seek_handler={this.seek} />
 			</div>
 		)
 	}

@@ -11,18 +11,13 @@ export class AppRoot {
 	@State() nav_showing: boolean = true
 	@State() current_track: Track
 	playlist_names: Array<string> = []
-	classes: string = ""
-
-	constructor() {
-		this.toggle_nav = this.toggle_nav.bind(this)
-	}
 
 	async componentWillLoad() {
 		let result = await fetch("/playlists")
 		this.playlist_names = await result.json()
 	}
 
-	async toggle_nav() {
+	toggle_nav = async () => {
 		this.nav_showing = !this.nav_showing
 	}
 

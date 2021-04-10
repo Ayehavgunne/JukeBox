@@ -45,9 +45,8 @@ if CONFIGS["logging"]["enabled"]:
 
 @app.before_serving
 async def get_images() -> None:
+    await asyncio.get_running_loop().run_in_executor(None, scan_files)
     asyncio.create_task(get_artist_images())
-    loop = asyncio.get_running_loop()
-    loop.run_in_executor(None, scan_files)
 
 
 @app.route("/")

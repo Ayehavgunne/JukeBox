@@ -7,7 +7,7 @@
     height: 10px;
     position: relative;
     display: block;
-    top: 6px;
+    bottom: 4px;
     left: 0;
     transform: translateX(-5px);
 }
@@ -17,4 +17,17 @@ div {
     background-color: #15dea5;
     width: 10px;
     height: 10px;
+}
+
+@media (max-width: 600px) {
+    :host {
+        width: 15px;
+        height: 15px;
+        bottom: 7px;
+    }
+
+    div {
+        width: 15px;
+        height: 15px;
+    }
 }

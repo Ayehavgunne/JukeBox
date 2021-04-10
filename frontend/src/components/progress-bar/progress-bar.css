@@ -5,11 +5,7 @@
 :host {
     float: right;
     width: calc(100% - 460px);
-    margin-top: 8px;
-}
-
-#progress {
-    height: 100%;
+    margin-top: 18px;
 }
 
 #progress_bar {

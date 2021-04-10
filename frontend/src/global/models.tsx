@@ -2,6 +2,7 @@ export interface Track {
 	track_id: number
 	title: string
 	album: string
+	album_id: number
 	album_disc: number
 	artist: string
 	track_number: number
@@ -19,11 +20,16 @@ export interface Track {
 export interface Album {
 	album_id: number
 	title: string
-	artist: string
-	total_tracks: number
-	disc_number: number
 	total_discs: number
 	year: number
+}
+
+export interface AlbumDisc {
+	album_disc_id: number
+	album: string
+	album_id: number
+	disc_number: number
+	total_tracks: number
 }
 
 export interface Artist {

@@ -56,9 +56,12 @@ export namespace Components {
     }
     interface ProgressBar {
         "progress": number;
+        "seek_handler": (number) => void;
     }
     interface ProgressDot {
+        "parent": HTMLDivElement;
         "progress": number;
+        "seek_handler": (number) => void;
     }
     interface TrackStats {
         "track": Track;
@@ -244,9 +247,12 @@ declare namespace LocalJSX {
     }
     interface ProgressBar {
         "progress"?: number;
+        "seek_handler"?: (number) => void;
     }
     interface ProgressDot {
+        "parent"?: HTMLDivElement;
         "progress"?: number;
+        "seek_handler"?: (number) => void;
     }
     interface TrackStats {
         "track"?: Track;

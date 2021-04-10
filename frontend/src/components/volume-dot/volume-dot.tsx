@@ -10,8 +10,6 @@ export class VolumeDot {
 	@Prop() volume: number
 	@Prop() parent: HTMLDivElement
 	@Prop() volume_handler: (volume: number) => void
-	y_shift: number
-	initial_y: number
 	active = false
 
 	@Listen("touchstart")
@@ -19,11 +17,6 @@ export class VolumeDot {
 	async drag_start(event) {
 		document.querySelector("body").classList.add("noselect")
 		document.documentElement.style.overflow = "hidden"
-		if (event.type === "touchstart") {
-			this.initial_y = event.touches[0].clientY
-		} else {
-			this.initial_y = event.clientY
-		}
 
 		if (event.target === this.el) {
 			this.active = true
@@ -35,7 +28,6 @@ export class VolumeDot {
 	async drag_end() {
 		document.querySelector("body").classList.remove("noselect")
 		document.documentElement.style.overflow = "auto"
-		this.initial_y = this.y_shift
 		this.active = false
 	}
 

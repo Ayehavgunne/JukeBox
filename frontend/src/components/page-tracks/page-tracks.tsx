@@ -1,6 +1,6 @@
 import {Component, h, Host, Element, Listen, Prop, State} from "@stencil/core"
 import {Track} from "../../global/models"
-import {get_player_controls, ua_parser} from "../../global/app"
+import {get_player_controls, lazy_load, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
 
 @Component({
@@ -26,7 +26,7 @@ export class PageTracks {
 	}
 
 	async componentDidRender() {
-		await this.lazy_load()
+		await lazy_load(this.el)
 	}
 
 	playing_track_handler = async () => {
@@ -37,56 +37,6 @@ export class PageTracks {
 	@Listen("changing_track", {target: "body"})
 	changing_track_handler(event: CustomEvent<Track>) {
 		this.current_track = event.detail
-	}
-
-	lazy_load = async () => {
-		let lazyloadImages
-		if ("IntersectionObserver" in window) {
-			lazyloadImages = this.el.shadowRoot.querySelectorAll(".lazy")
-			let imageObserver = new IntersectionObserver(function (entries) {
-				entries.forEach(function (entry) {
-					if (entry.isIntersecting) {
-						// @ts-ignore
-						let image: HTMLImageElement = entry.target
-						image.src = image.dataset.src
-						image.classList.remove("lazy")
-						imageObserver.unobserve(image)
-					}
-				})
-			})
-
-			lazyloadImages.forEach(function (image) {
-				imageObserver.observe(image)
-			})
-		} else {
-			let lazyloadThrottleTimeout
-			lazyloadImages = document.querySelectorAll(".lazy")
-
-			let lazyload = () => {
-				if (lazyloadThrottleTimeout) {
-					clearTimeout(lazyloadThrottleTimeout)
-				}
-
-				lazyloadThrottleTimeout = setTimeout(function () {
-					let scrollTop = window.pageYOffset
-					lazyloadImages.forEach(function (img) {
-						if (img.offsetTop < window.innerHeight + scrollTop) {
-							img.src = img.dataset.src
-							img.classList.remove("lazy")
-						}
-					})
-					if (lazyloadImages.length == 0) {
-						document.removeEventListener("scroll", lazyload)
-						window.removeEventListener("resize", lazyload)
-						window.removeEventListener("orientationChange", lazyload)
-					}
-				}, 20)
-			}
-
-			document.addEventListener("scroll", lazyload)
-			window.addEventListener("resize", lazyload)
-			window.addEventListener("orientationChange", lazyload)
-		}
 	}
 
 	render() {
@@ -103,7 +53,7 @@ export class PageTracks {
 							if (index < 15) {
 								image = (
 									<img
-										src={`/tracks/${track.track_id}/image`}
+										src={`/albums/${track.album_id}/image`}
 										alt={`image of ${track.title} album`}
 										class="small"
 									/>
@@ -112,7 +62,7 @@ export class PageTracks {
 								image = (
 									<img
 										src=""
-										data-src={`/tracks/${track.track_id}/image`}
+										data-src={`/albums/${track.album_id}/image`}
 										alt={`image of ${track.title} album`}
 										class="small lazy"
 									/>
@@ -160,7 +110,7 @@ export class PageTracks {
 				<h3>Tracks</h3>
 				<table>
 					<thead>
-						<th />
+						{/*<th />*/}
 						<th />
 						<th>No.</th>
 						<th>Title</th>
@@ -183,7 +133,7 @@ export class PageTracks {
 							if (index < 30) {
 								image = (
 									<img
-										src={`/tracks/${track.track_id}/image`}
+										src={`/albums/${track.album_id}/image`}
 										alt={`image of ${track.title} album`}
 										class="small"
 									/>
@@ -192,7 +142,7 @@ export class PageTracks {
 								image = (
 									<img
 										src=""
-										data-src={`/tracks/${track.track_id}/image`}
+										data-src={`/albums/${track.album_id}/image`}
 										alt={`image of ${track.title} album`}
 										class="small lazy"
 									/>
@@ -200,39 +150,31 @@ export class PageTracks {
 							}
 							return (
 								<tr key={track.track_id} class={tr_class}>
-									<td class="first">
-										{playing_track ? (
-											<div class="playing">
-												<div class="playing_bar bar-1" />
-												<div class="playing_bar bar-2" />
-												<div class="playing_bar bar-3" />
-											</div>
-										) : (
-											<play-container
-												track={track}
-												click_handler={
-													this.playing_track_handler
-												}
-											>
-												<div class="play_track" />
-											</play-container>
-										)}
-									</td>
 									<td>
 										<play-container
 											track={track}
 											click_handler={this.playing_track_handler}
+											class="albumart"
 										>
 											{image}
+											{playing_track ? (
+												<div class="playing_bars">
+													<div class="playing_bar bar-1" />
+													<div class="playing_bar bar-2" />
+													<div class="playing_bar bar-3" />
+												</div>
+											) : (
+												<div class="play_track" />
+											)}
 										</play-container>
 									</td>
-									<td class="third">{track.track_number}</td>
+									<td class="number">{track.track_number}</td>
 									<td>{track.title}</td>
 									<td>{track.artist}</td>
 									<td>{track.album}</td>
-									<td class="fifth">{track.disc_number}</td>
-									<td>{track.year}</td>
-									<td class="last">
+									<td class="number">{track.disc_number}</td>
+									<td class="number">{track.year}</td>
+									<td class="number">
 										{new Date(track.length * 1000)
 											.toISOString()
 											.substr(14, 5)}

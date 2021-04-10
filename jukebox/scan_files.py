@@ -1,6 +1,7 @@
 import asyncio
 import mimetypes
 import sys
+from functools import partial
 from pathlib import Path
 
 import aiohttp
@@ -102,6 +103,7 @@ def scan_files() -> None:
     extensions = CONFIGS["extensions"]
     songs = []
     existing_files = [track.file_path for track in Track.select()]
+    # remove tracks that no longer exist in the file system
     for music_folder in music_folders:
         for song_file in [
             file for file in Path(music_folder).rglob("*") if file.suffix in extensions
@@ -178,11 +180,15 @@ async def get_artist_images() -> None:
         f"JukeBox/{__version__}",
         user_token=CONFIGS["discogs"]["user_token"],
     )
+    loop = asyncio.get_running_loop()
     for artist in artists:
         artist_info = None
         if artist.api_id is None:
             if artist_info is None:
-                artist_info = api_client.search(artist.name, type="artist")
+                artist_info = await loop.run_in_executor(
+                    None, partial(api_client.search, artist.name, type="artist")
+                )
+
                 if len(artist_info):
                     artist_info = artist_info[0]
                     if artist_info.name.lower() == artist.name.lower():
@@ -205,9 +211,13 @@ async def get_artist_images() -> None:
         if len(artist.images) == 0 or not artist.images[0].not_found:
             if artist_info is None:
                 if artist.api_id:
-                    artist_info = api_client.artist(artist.api_id)
+                    artist_info = await loop.run_in_executor(
+                        None, api_client.artist, str(artist.api_id)
+                    )
                 else:
-                    artist_info = api_client.search(artist.name, type="artist")
+                    artist_info = await loop.run_in_executor(
+                        None, partial(api_client.search, artist.name, type="artist")
+                    )
                     if len(artist_info):
                         artist_info = artist_info[0]
                     else:

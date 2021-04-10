@@ -140,6 +140,7 @@ class Track(BaseModel):
             "track_id": self.track_id,
             "title": self.title,
             "album": self.album.title,
+            "album_id": self.album.album_id,
             "album_disc": self.album_disc.album_disc_id,
             "artist": self.artist.name,
             "track_number": self.track_number,
