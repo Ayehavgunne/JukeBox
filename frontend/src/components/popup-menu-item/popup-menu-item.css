@@ -1,0 +1,8 @@
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+.popup_menu_item {
+    display: block;
+    cursor: pointer;
+}

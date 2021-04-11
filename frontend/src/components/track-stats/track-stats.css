@@ -1,11 +1,11 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.track_stats_host {
     margin-left: 10px;
     float: left;
-    width: 200px;
+    width: 215px;
     white-space: nowrap;
 }
 
@@ -27,7 +27,7 @@
     }
 }
 
-.wrapper {
+.track_wrapper{
     font-size: 1.15em;
     overflow: hidden;
 }
@@ -40,7 +40,7 @@
     position: relative;
 }
 
-.small {
+.track_stats_host .small {
     font-size: 0.75em;
 }
 
@@ -49,7 +49,7 @@
 }
 
 @media (max-width: 600px) {
-    :host {
+    .track_stats_host {
         width: calc(100% - 131px);
         font-size: 15px;
     }

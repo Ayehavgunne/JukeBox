@@ -1,11 +1,11 @@
-import {Component, Element, h, State} from "@stencil/core"
+import {Component, Element, h, Host, State} from "@stencil/core"
 import {Artist} from "../../global/models"
 import {lazy_load} from "../../global/app"
 
 @Component({
 	tag: "page-artists",
 	styleUrl: "page-artists.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageArtists {
 	@Element() el: HTMLPageArtistsElement
@@ -22,7 +22,7 @@ export class PageArtists {
 
 	render() {
 		return (
-			<div class="container">
+			<Host class="page_artists_host">
 				<h3>Artists</h3>
 				<ul>
 					{this.artists.map((artist, index) => {
@@ -32,7 +32,7 @@ export class PageArtists {
 								<img
 									src={`/artists/${artist.artist_id}/image`}
 									alt={`image of ${artist.name}`}
-									class="small"
+									class="medium"
 								/>
 							)
 						} else {
@@ -41,7 +41,7 @@ export class PageArtists {
 									src=""
 									data-src={`/artists/${artist.artist_id}/image`}
 									alt={`image of ${artist.name}`}
-									class="small lazy"
+									class="medium lazy"
 								/>
 							)
 						}
@@ -57,7 +57,7 @@ export class PageArtists {
 						)
 					})}
 				</ul>
-			</div>
+			</Host>
 		)
 	}
 }

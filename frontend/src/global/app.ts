@@ -12,7 +12,7 @@ export let ua_parser = new UAParser(navigator.userAgent)
 export let lazy_load = async (el: Element) => {
 	let lazyloadImages
 	if ("IntersectionObserver" in window) {
-		lazyloadImages = el.shadowRoot.querySelectorAll(".lazy")
+		lazyloadImages = el.querySelectorAll(".lazy")
 		let imageObserver = new IntersectionObserver(function (entries) {
 			entries.forEach(function (entry) {
 				if (entry.isIntersecting) {

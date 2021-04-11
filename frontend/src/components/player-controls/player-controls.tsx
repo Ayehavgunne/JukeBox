@@ -1,4 +1,13 @@
-import {Component, Element, Event, EventEmitter, h, Method, State} from "@stencil/core"
+import {
+	Component,
+	Element,
+	Event,
+	EventEmitter,
+	h,
+	Host,
+	Method,
+	State,
+} from "@stencil/core"
 import {Components} from "../../components"
 import ProgressBar = Components.ProgressBar
 import {Track} from "../../global/models"
@@ -6,30 +15,29 @@ import {worker} from "../../progress.worker?worker"
 import {Howl} from "howler"
 import {ua_parser} from "../../global/app"
 
-const formats = ["flac", "mp3", "m4a"]
+const formats = ["m4a", "flac", "mp3"]
 
 @Component({
 	tag: "player-controls",
 	styleUrl: "player-controls.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PlayerControls {
 	@Element() el: HTMLPlayerControlsElement
 	@Event({eventName: "changing_track"}) changing_track: EventEmitter<Track>
-	@State() current_track_data: Track
-	@State() next_track_data: Track
-	@State() playlist_index: number = -1
 	@State() paused: boolean = true
 	@State() shuffle: boolean = false
-	@State() nearing_track_end: boolean = false
-	@State() playlist: Array<Track> = []
-	@State() ordered_playlist: Array<Track> = []
 	@State() volume_bar_hidden = true
-	@State() volume = 0.6
 	current_track: Howl
+	current_track_data: Track
+	nearing_track_end: boolean = false
 	next_track: Howl
+	next_track_data: Track
+	ordered_playlist: Array<Track> = []
 	os_hide_volume: boolean
-	volume_button: HTMLDivElement
+	queue: Array<Track> = []
+	queue_index: number = -1
+	volume = 0.6
 	volume_wrapper: HTMLDivElement
 	volume_bar: HTMLDivElement
 
@@ -53,7 +61,7 @@ export class PlayerControls {
 	}
 
 	doc_hide_volume_bar = event => {
-		if (event.target !== this.volume_button && !this.el.contains(event.target)) {
+		if (!this.volume_wrapper.contains(event.target)) {
 			this.volume_bar_hidden = true
 			document.removeEventListener("click", this.doc_hide_volume_bar)
 		}
@@ -65,7 +73,7 @@ export class PlayerControls {
 			if (this.current_track.seek() > 1.5) {
 				this.current_track.seek(0)
 			} else {
-				await this.change_to_track(this.playlist_index - 1)
+				await this.change_to_track(this.queue_index - 1)
 			}
 			worker.postMessage("start_progress")
 		}
@@ -83,7 +91,7 @@ export class PlayerControls {
 	async play_next_track() {
 		if (this.current_track) {
 			// check if this.next_track has been loaded
-			await this.change_to_track(this.playlist_index + 1)
+			await this.change_to_track(this.queue_index + 1)
 			worker.postMessage("start_progress")
 		}
 	}
@@ -112,10 +120,22 @@ export class PlayerControls {
 	}
 
 	@Method()
-	async set_playlist(tracks: Array<Track>) {
-		this.playlist = tracks
+	async set_queue(tracks: Array<Track>) {
+		this.queue = tracks
 		this.ordered_playlist = tracks
-		this.playlist_index = this.playlist.indexOf(this.current_track_data)
+		this.queue_index = this.queue.indexOf(this.current_track_data)
+	}
+
+	@Method()
+	async add_next_in_queue(track: Track) {
+		this.queue.splice(this.queue_index + 1, 0, track)
+		this.ordered_playlist.splice(this.queue_index + 1, 0, track)
+	}
+
+	@Method()
+	async append_to_queue(tracks: Array<Track>) {
+		this.queue.concat(tracks)
+		this.ordered_playlist.concat(tracks)
 	}
 
 	seek = async (percent: number) => {
@@ -142,8 +162,8 @@ export class PlayerControls {
 			this.current_track.stop()
 			delete this.current_track
 		}
-		this.playlist_index = track_index
-		this.current_track_data = this.playlist[this.playlist_index]
+		this.queue_index = track_index
+		this.current_track_data = this.queue[this.queue_index]
 		this.current_track = new Howl({
 			src: "/stream/" + this.current_track_data.track_id,
 			format: formats,
@@ -158,14 +178,14 @@ export class PlayerControls {
 	auto_change_to_next_track = async () => {
 		// this.playlist_index = // loops index around when out of bounds
 		// 	(this.playlist_index + 1 + this.playlist.length) % this.playlist.length
-		this.playlist_index += 1
-		if (this.playlist_index < this.playlist.length) {
+		this.queue_index += 1
+		if (this.queue_index < this.queue.length) {
 			this.current_track = this.next_track
 			delete this.next_track
 			this.play().then(() => {
 				// nothin
 			})
-			this.current_track_data = this.playlist[this.playlist_index]
+			this.current_track_data = this.queue[this.queue_index]
 			this.changing_track.emit(this.current_track_data)
 		}
 	}
@@ -183,14 +203,14 @@ export class PlayerControls {
 		if (this.shuffle) {
 			await this.shuffle_playlist()
 		} else {
-			this.playlist = this.ordered_playlist
+			this.queue = this.ordered_playlist
 		}
 	}
 
 	preload_next_track = async () => {
-		if (this.playlist_index + 1 < this.playlist.length) {
+		if (this.queue_index + 1 < this.queue.length) {
 			console.log("preloading next track")
-			this.next_track_data = this.playlist[this.playlist_index + 1]
+			this.next_track_data = this.queue[this.queue_index + 1]
 			this.next_track = new Howl({
 				src: "/get/" + this.next_track_data.track_id,
 				format: formats,
@@ -206,9 +226,7 @@ export class PlayerControls {
 			// @ts-ignore
 			let current_time: number = this.current_track.seek() || 0
 			let progress = (current_time / duration) * 100
-			let progres_bar: ProgressBar = this.el.shadowRoot.querySelector(
-				"progress-bar",
-			)
+			let progres_bar: ProgressBar = this.el.querySelector("progress-bar")
 			progres_bar.progress = progress
 			if (!this.nearing_track_end && duration - current_time < 30) {
 				this.nearing_track_end = true
@@ -241,8 +259,8 @@ export class PlayerControls {
 			currentIndex -= 1
 
 			temporaryValue = this.ordered_playlist[currentIndex]
-			this.playlist[currentIndex] = this.ordered_playlist[randomIndex]
-			this.playlist[randomIndex] = temporaryValue
+			this.queue[currentIndex] = this.ordered_playlist[randomIndex]
+			this.queue[randomIndex] = temporaryValue
 		}
 	}
 
@@ -261,12 +279,6 @@ export class PlayerControls {
 		this.next_track?.volume(this.volume)
 	}
 
-	// var clickPosition = (e.pageX  - this.offsetLeft) / this.offsetWidth;
-	// var clickTime = clickPosition * this.current_track?.duration;
-	//
-	// // move the playhead to the correct position
-	// this.current_track?.currentTime = clickTime;
-
 	// cache.delete
 
 	render() {
@@ -274,12 +286,12 @@ export class PlayerControls {
 		if (this.volume === 0) {
 			speaker_class = "speaker -off"
 		}
-		let wrapper_class = "wrapper hidden"
+		let wrapper_class = "volume_wrapper hidden"
 		if (!this.volume_bar_hidden) {
-			wrapper_class = "wrapper showing"
+			wrapper_class = "volume_wrapper showing"
 		}
 		return (
-			<div class="container">
+			<Host class="player_controls_host">
 				<div class="prev" onClick={this.play_previous_track.bind(this)} />
 				<play-button
 					paused={this.paused}
@@ -288,11 +300,7 @@ export class PlayerControls {
 				<div class="next" onClick={this.play_next_track.bind(this)} />
 				<track-stats track={this.current_track_data} />
 				{this.os_hide_volume && (
-					<div
-						class="volume"
-						onClick={this.toggle_volume_showing}
-						ref={el => (this.volume_button = el as HTMLDivElement)}
-					>
+					<div class="volume" onClick={this.toggle_volume_showing}>
 						<div class={speaker_class} />
 						<div
 							class={wrapper_class}
@@ -312,7 +320,7 @@ export class PlayerControls {
 					</div>
 				)}
 				<progress-bar seek_handler={this.seek} />
-			</div>
+			</Host>
 		)
 	}
 }

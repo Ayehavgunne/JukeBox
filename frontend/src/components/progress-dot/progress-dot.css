@@ -1,8 +1,8 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.progress_dot_host {
     width: 10px;
     height: 10px;
     position: relative;
@@ -12,21 +12,23 @@
     transform: translateX(-5px);
 }
 
-div {
+.progress_dot {
     border-radius: 50%;
     background-color: #15dea5;
     width: 10px;
     height: 10px;
+    cursor: pointer;
+    transition: transform 100ms ease-in-out;
 }
 
 @media (max-width: 600px) {
-    :host {
+    .progress_dot_host {
         width: 15px;
         height: 15px;
         bottom: 7px;
     }
 
-    div {
+    .progress_dot {
         width: 15px;
         height: 15px;
     }

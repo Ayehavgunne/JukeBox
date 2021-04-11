@@ -1,4 +1,4 @@
-import {Component, h, Host, Element, Listen, Prop, State} from "@stencil/core"
+import {Component, h, Host, Element, Listen, Prop} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls, lazy_load, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
@@ -6,14 +6,14 @@ import {MatchResults} from "@stencil/router"
 @Component({
 	tag: "page-tracks",
 	styleUrl: "page-tracks.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageTracks {
 	@Element() el: HTMLPageTracksElement
 	@Prop() match: MatchResults
 	@Prop({mutable: true}) current_track: Track
-	@State() tracks: Array<Track>
-	@State() device_type: string
+	tracks: Array<Track>
+	device_type: string
 
 	async componentWillLoad() {
 		let url = "/tracks"
@@ -31,7 +31,7 @@ export class PageTracks {
 
 	playing_track_handler = async () => {
 		const controler = await get_player_controls()
-		await controler.set_playlist(this.tracks)
+		await controler.set_queue(this.tracks)
 	}
 
 	@Listen("changing_track", {target: "body"})
@@ -39,10 +39,30 @@ export class PageTracks {
 		this.current_track = event.detail
 	}
 
+	love_track = async (event: MouseEvent) => {
+		let target = event.target as HTMLPopupMenuItemElement
+		console.log("love track", target.data)
+	}
+
+	add_track_to_playlist = async (event: MouseEvent) => {
+		let target = event.target as HTMLPopupMenuItemElement
+		console.log("add track to playlist", target, target.data)
+	}
+
+	play_track_next = async (event: MouseEvent) => {
+		let target = event.target as HTMLPopupMenuItemElement
+		console.log("play track next", target.data)
+	}
+
+	append_track_to_queue = async (event: MouseEvent) => {
+		let target = event.target as HTMLPopupMenuItemElement
+		console.log("append track to queue", target.data)
+	}
+
 	render() {
 		if (this.device_type === "mobile") {
 			return (
-				<Host>
+				<Host class="page_tracks_host">
 					<h3>Tracks</h3>
 					<ul>
 						{this.tracks.map((track, index) => {
@@ -69,7 +89,7 @@ export class PageTracks {
 								)
 							}
 							return (
-								<li>
+								<li key={track.track_id}>
 									<play-container
 										track={track}
 										click_handler={this.playing_track_handler}
@@ -106,11 +126,11 @@ export class PageTracks {
 			)
 		}
 		return (
-			<Host>
+			<Host class="page_tracks_host">
 				<h3>Tracks</h3>
 				<table>
 					<thead>
-						{/*<th />*/}
+						<th />
 						<th />
 						<th>No.</th>
 						<th>Title</th>
@@ -150,6 +170,34 @@ export class PageTracks {
 							}
 							return (
 								<tr key={track.track_id} class={tr_class}>
+									<td class="menu">
+										{/*<popup-menu>*/}
+										{/*	<popup-menu-item*/}
+										{/*		onClick={this.love_track}*/}
+										{/*		data={track}*/}
+										{/*	>*/}
+										{/*		Love*/}
+										{/*	</popup-menu-item>*/}
+										{/*	<popup-menu-item*/}
+										{/*		onClick={this.add_track_to_playlist}*/}
+										{/*		data={track}*/}
+										{/*	>*/}
+										{/*		Add to a playlist*/}
+										{/*	</popup-menu-item>*/}
+										{/*	<popup-menu-item*/}
+										{/*		onClick={this.play_track_next}*/}
+										{/*		data={track}*/}
+										{/*	>*/}
+										{/*		Play Next*/}
+										{/*	</popup-menu-item>*/}
+										{/*	<popup-menu-item*/}
+										{/*		onClick={this.append_track_to_queue}*/}
+										{/*		data={track}*/}
+										{/*	>*/}
+										{/*		Append to Queue*/}
+										{/*	</popup-menu-item>*/}
+										{/*</popup-menu>*/}
+									</td>
 									<td>
 										<play-container
 											track={track}

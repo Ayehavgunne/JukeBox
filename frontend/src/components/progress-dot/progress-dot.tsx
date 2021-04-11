@@ -3,7 +3,7 @@ import {Component, Element, h, Host, Listen, Prop, Watch} from "@stencil/core"
 @Component({
 	tag: "progress-dot",
 	styleUrl: "progress-dot.css",
-	shadow: true,
+	// shadow: true,
 })
 export class ProgressDot {
 	@Element() el: HTMLProgressDotElement
@@ -12,13 +12,14 @@ export class ProgressDot {
 	@Prop() seek_handler: (number) => void
 	mew_position: number
 	active = false
+	progress_dot: HTMLDivElement
 
 	@Listen("touchstart")
 	@Listen("mousedown")
 	async drag_start(event) {
 		document.querySelector("body").classList.add("noselect")
 
-		if (event.target === this.el) {
+		if (event.target === this.el || event.target === this.progress_dot) {
 			this.active = true
 		}
 	}
@@ -65,8 +66,11 @@ export class ProgressDot {
 
 	render() {
 		return (
-			<Host>
-				<div />
+			<Host class="progress_dot_host">
+				<div
+					class="progress_dot"
+					ref={el => (this.progress_dot = el as HTMLDivElement)}
+				/>
 			</Host>
 		)
 	}

@@ -1,8 +1,8 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.app_root_host {
     height: 100%;
 }
 
@@ -33,7 +33,7 @@ h1 {
     padding: 0 12px;
 }
 
-h3 {
+nav h3 {
     margin-bottom: 5px;
 }
 
@@ -66,11 +66,11 @@ nav, main {
     height: calc(100% - 56px);
 }
 
-ul {
+nav ul {
     padding-left: 10px;
 }
 
-li {
+nav li {
     list-style: none;
     padding-bottom: 5px;
 }

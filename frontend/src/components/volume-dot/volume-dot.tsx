@@ -3,7 +3,7 @@ import {Component, Host, h, Element, Prop, Listen} from "@stencil/core"
 @Component({
 	tag: "volume-dot",
 	styleUrl: "volume-dot.css",
-	shadow: true,
+	// shadow: true,
 })
 export class VolumeDot {
 	@Element() el: HTMLVolumeDotElement
@@ -11,6 +11,7 @@ export class VolumeDot {
 	@Prop() parent: HTMLDivElement
 	@Prop() volume_handler: (volume: number) => void
 	active = false
+	vol_dot: HTMLDivElement
 
 	@Listen("touchstart")
 	@Listen("mousedown")
@@ -18,7 +19,7 @@ export class VolumeDot {
 		document.querySelector("body").classList.add("noselect")
 		document.documentElement.style.overflow = "hidden"
 
-		if (event.target === this.el) {
+		if (event.target === this.el || event.target === this.vol_dot) {
 			this.active = true
 		}
 	}
@@ -55,8 +56,11 @@ export class VolumeDot {
 
 	render() {
 		return (
-			<Host>
-				<div />
+			<Host class="volume_dot_host">
+				<div
+					class="volume_dot"
+					ref={el => (this.vol_dot = el as HTMLDivElement)}
+				/>
 			</Host>
 		)
 	}

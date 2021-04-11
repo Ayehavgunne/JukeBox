@@ -1,12 +1,12 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.page_tracks_host {
     background-color: #181a1b;
 }
 
-h3 {
+.page_tracks_host h3 {
     margin-top: 3px;
     margin-bottom: 3px;
     font-size: 1.4em;
@@ -20,26 +20,12 @@ table {
     border-collapse: collapse;
 }
 
-th:first-child {
-    border-right: 0;
-}
-
 th {
-    border-right: solid 1px #4a4a4a;
-    padding: 0 8px;
+    padding: 4px 8px;
     position: sticky;
     top: 0;
     background-color: #181a1b;
     z-index: 1;
-}
-
-th:first-child {
-    position: sticky;
-    left: 0;
-}
-
-th:last-child {
-    border-right: 0;
 }
 
 tr:first-child td {
@@ -52,13 +38,6 @@ tr:hover {
 
 .playing_row {
     background-color: #696969;
-}
-
-td:first-child {
-    border-top: 0;
-    position: sticky;
-    left: 0;
-    background-color: #181a1b;
 }
 
 td {
@@ -145,13 +124,13 @@ tr:hover .play_track {
     float: left;
 }
 
-ul {
+.page_tracks_host ul {
     padding-left: 2px;
     height: calc(100% - 51px);
     overflow: auto;
 }
 
-li {
+.page_tracks_host li {
     list-style: none;
     height: 55px
 }
@@ -176,9 +155,13 @@ li {
     font-size: .8em;
 }
 
-img.small {
+.page_tracks_host .small {
     height: 50px;
     width: 50px;
+}
+
+.menu {
+    position: relative;
 }
 
 @media (max-width: 600px) {

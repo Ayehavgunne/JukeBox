@@ -1,11 +1,17 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.progress_bar_host {
     float: right;
     width: calc(100% - 460px);
-    margin-top: 18px;
+    padding-top: 18px;
+    padding-bottom: 13px;
+    cursor: pointer;
+}
+
+.progress_bar_host:hover .progress_dot {
+    transform: scale(1.5);
 }
 
 #progress_bar {
@@ -14,7 +20,7 @@
 }
 
 @media (max-width: 600px) {
-    :host {
+    .progress_bar_host {
         float: right;
         width: 100%;
         margin-top: 8px;

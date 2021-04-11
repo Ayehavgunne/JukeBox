@@ -3,7 +3,7 @@ import {Component, Host, h} from "@stencil/core"
 @Component({
 	tag: "page-settings",
 	styleUrl: "page-settings.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageSettings {
 	scan_files = async () => {
@@ -15,7 +15,7 @@ export class PageSettings {
 
 	render() {
 		return (
-			<Host>
+			<Host class="page_settings_host">
 				<h3>Tasks</h3>
 				<button onClick={this.scan_files}>Scan Music</button>
 				<button onClick={this.get_artist_images}>Get Artist Images</button>

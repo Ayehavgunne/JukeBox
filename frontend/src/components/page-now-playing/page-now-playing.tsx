@@ -1,17 +1,17 @@
-import {Component, h} from "@stencil/core"
+import {Component, h, Host} from "@stencil/core"
 
 @Component({
 	tag: "page-now-playing",
 	styleUrl: "page-now-playing.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageNowPlaying {
 	render() {
 		return (
-			<div>
+			<Host class="page_now_playing_host">
 				<h3>Now Playing</h3>
 				Nothing here yet. Move along.
-			</div>
+			</Host>
 		)
 	}
 }

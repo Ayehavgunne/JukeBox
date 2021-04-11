@@ -1,4 +1,4 @@
-import {Component, Element, h, Prop, State} from "@stencil/core"
+import {Component, Element, h, Host, Prop, State} from "@stencil/core"
 import {MatchResults} from "@stencil/router"
 import {Album} from "../../global/models"
 import {lazy_load} from "../../global/app"
@@ -6,7 +6,7 @@ import {lazy_load} from "../../global/app"
 @Component({
 	tag: "page-albums",
 	styleUrl: "page-albums.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageAlbums {
 	@Element() el: HTMLPageAlbumsElement
@@ -28,7 +28,7 @@ export class PageAlbums {
 
 	render() {
 		return (
-			<div class="container">
+			<Host class="page_albums_host">
 				<h3>Albums</h3>
 				<ul>
 					{this.albums.map((album, index) => {
@@ -38,7 +38,7 @@ export class PageAlbums {
 								<img
 									src={`/albums/${album.album_id}/image`}
 									alt={`image of ${album.title}`}
-									class="small"
+									class="medium"
 								/>
 							)
 						} else {
@@ -47,7 +47,7 @@ export class PageAlbums {
 									src=""
 									data-src={`/albums/${album.album_id}/image`}
 									alt={`image of ${album.title}`}
-									class="small lazy"
+									class="medium lazy"
 								/>
 							)
 						}
@@ -63,7 +63,7 @@ export class PageAlbums {
 						)
 					})}
 				</ul>
-			</div>
+			</Host>
 		)
 	}
 }

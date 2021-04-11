@@ -3,7 +3,7 @@ import {Component, h, Host, Listen, Prop} from "@stencil/core"
 @Component({
 	tag: "play-button",
 	styleUrl: "play-button.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PlayButton {
 	@Prop() paused: boolean = true

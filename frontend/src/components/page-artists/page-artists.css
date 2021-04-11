@@ -1,43 +1,38 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-.container {
+.page_artists_host {
     height: 100%;
     overflow: auto;
 }
 
-h3 {
+.page_artists_host h3 {
     margin-top: 3px;
     margin-bottom: 3px;
     font-size: 1.4em;
 }
 
-ul {
+.page_artists_host ul {
     padding-left: 0;
 }
 
-li {
+.page_artists_host li {
     list-style: none;
     font-size: 2em;
     height: 110px;
 }
 
 a:visited, a:link, a:hover, a:active {
-    color: #fff;
-    text-decoration: none;
+    /*color: #fff;*/
+    /*text-decoration: none;*/
     height: 100%;
     display: inline-block;
     width: 100%;
 }
 
-img {
+.page_artists_host img {
     margin-right: 12px;
-}
-
-img.small {
-    height: 100px;
-    width: 100px;
 }
 
 .artist_image {

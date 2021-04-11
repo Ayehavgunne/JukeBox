@@ -1,10 +1,10 @@
-import {Component, Prop, h} from "@stencil/core"
+import {Component, Prop, h, Host} from "@stencil/core"
 import {MatchResults} from "@stencil/router"
 
 @Component({
 	tag: "page-profile",
 	styleUrl: "page-profile.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageProfile {
 	@Prop() match: MatchResults
@@ -19,13 +19,15 @@ export class PageProfile {
 	render() {
 		if (this.match && this.match.params.name) {
 			return (
-				<div>
+				<Host class="page_profile_host">
 					<p>
 						Hello {this.normalize(this.match.params.name)}. I don't have
 						this implimented yet so make like a tree and do something else.
 					</p>
-				</div>
+				</Host>
 			)
+		} else {
+			return <Host class="page_profile_host" />
 		}
 	}
 }

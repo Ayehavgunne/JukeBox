@@ -1,14 +1,13 @@
-import {Component, Host, h, Event, EventEmitter, Prop, Listen} from "@stencil/core"
+import {Component, Host, h, Prop, Listen} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls} from "../../global/app"
 
 @Component({
 	tag: "play-container",
 	styleUrl: "play-container.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PlayContainer {
-	@Event() playing_track: EventEmitter<number>
 	@Prop() track: Track
 	@Prop() click_handler: () => void
 
@@ -22,7 +21,7 @@ export class PlayContainer {
 
 	render() {
 		return (
-			<Host>
+			<Host class="play_container_host">
 				<slot />
 			</Host>
 		)

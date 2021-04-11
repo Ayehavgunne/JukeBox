@@ -1,9 +1,9 @@
-import {Component, h, State} from "@stencil/core"
+import {Component, h, Host, State} from "@stencil/core"
 
 @Component({
 	tag: "page-genres",
 	styleUrl: "page-genres.css",
-	shadow: true,
+	// shadow: true,
 })
 export class PageGenres {
 	@State() genres: Array<string>
@@ -15,7 +15,7 @@ export class PageGenres {
 
 	render() {
 		return (
-			<div>
+			<Host class="page_genres_host">
 				<h3>Genres</h3>
 				{this.genres.map(genre => {
 					return (
@@ -26,7 +26,7 @@ export class PageGenres {
 						</li>
 					)
 				})}
-			</div>
+			</Host>
 		)
 	}
 }

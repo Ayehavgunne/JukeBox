@@ -3,7 +3,7 @@ import {Component, h, Listen, Prop} from "@stencil/core"
 @Component({
 	tag: "menu-toggle",
 	styleUrl: "menu-toggle.css",
-	shadow: true,
+	// shadow: true,
 })
 export class MenuToggle {
 	@Prop() showing: boolean = true
@@ -16,7 +16,7 @@ export class MenuToggle {
 	}
 
 	render() {
-		let classes = "hamburger--arrowalt"
+		let classes = "hamburger hamburger--arrowalt"
 		if (this.showing) {
 			classes += " is-active"
 		}

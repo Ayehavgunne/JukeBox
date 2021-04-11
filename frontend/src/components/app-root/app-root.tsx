@@ -4,7 +4,6 @@ import {Track} from "../../global/models"
 @Component({
 	tag: "app-root",
 	styleUrl: "app-root.css",
-	shadow: false,
 })
 export class AppRoot {
 	@Element() el: HTMLElement
@@ -33,7 +32,7 @@ export class AppRoot {
 		}
 
 		return (
-			<Host>
+			<Host class="app_root_host">
 				<nav class={classes}>
 					<header>
 						<h1>JukeBox</h1>

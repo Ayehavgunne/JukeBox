@@ -1,8 +1,12 @@
-:host {
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+.page_settings_host {
     display: block;
 }
 
-button {
+.page_settings_host button {
     background: transparent;
     border: 1px solid #4a4a4a;
     color: white;

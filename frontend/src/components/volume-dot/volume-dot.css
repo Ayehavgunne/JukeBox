@@ -1,8 +1,8 @@
-* {
-    box-sizing: border-box;
-}
+/** {*/
+/*    box-sizing: border-box;*/
+/*}*/
 
-:host {
+.volume_dot_host {
     width: 9px;
     height: 9px;
     position: absolute;
@@ -12,22 +12,23 @@
     z-index: 2;
 }
 
-div {
+.volume_dot {
     border-radius: 50%;
     background-color: #15dea5;
     width: 9px;
     height: 9px;
     cursor: pointer;
+    transition: transform 100ms ease-in-out;
 }
 
 @media (max-width: 600px) {
-    :host {
+    .volume_dot_host {
         width: 30px;
         height: 15px;
         right: -15px;
     }
 
-    div {
+    .volume_dot {
         width: 15px;
         height: 15px;
         position: absolute;

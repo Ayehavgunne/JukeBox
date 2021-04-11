@@ -4,7 +4,7 @@ import {Track} from "../../global/models"
 @Component({
 	tag: "track-stats",
 	styleUrl: "track-stats.css",
-	shadow: true,
+	// shadow: true,
 })
 export class TrackStats {
 	@Prop() track: Track
@@ -60,8 +60,8 @@ export class TrackStats {
 	render() {
 		if (this.track) {
 			return (
-				<Host>
-					<div class="wrapper">
+				<Host class="track_stats_host">
+					<div class="track_wrapper">
 						<div
 							class="slider"
 							ref={el => (this.title_div = el as HTMLDivElement)}
@@ -69,7 +69,7 @@ export class TrackStats {
 							{this.track.title}
 						</div>
 					</div>
-					<div class="wrapper small">
+					<div class="track_wrapper small">
 						<div
 							class="slider"
 							ref={el => (this.artist_div = el as HTMLDivElement)}

@@ -47,12 +47,19 @@ export namespace Components {
         "track": Track;
     }
     interface PlayerControls {
+        "add_next_in_queue": (track: Track) => Promise<void>;
+        "append_to_queue": (tracks: Array<Track>) => Promise<void>;
         "pause": () => Promise<void>;
         "play": () => Promise<void>;
         "play_next_track": () => Promise<void>;
         "play_previous_track": () => Promise<void>;
-        "set_playlist": (tracks: Array<Track>) => Promise<void>;
+        "set_queue": (tracks: Array<Track>) => Promise<void>;
         "set_track": (track: Track) => Promise<void>;
+    }
+    interface PopupMenu {
+    }
+    interface PopupMenuItem {
+        "data": any;
     }
     interface ProgressBar {
         "progress": number;
@@ -157,6 +164,18 @@ declare global {
         prototype: HTMLPlayerControlsElement;
         new (): HTMLPlayerControlsElement;
     };
+    interface HTMLPopupMenuElement extends Components.PopupMenu, HTMLStencilElement {
+    }
+    var HTMLPopupMenuElement: {
+        prototype: HTMLPopupMenuElement;
+        new (): HTMLPopupMenuElement;
+    };
+    interface HTMLPopupMenuItemElement extends Components.PopupMenuItem, HTMLStencilElement {
+    }
+    var HTMLPopupMenuItemElement: {
+        prototype: HTMLPopupMenuItemElement;
+        new (): HTMLPopupMenuItemElement;
+    };
     interface HTMLProgressBarElement extends Components.ProgressBar, HTMLStencilElement {
     }
     var HTMLProgressBarElement: {
@@ -196,6 +215,8 @@ declare global {
         "play-button": HTMLPlayButtonElement;
         "play-container": HTMLPlayContainerElement;
         "player-controls": HTMLPlayerControlsElement;
+        "popup-menu": HTMLPopupMenuElement;
+        "popup-menu-item": HTMLPopupMenuItemElement;
         "progress-bar": HTMLProgressBarElement;
         "progress-dot": HTMLProgressDotElement;
         "track-stats": HTMLTrackStatsElement;
@@ -239,11 +260,15 @@ declare namespace LocalJSX {
     }
     interface PlayContainer {
         "click_handler"?: () => void;
-        "onPlaying_track"?: (event: CustomEvent<number>) => void;
         "track"?: Track;
     }
     interface PlayerControls {
         "onChanging_track"?: (event: CustomEvent<Track>) => void;
+    }
+    interface PopupMenu {
+    }
+    interface PopupMenuItem {
+        "data"?: any;
     }
     interface ProgressBar {
         "progress"?: number;
@@ -277,6 +302,8 @@ declare namespace LocalJSX {
         "play-button": PlayButton;
         "play-container": PlayContainer;
         "player-controls": PlayerControls;
+        "popup-menu": PopupMenu;
+        "popup-menu-item": PopupMenuItem;
         "progress-bar": ProgressBar;
         "progress-dot": ProgressDot;
         "track-stats": TrackStats;
@@ -301,6 +328,8 @@ declare module "@stencil/core" {
             "play-button": LocalJSX.PlayButton & JSXBase.HTMLAttributes<HTMLPlayButtonElement>;
             "play-container": LocalJSX.PlayContainer & JSXBase.HTMLAttributes<HTMLPlayContainerElement>;
             "player-controls": LocalJSX.PlayerControls & JSXBase.HTMLAttributes<HTMLPlayerControlsElement>;
+            "popup-menu": LocalJSX.PopupMenu & JSXBase.HTMLAttributes<HTMLPopupMenuElement>;
+            "popup-menu-item": LocalJSX.PopupMenuItem & JSXBase.HTMLAttributes<HTMLPopupMenuItemElement>;
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
             "progress-dot": LocalJSX.ProgressDot & JSXBase.HTMLAttributes<HTMLProgressDotElement>;
             "track-stats": LocalJSX.TrackStats & JSXBase.HTMLAttributes<HTMLTrackStatsElement>;
