@@ -13,7 +13,7 @@ import ProgressBar = Components.ProgressBar
 import {Track} from "../../global/models"
 import {worker} from "../../progress.worker?worker"
 import {Howl} from "howler"
-import {ua_parser} from "../../global/app"
+import {print, ua_parser} from "../../global/app"
 
 const formats = ["m4a", "flac", "mp3"]
 
@@ -116,6 +116,7 @@ export class PlayerControls {
 		})
 		this.add_event_listeners(this.current_track)
 		this.current_track_data = track
+		document.title = this.current_track_data.title + " - JukeBox"
 		this.changing_track.emit(this.current_track_data)
 	}
 
@@ -170,6 +171,7 @@ export class PlayerControls {
 			volume: this.volume,
 			html5: true,
 		})
+		document.title = this.current_track_data.title + " - JukeBox"
 		this.add_event_listeners(this.current_track)
 		this.changing_track.emit(this.current_track_data)
 		this.current_track.play()
@@ -186,6 +188,7 @@ export class PlayerControls {
 				// nothin
 			})
 			this.current_track_data = this.queue[this.queue_index]
+			document.title = this.current_track_data.title + " - JukeBox"
 			this.changing_track.emit(this.current_track_data)
 		}
 	}
@@ -209,7 +212,7 @@ export class PlayerControls {
 
 	preload_next_track = async () => {
 		if (this.queue_index + 1 < this.queue.length) {
-			console.log("preloading next track")
+			print("preloading next track")
 			this.next_track_data = this.queue[this.queue_index + 1]
 			this.next_track = new Howl({
 				src: "/get/" + this.next_track_data.track_id,

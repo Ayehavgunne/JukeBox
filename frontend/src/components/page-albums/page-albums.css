@@ -24,8 +24,6 @@
 }
 
 a:visited, a:link, a:hover, a:active {
-    /*color: #fff;*/
-    /*text-decoration: none;*/
     height: 100%;
     display: inline-block;
     width: 100%;

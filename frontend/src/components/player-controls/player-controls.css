@@ -69,15 +69,15 @@
 }
 
 .volume_wrapper {
-    background-color: rgba(77, 77, 77, .66);
+    background-color: rgba(31, 31, 31, 0.66);
+    box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     width: 22px;
     height: 200px;
     position: relative;
     bottom: 218px;
     right: 3px;
-    box-shadow: 0 0 1px 1px rgba(77, 77, 77, .66);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
 }
 
 .hidden {
@@ -90,7 +90,7 @@
     border-left: solid 1px #e8e6e3;
     position: absolute;
     left: 10px;
-    bottom: 2px;
+    bottom: 5px;
 }
 
 .speaker {

@@ -10,6 +10,12 @@ import { Track } from "./global/models";
 export namespace Components {
     interface AppRoot {
     }
+    interface CacheImg {
+        "alt": string;
+        "class"?: string;
+        "placeholder"?: string;
+        "src": string;
+    }
     interface MenuToggle {
         "showing": boolean;
         "toggle": () => void;
@@ -85,6 +91,12 @@ declare global {
     var HTMLAppRootElement: {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
+    };
+    interface HTMLCacheImgElement extends Components.CacheImg, HTMLStencilElement {
+    }
+    var HTMLCacheImgElement: {
+        prototype: HTMLCacheImgElement;
+        new (): HTMLCacheImgElement;
     };
     interface HTMLMenuToggleElement extends Components.MenuToggle, HTMLStencilElement {
     }
@@ -202,6 +214,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "app-root": HTMLAppRootElement;
+        "cache-img": HTMLCacheImgElement;
         "menu-toggle": HTMLMenuToggleElement;
         "page-albums": HTMLPageAlbumsElement;
         "page-artists": HTMLPageArtistsElement;
@@ -225,6 +238,12 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AppRoot {
+    }
+    interface CacheImg {
+        "alt"?: string;
+        "class"?: string;
+        "placeholder"?: string;
+        "src"?: string;
     }
     interface MenuToggle {
         "showing"?: boolean;
@@ -289,6 +308,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "app-root": AppRoot;
+        "cache-img": CacheImg;
         "menu-toggle": MenuToggle;
         "page-albums": PageAlbums;
         "page-artists": PageArtists;
@@ -315,6 +335,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "cache-img": LocalJSX.CacheImg & JSXBase.HTMLAttributes<HTMLCacheImgElement>;
             "menu-toggle": LocalJSX.MenuToggle & JSXBase.HTMLAttributes<HTMLMenuToggleElement>;
             "page-albums": LocalJSX.PageAlbums & JSXBase.HTMLAttributes<HTMLPageAlbumsElement>;
             "page-artists": LocalJSX.PageArtists & JSXBase.HTMLAttributes<HTMLPageArtistsElement>;

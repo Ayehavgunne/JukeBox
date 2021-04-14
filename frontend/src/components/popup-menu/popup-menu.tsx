@@ -1,4 +1,5 @@
 import {Component, Host, h, State, Element} from "@stencil/core"
+import {print} from "../../global/app"
 
 @Component({
 	tag: "popup-menu",
@@ -11,7 +12,7 @@ export class PopupMenu {
 
 	componentDidRender() {
 		if (this.showing) {
-			console.log("rendered popup menu")
+			print("rendered popup menu")
 			document.addEventListener("click", this.doc_hide_menu)
 		}
 	}
@@ -19,7 +20,7 @@ export class PopupMenu {
 	doc_hide_menu = (event: MouseEvent) => {
 		this.showing = false
 		let target = event.target as HTMLElement
-		console.log(target)
+		print(target)
 		document.removeEventListener("click", this.doc_hide_menu)
 	}
 
@@ -34,7 +35,7 @@ export class PopupMenu {
 		}
 		return (
 			<Host class="popup_menu_host">
-				<div class="menu_wrapper" onClick={this.toggle_show}>
+				<div onClick={this.toggle_show}>
 					<div class="menu_button">
 						<div class="circle" />
 						<div class="circle" />
