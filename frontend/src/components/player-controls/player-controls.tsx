@@ -23,7 +23,7 @@ export class PlayerControls {
 	next_track_audio: Howl
 	nearing_track_end: boolean = false
 	next_track_data: Track
-	ordered_playlist: Array<Track> = []
+	ordered_queue: Array<Track> = []
 	os_hide_volume: boolean
 	queue: Array<Track> = []
 	queue_index: number = -1
@@ -42,10 +42,13 @@ export class PlayerControls {
 		let device_type = ua_parser.getDevice().type
 		this.os_hide_volume =
 			os_name !== "iOS" && device_type !== "mobile" && device_type !== "tablet"
-		let volume = parseFloat(Cookies.get("jukebox-volume"))
-		if (volume === undefined) {
+		let volume_cookie = Cookies.get("jukebox-volume")
+		let volume: number
+		if (volume_cookie === undefined) {
 			volume = this.volume
 			Cookies.set("jukebox-volume", volume + "")
+		} else {
+			volume = parseFloat(volume_cookie)
 		}
 		this.volume = volume
 	}
@@ -118,20 +121,20 @@ export class PlayerControls {
 	@Method()
 	async set_queue(tracks: Array<Track>) {
 		this.queue = tracks
-		this.ordered_playlist = tracks
+		this.ordered_queue = tracks
 		this.queue_index = this.queue.indexOf(store.current_track)
 	}
 
 	@Method()
 	async add_next_in_queue(track: Track) {
 		this.queue.splice(this.queue_index + 1, 0, track)
-		this.ordered_playlist.splice(this.queue_index + 1, 0, track)
+		this.ordered_queue.splice(this.queue_index + 1, 0, track)
 	}
 
 	@Method()
 	async append_to_queue(tracks: Array<Track>) {
 		this.queue.concat(tracks)
-		this.ordered_playlist.concat(tracks)
+		this.ordered_queue.concat(tracks)
 	}
 
 	seek = async (percent: number) => {
@@ -158,17 +161,41 @@ export class PlayerControls {
 			this.current_track_audio.stop()
 			delete this.current_track_audio
 		}
-		this.queue_index = track_index
-		store.current_track = this.queue[this.queue_index]
-		this.current_track_audio = new Howl({
-			src: "/stream/" + store.current_track.track_id,
-			format: formats,
-			volume: this.volume,
-			html5: true,
-		})
-		document.title = store.current_track.title + " - JukeBox"
-		this.add_event_listeners(this.current_track_audio)
-		this.current_track_audio.play()
+		if (track_index < this.queue.length) {
+			this.queue_index = track_index
+			store.current_track = this.queue[this.queue_index]
+			this.current_track_audio = new Howl({
+				src: "/stream/" + store.current_track.track_id,
+				format: formats,
+				volume: this.volume,
+				html5: true,
+			})
+			document.title = store.current_track.title + " - JukeBox"
+			this.add_event_listeners(this.current_track_audio)
+			this.current_track_audio.play()
+		} else {
+			store.current_track = {
+				track_id: 0,
+				title: "",
+				album: "",
+				album_id: 0,
+				album_disc: 0,
+				artist: "",
+				track_number: 0,
+				disc_number: 0,
+				year: 0,
+				genre: "",
+				compilation: "",
+				length: 0,
+				mimetype: "",
+				codec: "",
+				bitrate: 0,
+				size: 0,
+			}
+			let progres_bar: ProgressBar = this.el.querySelector("progress-bar")
+			progres_bar.progress = 0
+			progres_bar.current_time = 0
+		}
 	}
 
 	auto_change_to_next_track = async () => {
@@ -199,7 +226,7 @@ export class PlayerControls {
 		if (this.shuffle) {
 			await this.shuffle_playlist()
 		} else {
-			this.queue = this.ordered_playlist
+			this.queue = this.ordered_queue
 		}
 	}
 
@@ -247,7 +274,7 @@ export class PlayerControls {
 	}
 
 	shuffle_playlist = async () => {
-		let currentIndex = this.ordered_playlist.length,
+		let currentIndex = this.ordered_queue.length,
 			temporaryValue,
 			randomIndex
 
@@ -255,8 +282,8 @@ export class PlayerControls {
 			randomIndex = Math.floor(Math.random() * currentIndex)
 			currentIndex -= 1
 
-			temporaryValue = this.ordered_playlist[currentIndex]
-			this.queue[currentIndex] = this.ordered_playlist[randomIndex]
+			temporaryValue = this.ordered_queue[currentIndex]
+			this.queue[currentIndex] = this.ordered_queue[randomIndex]
 			this.queue[randomIndex] = temporaryValue
 		}
 	}

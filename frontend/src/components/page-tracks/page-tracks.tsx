@@ -1,4 +1,4 @@
-import {Component, Element, h, Host, Listen, Prop, State, Watch} from "@stencil/core"
+import {Component, Element, h, Host, Prop, State, Watch} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls, print, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
@@ -65,8 +65,30 @@ export class PageTracks {
 		await popup_menu.hide()
 	}
 
-	add_track_to_playlist = async (data: Track) => {
-		print("add track to playlist", data)
+	choose_playlist_to_add_track_to = async (data: Track) => {
+		print("showing playlist names to choose", data)
+	}
+
+	add_track_to_playlist = async (
+		data: Track,
+		popup_menu: HTMLPopupMenuElement,
+		event: MouseEvent,
+	) => {
+		let target = event.target as HTMLElement
+		let playlist_name = target.innerText
+		if (playlist_name.trim() === "+ New Playlist") {
+			playlist_name = prompt("Playlist Name")
+		}
+		let response = await fetch(
+			`/playlists/${playlist_name}/${data.track_id}/${store.user.user_id}`,
+			{method: "POST"},
+		)
+		let result = await response.text()
+		if (result === "Success") {
+			response = await fetch(`/playlists`)
+			store.playlist_names = await response.json()
+		}
+		await popup_menu.hide()
 	}
 
 	play_track_next = async (data: Track, popup_menu: HTMLPopupMenuElement) => {
@@ -104,14 +126,72 @@ export class PageTracks {
 		}
 	}
 
-	@Listen("changing_track", {target: "body"})
-	changing_track_handler(event: CustomEvent<Track>) {
-		store.current_track = event.detail
-	}
-
 	@Watch("match")
 	async match_handler() {
 		await this.load_page()
+	}
+
+	generate_popup_menu = track => {
+		return (
+			<popup-menu>
+				<popup-menu-item click_action={this.love_track} data={track}>
+					Love
+				</popup-menu-item>
+				<popup-menu-item
+					click_action={this.choose_playlist_to_add_track_to}
+					data={track}
+					contains_submenu={true}
+				>
+					Add to a playlist
+					<span slot="submenu">
+						<popup-menu-item
+							click_action={this.add_track_to_playlist}
+							data={track}
+						>
+							+ New Playlist
+						</popup-menu-item>
+						{store.playlist_names.map(name => {
+							return (
+								<popup-menu-item
+									click_action={this.add_track_to_playlist}
+									data={track}
+								>
+									{name}
+								</popup-menu-item>
+							)
+						})}
+					</span>
+				</popup-menu-item>
+				<popup-menu-item click_action={this.play_track_next} data={track}>
+					Play Next
+				</popup-menu-item>
+				<popup-menu-item click_action={this.append_track_to_queue} data={track}>
+					Append to Queue
+				</popup-menu-item>
+			</popup-menu>
+		)
+	}
+
+	generate_album_art = (track, playing_track) => {
+		return (
+			<div class="albumart">
+				<cache-img
+					src={`/albums/${track.album_id}/image`}
+					alt={`${track.title} album`}
+					placeholder="/assets/generic_album.png"
+					class="small"
+				/>
+				{playing_track ? (
+					<div class="playing on_image">
+						<div class="playing_bar bar-1" />
+						<div class="playing_bar bar-2" />
+						<div class="playing_bar bar-3" />
+					</div>
+				) : (
+					<div class="play_track" />
+				)}
+			</div>
+		)
 	}
 
 	generate_mobile = index => {
@@ -120,50 +200,12 @@ export class PageTracks {
 			store.current_track && store.current_track.track_id == track.track_id
 		return (
 			<li key={track.track_id}>
-				<div class="menu cell">
-					<popup-menu>
-						<popup-menu-item click_action={this.love_track} data={track}>
-							Love
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.add_track_to_playlist}
-							data={track}
-						>
-							Add to a playlist
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.play_track_next}
-							data={track}
-						>
-							Play Next
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.append_track_to_queue}
-							data={track}
-						>
-							Append to Queue
-						</popup-menu-item>
-					</popup-menu>
-				</div>
+				<div class="menu cell">{this.generate_popup_menu(track)}</div>
 				<play-container
 					track={track}
 					click_handler={this.playing_track_handler}
 				>
-					<div class="albumart">
-						<cache-img
-							src={`/albums/${track.album_id}/image`}
-							alt={`image of ${track.title} album`}
-							placeholder="/assets/generic_album.png"
-							class="small"
-						/>
-						{playing_track && (
-							<div class="playing on_image">
-								<div class="playing_bar bar-1" />
-								<div class="playing_bar bar-2" />
-								<div class="playing_bar bar-3" />
-							</div>
-						)}
-					</div>
+					{this.generate_album_art(track, playing_track)}
 				</play-container>
 				<play-container
 					track={track}
@@ -188,53 +230,13 @@ export class PageTracks {
 			store.current_track && store.current_track.track_id == track.track_id
 		return (
 			<div class="row" key={track.track_id}>
-				<div class="menu cell">
-					<popup-menu>
-						<popup-menu-item click_action={this.love_track} data={track}>
-							Love
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.add_track_to_playlist}
-							data={track}
-						>
-							Add to a playlist
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.play_track_next}
-							data={track}
-						>
-							Play Next
-						</popup-menu-item>
-						<popup-menu-item
-							click_action={this.append_track_to_queue}
-							data={track}
-						>
-							Append to Queue
-						</popup-menu-item>
-					</popup-menu>
-				</div>
+				<div class="menu cell">{this.generate_popup_menu(track)}</div>
 				<play-container
 					track={track}
 					click_handler={this.playing_track_handler}
 					class="cell"
 				>
-					<div class="albumart">
-						<cache-img
-							src={`/albums/${track.album_id}/image`}
-							alt={`image of ${track.title} album`}
-							placeholder="/assets/generic_album.png"
-							class="small"
-						/>
-						{playing_track ? (
-							<div class="playing on_image">
-								<div class="playing_bar bar-1" />
-								<div class="playing_bar bar-2" />
-								<div class="playing_bar bar-3" />
-							</div>
-						) : (
-							<div class="play_track" />
-						)}
-					</div>
+					{this.generate_album_art(track, playing_track)}
 				</play-container>
 				<div class="number cell">{track.track_number}</div>
 				<div class="cell">{track.title}</div>

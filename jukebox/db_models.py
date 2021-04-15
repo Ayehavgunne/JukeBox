@@ -6,7 +6,6 @@ from peewee import (
     BlobField,
     BooleanField,
     CharField,
-    CompositeKey,
     FloatField,
     ForeignKeyField,
     IntegerField,
@@ -169,14 +168,15 @@ class User(BaseModel):
 
 
 class Playlist(BaseModel):
+    playlist_id = AutoField(primary_key=True)
     playlist_name = CharField()
-    track = ForeignKeyField(Track, backref="playlists")
+    track = ForeignKeyField(Track)
     user = ForeignKeyField(User, backref="playlists")
 
     class Meta:
         database = database
         legacy_table_names = False
-        primary_key = CompositeKey("playlist_name", "track", "user")
+        indexes = ((("playlist_name", "track", "user"), True),)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
@@ -184,6 +184,39 @@ class Playlist(BaseModel):
             "track_id": self.track.track_id,
             "user_id": self.user.user_id,
         }
+
+
+class LovedTrack(BaseModel):
+    loved_track_id = AutoField(primary_key=True)
+    track = ForeignKeyField(Track)
+    user = ForeignKeyField(User, backref="loved_tracks")
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        indexes = ((("track", "user"), True),)
+
+
+class LovedAlbum(BaseModel):
+    loved_track_id = AutoField(primary_key=True)
+    album = ForeignKeyField(Album)
+    user = ForeignKeyField(User, backref="loved_albums")
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        indexes = ((("album", "user"), True),)
+
+
+class LovedArtist(BaseModel):
+    loved_track_id = AutoField(primary_key=True)
+    artist = ForeignKeyField(Artist)
+    user = ForeignKeyField(User, backref="loved_artists")
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        indexes = ((("artist", "user"), True),)
 
 
 def create_tables() -> None:
@@ -196,6 +229,9 @@ def create_tables() -> None:
                 Album,
                 AlbumArtist,
                 AlbumDisc,
+                LovedTrack,
+                LovedAlbum,
+                LovedArtist,
                 Track,
                 Playlist,
                 User,
@@ -203,11 +239,6 @@ def create_tables() -> None:
         )
         try:
             User.create(username="Anthony")
-            User.create(username="Ant")
-            Playlist.create(playlist_name="Mine", track=1, user=1)
-            Playlist.create(playlist_name="Mine", track=2, user=1)
-            Playlist.create(playlist_name="Favs", track=3, user=1)
-            Playlist.create(playlist_name="Favs", track=4, user=1)
         except IntegrityError:
             pass
 

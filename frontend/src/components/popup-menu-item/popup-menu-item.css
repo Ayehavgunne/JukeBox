@@ -1,8 +1,27 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .popup_menu_item {
     display: block;
     cursor: pointer;
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: rgba(31, 31, 31, 0.66);
+    box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    padding: 4px 10px;
+    min-height: 100%;
+    border-left: 1px solid #5e5e5e;
+    border-radius: 0 3px 3px 0;
+}
+
+.submenu.show {
+    display: block;
+}
+
+.submenu div {
+    margin-bottom: 4px;
 }

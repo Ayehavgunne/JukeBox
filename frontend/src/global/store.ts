@@ -21,6 +21,10 @@ const {state} = createStore({
 		size: 0,
 	},
 	images: {},
+	user: {
+		user_id: 0,
+		username: "",
+	},
 })
 
 export default state

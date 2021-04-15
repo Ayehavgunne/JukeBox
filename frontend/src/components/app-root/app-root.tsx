@@ -1,5 +1,8 @@
 import {Component, Element, h, Host, State} from "@stencil/core"
+import {print} from "../../global/app"
+import {User} from "../../global/models"
 import store from "../../global/store"
+import Cookies from "js-cookie"
 
 @Component({
 	tag: "app-root",
@@ -12,6 +15,25 @@ export class AppRoot {
 	async componentWillLoad() {
 		let result = await fetch("/playlists")
 		store.playlist_names = await result.json()
+		let user_cookie = Cookies.get("jukebox-user")
+		let user: User
+		if (user_cookie === undefined) {
+			let username = prompt("What is your username?")
+			let response = await fetch(`/users/${username}`)
+			let result = await response.json()
+			if (result["error"]) {
+				print(result["error"])
+				return
+			}
+			user = {
+				user_id: result["user_id"],
+				username: result["username"],
+			}
+			Cookies.set("jukebox-user", JSON.stringify(user))
+		} else {
+			user = JSON.parse(user_cookie)
+		}
+		store.user = user
 	}
 
 	toggle_nav = async () => {
@@ -30,13 +52,14 @@ export class AppRoot {
 					<header>
 						<h1>JukeBox</h1>
 					</header>
-
 					<ul>
 						<li>
 							<stencil-route-link url="/">Home</stencil-route-link>
 						</li>
 						<li>
-							<stencil-route-link url="/page/profile/Anthony">
+							<stencil-route-link
+								url={`/page/profile/${store.user.username}`}
+							>
 								Profile
 							</stencil-route-link>
 						</li>
@@ -52,7 +75,6 @@ export class AppRoot {
 						</li>
 						<li>
 							<h3>Library</h3>
-
 							<ul>
 								<li>
 									<stencil-route-link url="/page/tracks">
@@ -78,13 +100,12 @@ export class AppRoot {
 						</li>
 						<li>
 							<h3>Playlists</h3>
-
 							<ul>
 								{store.playlist_names.map(playlist_name => {
 									return (
-										<li>
+										<li key={playlist_name}>
 											<stencil-route-link
-												url={"/page/playlist/" + playlist_name}
+												url={`/page/playlist/${playlist_name}`}
 											>
 												{playlist_name}
 											</stencil-route-link>
@@ -95,7 +116,6 @@ export class AppRoot {
 						</li>
 					</ul>
 				</nav>
-
 				<main class={classes}>
 					<stencil-router>
 						<stencil-route-switch scrollTopOffset={0}>
@@ -125,8 +145,8 @@ export class AppRoot {
 							{/*	component="page-genres"*/}
 							{/*/>*/}
 							<stencil-route
-								url="/page/playlists/:name?"
-								component="page-playlists"
+								url="/page/playlist/:name?"
+								component="page-playlist"
 							/>
 							<stencil-route
 								url="/page/profile/:name?"
@@ -135,7 +155,6 @@ export class AppRoot {
 						</stencil-route-switch>
 					</stencil-router>
 				</main>
-
 				<footer class={classes}>
 					<menu-toggle
 						class={classes}

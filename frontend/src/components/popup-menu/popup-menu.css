@@ -1,5 +1,6 @@
 .popup_menu_host {
     position: relative;
+    white-space: nowrap;
 }
 
 .menu_container {
@@ -12,7 +13,7 @@
     z-index: 1;
     top: 8px;
     left: 14px;
-    padding: 4px;
+    padding: 4px 10px;
     min-width: 172px;
     border-radius: 3px;
 }

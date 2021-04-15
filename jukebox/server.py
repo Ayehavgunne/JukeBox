@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator
 
-from peewee import fn
+from peewee import DoesNotExist, IntegrityError, fn
 from quart import (
     Quart,
     Response,
@@ -24,6 +24,7 @@ from jukebox.db_models import (
     Artist,
     Playlist,
     Track,
+    User,
     create_tables,
     database,
 )
@@ -209,10 +210,10 @@ async def get_genres(genre: str = None) -> Response:
 
 
 @app.route("/playlists/")
-@app.route("/playlists/<string:playlist_name>")
-async def get_playlists(playlist_name: str = None) -> Response:
+@app.route("/playlists/<string:playlist_name>/<int:user_id>")
+async def get_playlists(playlist_name: str = None, user_id: int = None) -> Response:
     with database.atomic():
-        if playlist_name is None:
+        if playlist_name is None or user_id is None:
             playlists = (
                 Playlist.select(Playlist.playlist_name)
                 .distinct()
@@ -220,8 +221,86 @@ async def get_playlists(playlist_name: str = None) -> Response:
             )
             return jsonify([playlist.playlist_name for playlist in playlists])
         else:
-            playlists = Playlist.select().where(Playlist.playlist_name == playlist_name)
-            return jsonify([playlist.to_json() for playlist in playlists])
+            playlist_tracks = Playlist.select().where(
+                Playlist.playlist_name == playlist_name, Playlist.user == user_id
+            )
+            tracks = (
+                Track.select()
+                .join(Playlist)
+                .switch(Track)
+                .where(
+                    Track.track_id
+                    << [playlist_track.track_id for playlist_track in playlist_tracks]
+                )
+                .order_by(Playlist.playlist_id)
+            )
+            return jsonify([track.to_json() for track in tracks])
+
+
+@app.route(
+    "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>", methods=["POST"]
+)
+async def add_to_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
+    with database.atomic():
+        try:
+            Playlist.create(
+                playlist_name=playlist_name,
+                track=track_id,
+                user=user_id,
+            )
+        except IntegrityError:
+            return "Already exists"
+        return "Success"
+
+
+@app.route("/users")
+@app.route("/users/<int:user_id>")
+@app.route("/users/<string:username>", methods=["GET", "PUT"])
+async def get_users(user_id: int = None, username: str = None) -> Response:
+    with database.atomic():
+        if user_id is None and username is None:
+            users = User.select()
+            return jsonify([user.to_json() for user in users])
+        elif user_id is None:
+            if request.method == "PUT":
+                try:
+                    return jsonify(
+                        {
+                            "error": None,
+                            "user_id": User.create(username=username).user_id,
+                            "username": username,
+                        }
+                    )
+                except IntegrityError:
+                    return jsonify(
+                        {"error": "Already Exists", "user_id": None, "username": None}
+                    )
+            else:
+                try:
+                    user = User.get(username=username)
+                except DoesNotExist as err:
+                    print(err)
+                    return jsonify(
+                        {
+                            "error": None,
+                            "user_id": User.create(username=username).user_id,
+                            "username": username,
+                        }
+                    )
+                return jsonify({"error": None, **user.to_json()})
+        else:
+            try:
+                user = User.get(user_id=user_id)
+            except DoesNotExist as err:
+                print(err)
+                return jsonify(
+                    {
+                        "error": "User does not exist",
+                        "user_id": None,
+                        "username": username,
+                    }
+                )
+            return jsonify({"error": None, **user.to_json()})
 
 
 @app.route("/stream/<int:track_id>")

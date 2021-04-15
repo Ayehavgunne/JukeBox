@@ -32,7 +32,7 @@ export namespace Components {
     }
     interface PageNowPlaying {
     }
-    interface PagePlaylists {
+    interface PagePlaylist {
         "match": MatchResults;
     }
     interface PageProfile {
@@ -65,7 +65,8 @@ export namespace Components {
         "hide": () => Promise<void>;
     }
     interface PopupMenuItem {
-        "click_action": (any, HTMLPopupMenuElement) => void;
+        "click_action": (any, HTMLPopupMenuElement, MouseEvent) => void;
+        "contains_submenu": boolean;
         "data": any;
     }
     interface ProgressBar {
@@ -136,11 +137,11 @@ declare global {
         prototype: HTMLPageNowPlayingElement;
         new (): HTMLPageNowPlayingElement;
     };
-    interface HTMLPagePlaylistsElement extends Components.PagePlaylists, HTMLStencilElement {
+    interface HTMLPagePlaylistElement extends Components.PagePlaylist, HTMLStencilElement {
     }
-    var HTMLPagePlaylistsElement: {
-        prototype: HTMLPagePlaylistsElement;
-        new (): HTMLPagePlaylistsElement;
+    var HTMLPagePlaylistElement: {
+        prototype: HTMLPagePlaylistElement;
+        new (): HTMLPagePlaylistElement;
     };
     interface HTMLPageProfileElement extends Components.PageProfile, HTMLStencilElement {
     }
@@ -223,7 +224,7 @@ declare global {
         "page-genres": HTMLPageGenresElement;
         "page-home": HTMLPageHomeElement;
         "page-now-playing": HTMLPageNowPlayingElement;
-        "page-playlists": HTMLPagePlaylistsElement;
+        "page-playlist": HTMLPagePlaylistElement;
         "page-profile": HTMLPageProfileElement;
         "page-settings": HTMLPageSettingsElement;
         "page-tracks": HTMLPageTracksElement;
@@ -263,7 +264,7 @@ declare namespace LocalJSX {
     }
     interface PageNowPlaying {
     }
-    interface PagePlaylists {
+    interface PagePlaylist {
         "match"?: MatchResults;
     }
     interface PageProfile {
@@ -287,7 +288,8 @@ declare namespace LocalJSX {
     interface PopupMenu {
     }
     interface PopupMenuItem {
-        "click_action"?: (any, HTMLPopupMenuElement) => void;
+        "click_action"?: (any, HTMLPopupMenuElement, MouseEvent) => void;
+        "contains_submenu"?: boolean;
         "data"?: any;
     }
     interface ProgressBar {
@@ -317,7 +319,7 @@ declare namespace LocalJSX {
         "page-genres": PageGenres;
         "page-home": PageHome;
         "page-now-playing": PageNowPlaying;
-        "page-playlists": PagePlaylists;
+        "page-playlist": PagePlaylist;
         "page-profile": PageProfile;
         "page-settings": PageSettings;
         "page-tracks": PageTracks;
@@ -344,7 +346,7 @@ declare module "@stencil/core" {
             "page-genres": LocalJSX.PageGenres & JSXBase.HTMLAttributes<HTMLPageGenresElement>;
             "page-home": LocalJSX.PageHome & JSXBase.HTMLAttributes<HTMLPageHomeElement>;
             "page-now-playing": LocalJSX.PageNowPlaying & JSXBase.HTMLAttributes<HTMLPageNowPlayingElement>;
-            "page-playlists": LocalJSX.PagePlaylists & JSXBase.HTMLAttributes<HTMLPagePlaylistsElement>;
+            "page-playlist": LocalJSX.PagePlaylist & JSXBase.HTMLAttributes<HTMLPagePlaylistElement>;
             "page-profile": LocalJSX.PageProfile & JSXBase.HTMLAttributes<HTMLPageProfileElement>;
             "page-settings": LocalJSX.PageSettings & JSXBase.HTMLAttributes<HTMLPageSettingsElement>;
             "page-tracks": LocalJSX.PageTracks & JSXBase.HTMLAttributes<HTMLPageTracksElement>;
