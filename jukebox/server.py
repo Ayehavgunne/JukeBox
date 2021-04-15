@@ -47,7 +47,7 @@ if CONFIGS["logging"]["enabled"]:
 @app.before_serving
 async def get_images() -> None:
     await asyncio.get_running_loop().run_in_executor(None, scan_files)
-    asyncio.create_task(get_artist_images())
+    # asyncio.create_task(get_artist_images())
 
 
 @app.route("/")
@@ -221,16 +221,11 @@ async def get_playlists(playlist_name: str = None, user_id: int = None) -> Respo
             )
             return jsonify([playlist.playlist_name for playlist in playlists])
         else:
-            playlist_tracks = Playlist.select().where(
-                Playlist.playlist_name == playlist_name, Playlist.user == user_id
-            )
             tracks = (
                 Track.select()
                 .join(Playlist)
-                .switch(Track)
                 .where(
-                    Track.track_id
-                    << [playlist_track.track_id for playlist_track in playlist_tracks]
+                    Playlist.playlist_name == playlist_name, Playlist.user == user_id
                 )
                 .order_by(Playlist.order)
             )
@@ -243,10 +238,20 @@ async def get_playlists(playlist_name: str = None, user_id: int = None) -> Respo
 async def add_to_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
     with database.atomic():
         try:
+            result = (
+                Playlist.select(fn.MAX(Playlist.order).alias("order"))
+                .where(
+                    Playlist.playlist_name == playlist_name,
+                    Playlist.user == user_id,
+                )
+                .group_by(Playlist.playlist_name, Playlist.user)
+            )
+            if result:
+                order = result[0].order + 1
+            else:
+                order = 1
             Playlist.create(
-                playlist_name=playlist_name,
-                track=track_id,
-                user=user_id,
+                playlist_name=playlist_name, track=track_id, user=user_id, order=order
             )
         except IntegrityError:
             return "Already exists"
