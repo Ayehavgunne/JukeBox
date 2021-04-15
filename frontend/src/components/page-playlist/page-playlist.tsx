@@ -102,7 +102,7 @@ export class PagePlaylist {
 
 	load_page = async () => {
 		let result = await fetch(
-			`/playlists/${this.match.params.name}/${store.user.user_id}`,
+			`/playlists/${store.user.user_id}/${this.match.params.name}`,
 		)
 		this.tracks = await result.json()
 	}

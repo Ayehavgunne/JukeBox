@@ -154,7 +154,7 @@ async def get_albums_tracks(album_id: int) -> Response:
         return jsonify([track.to_json() for track in tracks])
 
 
-@app.route("/tracks/")
+@app.route("/tracks")
 @app.route("/tracks/<int:track_id>")
 async def get_tracks(track_id: int = None) -> Response:
     with database.atomic():
@@ -191,7 +191,7 @@ async def get_track_image(track_id: int) -> Response:
             )
 
 
-@app.route("/genres/")
+@app.route("/genres")
 @app.route("/genres/<string:genre>")
 async def get_genres(genre: str = None) -> Response:
     with database.atomic():
@@ -209,14 +209,15 @@ async def get_genres(genre: str = None) -> Response:
             return jsonify([track.to_json() for track in tracks])
 
 
-@app.route("/playlists/")
-@app.route("/playlists/<string:playlist_name>/<int:user_id>")
-async def get_playlists(playlist_name: str = None, user_id: int = None) -> Response:
+@app.route("/playlists/<int:user_id>")
+@app.route("/playlists/<int:user_id>/<string:playlist_name>")
+async def get_playlists(user_id: int, playlist_name: str = None) -> Response:
     with database.atomic():
-        if playlist_name is None or user_id is None:
+        if playlist_name is None:
             playlists = (
                 Playlist.select(Playlist.playlist_name)
                 .distinct()
+                .where(Playlist.user == user_id)
                 .order_by(fn.Lower(Playlist.playlist_name))
             )
             return jsonify([playlist.playlist_name for playlist in playlists])

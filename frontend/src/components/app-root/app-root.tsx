@@ -13,7 +13,7 @@ export class AppRoot {
 	@State() nav_showing: boolean = true
 
 	async componentWillLoad() {
-		let result = await fetch("/playlists")
+		let result = await fetch(`/playlists/${store.user.user_id}`)
 		store.playlist_names = await result.json()
 		let user_cookie = Cookies.get("jukebox-user")
 		let user: User

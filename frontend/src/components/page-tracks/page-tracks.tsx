@@ -85,7 +85,7 @@ export class PageTracks {
 		)
 		let result = await response.text()
 		if (result === "Success") {
-			response = await fetch(`/playlists`)
+			response = await fetch(`/playlists/${store.user.user_id}`)
 			store.playlist_names = await response.json()
 		}
 		await popup_menu.hide()
