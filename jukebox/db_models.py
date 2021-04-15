@@ -172,6 +172,7 @@ class Playlist(BaseModel):
     playlist_name = CharField()
     track = ForeignKeyField(Track)
     user = ForeignKeyField(User, backref="playlists")
+    order = IntegerField()
 
     class Meta:
         database = database
@@ -183,6 +184,7 @@ class Playlist(BaseModel):
             "playlist_name": self.playlist_name,
             "track_id": self.track.track_id,
             "user_id": self.user.user_id,
+            "order": self.order,
         }
 
 

@@ -232,7 +232,7 @@ async def get_playlists(playlist_name: str = None, user_id: int = None) -> Respo
                     Track.track_id
                     << [playlist_track.track_id for playlist_track in playlist_tracks]
                 )
-                .order_by(Playlist.playlist_id)
+                .order_by(Playlist.order)
             )
             return jsonify([track.to_json() for track in tracks])
 
