@@ -1,7 +1,3 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .progress_bar_host {
     float: right;
     width: calc(100% - 460px);
@@ -19,13 +15,28 @@
     border-bottom: solid 1px #e8e6e3;
 }
 
+.current_time {
+    float: left;
+    margin-top: 5px;
+}
+
+.total_time {
+    float: right;
+    margin-top: 5px;
+}
+
 @media (max-width: 600px) {
     .progress_bar_host {
         float: right;
         width: 100%;
-        margin-top: 8px;
         clear: left;
         padding-left: 8px;
         padding-right: 8px;
+    }
+
+    .current_time, .total_time {
+        margin-top: 0;
+        position: relative;
+        bottom: 22px;
     }
 }

@@ -1,5 +1,5 @@
-import {Component, Element, h, Host, Listen, State} from "@stencil/core"
-import {Track} from "../../global/models"
+import {Component, Element, h, Host, State} from "@stencil/core"
+import store from "../../global/store"
 
 @Component({
 	tag: "app-root",
@@ -8,21 +8,14 @@ import {Track} from "../../global/models"
 export class AppRoot {
 	@Element() el: HTMLElement
 	@State() nav_showing: boolean = true
-	@State() current_track: Track
-	playlist_names: Array<string> = []
 
 	async componentWillLoad() {
 		let result = await fetch("/playlists")
-		this.playlist_names = await result.json()
+		store.playlist_names = await result.json()
 	}
 
 	toggle_nav = async () => {
 		this.nav_showing = !this.nav_showing
-	}
-
-	@Listen("changing_track", {target: "body"})
-	changing_track_handler(event: CustomEvent<Track>) {
-		this.current_track = event.detail
 	}
 
 	render() {
@@ -87,7 +80,7 @@ export class AppRoot {
 							<h3>Playlists</h3>
 
 							<ul>
-								{this.playlist_names.map(playlist_name => {
+								{store.playlist_names.map(playlist_name => {
 									return (
 										<li>
 											<stencil-route-link
@@ -118,7 +111,6 @@ export class AppRoot {
 							<stencil-route
 								url="/page/tracks/:album_id?"
 								component="page-tracks"
-								componentProps={{current_track: this.current_track}}
 							/>
 							<stencil-route
 								url="/page/albums/:artist_id?"

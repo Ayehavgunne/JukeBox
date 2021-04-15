@@ -3,7 +3,6 @@ import {Component, h, Host, State} from "@stencil/core"
 @Component({
 	tag: "page-genres",
 	styleUrl: "page-genres.css",
-	// shadow: true,
 })
 export class PageGenres {
 	@State() genres: Array<string>
@@ -16,7 +15,7 @@ export class PageGenres {
 	render() {
 		return (
 			<Host class="page_genres_host">
-				<h3>Genres</h3>
+				<h3 class="page_header">Genres</h3>
 				{this.genres.map(genre => {
 					return (
 						<li>

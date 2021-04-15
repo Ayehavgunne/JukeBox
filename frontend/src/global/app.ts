@@ -12,5 +12,3 @@ export let ua_parser = new UAParser(navigator.userAgent)
 export let print = (...messages) => {
 	console.log(...messages)
 }
-
-export let images = {}

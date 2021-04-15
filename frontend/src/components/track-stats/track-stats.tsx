@@ -1,13 +1,11 @@
-import {Component, Host, h, Prop, Listen} from "@stencil/core"
-import {Track} from "../../global/models"
+import {Component, Host, h, Listen} from "@stencil/core"
+import store from "../../global/store"
 
 @Component({
 	tag: "track-stats",
 	styleUrl: "track-stats.css",
-	// shadow: true,
 })
 export class TrackStats {
-	@Prop() track: Track
 	title_div: HTMLDivElement
 	artist_div: HTMLDivElement
 
@@ -58,7 +56,7 @@ export class TrackStats {
 	}
 
 	render() {
-		if (this.track) {
+		if (store.current_track.track_id) {
 			return (
 				<Host class="track_stats_host">
 					<div class="track_wrapper">
@@ -66,7 +64,7 @@ export class TrackStats {
 							class="slider"
 							ref={el => (this.title_div = el as HTMLDivElement)}
 						>
-							{this.track.title}
+							{store.current_track.title}
 						</div>
 					</div>
 					<div class="track_wrapper small">
@@ -74,7 +72,7 @@ export class TrackStats {
 							class="slider"
 							ref={el => (this.artist_div = el as HTMLDivElement)}
 						>
-							{this.track.artist}
+							{store.current_track.artist}
 						</div>
 					</div>
 				</Host>

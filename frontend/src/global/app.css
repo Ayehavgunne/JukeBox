@@ -18,6 +18,34 @@ a:visited, a:link, a:hover, a:active {
     text-decoration: none;
 }
 
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #606060 #181a1b;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #181a1b;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #606060;
+    border-radius: 20px;
+    border: 3px solid #181a1b;
+}
+
+.page_header {
+    margin-left: 10px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 1.4em;
+}
+
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

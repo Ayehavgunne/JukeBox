@@ -16,7 +16,7 @@ export class PageArtists {
 	render() {
 		return (
 			<Host class="page_artists_host">
-				<h3>Artists</h3>
+				<h3 class="page_header">Artists</h3>
 				<ul>
 					{this.artists.map(artist => {
 						return (

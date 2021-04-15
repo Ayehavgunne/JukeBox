@@ -7,14 +7,8 @@
     overflow: auto;
 }
 
-.page_albums_host h3 {
-    margin-top: 3px;
-    margin-bottom: 3px;
-    font-size: 1.4em;
-}
-
 .page_albums_host ul {
-    padding-left: 0;
+    padding-left: 10px;
 }
 
 .page_albums_host li {

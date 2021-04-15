@@ -3,7 +3,6 @@ import {Component, Host, h, Element, Prop, Listen} from "@stencil/core"
 @Component({
 	tag: "volume-dot",
 	styleUrl: "volume-dot.css",
-	// shadow: true,
 })
 export class VolumeDot {
 	@Element() el: HTMLVolumeDotElement
@@ -12,6 +11,10 @@ export class VolumeDot {
 	@Prop() volume_handler: (volume: number) => void
 	active = false
 	vol_dot: HTMLDivElement
+
+	constructor() {
+		this.el.style.bottom = (this.volume * 100).toFixed(0) + "%"
+	}
 
 	@Listen("touchstart")
 	@Listen("mousedown")

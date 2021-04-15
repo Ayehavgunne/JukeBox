@@ -3,11 +3,12 @@ import {Component, Element, h, Host, Listen, Prop} from "@stencil/core"
 @Component({
 	tag: "progress-bar",
 	styleUrl: "progress-bar.css",
-	// shadow: true,
 })
 export class ProgressBar {
 	@Element() el: HTMLProgressBarElement
 	@Prop() progress: number
+	@Prop() current_time: number
+	@Prop() total_time: number
 	@Prop() seek_handler: (number) => void
 	progress_bar: HTMLDivElement
 	progress_dot: HTMLProgressDotElement
@@ -22,8 +23,20 @@ export class ProgressBar {
 	}
 
 	render() {
+		let current_time = ""
+		if (this.current_time) {
+			current_time = new Date(this.current_time * 1000)
+				.toISOString()
+				.substr(14, 5)
+		}
+		let total_time = ""
+		if (this.total_time) {
+			total_time = new Date(this.total_time * 1000).toISOString().substr(14, 5)
+		}
 		return (
 			<Host class="progress_bar_host">
+				<div class="current_time">{current_time}</div>
+				<div class="total_time">{total_time}</div>
 				<div
 					id="progress_bar"
 					ref={el => (this.progress_bar = el as HTMLDivElement)}

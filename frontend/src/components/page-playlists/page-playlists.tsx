@@ -4,7 +4,6 @@ import {MatchResults} from "@stencil/router"
 @Component({
 	tag: "page-playlists",
 	styleUrl: "page-playlists.css",
-	// shadow: true,
 })
 export class PagePlaylists {
 	@Prop() match: MatchResults
@@ -20,7 +19,9 @@ export class PagePlaylists {
 		if (this.match && this.match.params.name) {
 			return (
 				<Host class="page_playlist_host">
-					<h3>{this.normalize(this.match.params.name)}</h3>
+					<h3 class="page_header">
+						{this.normalize(this.match.params.name)}
+					</h3>
 					<div>Nothing here yet. Move along.</div>
 				</Host>
 			)

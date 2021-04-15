@@ -1,7 +1,8 @@
-import {Component, Element, h, Host, Listen, Prop, State} from "@stencil/core"
+import {Component, Element, h, Host, Listen, Prop, State, Watch} from "@stencil/core"
 import {Track} from "../../global/models"
 import {get_player_controls, print, ua_parser} from "../../global/app"
 import {MatchResults} from "@stencil/router"
+import store from "../../global/store"
 
 @Component({
 	tag: "page-tracks",
@@ -10,9 +11,8 @@ import {MatchResults} from "@stencil/router"
 export class PageTracks {
 	@Element() el: HTMLPageTracksElement
 	@Prop() match: MatchResults
-	@Prop({mutable: true}) current_track: Track
 	@State() start_node = 0
-	tracks: Array<Track>
+	@State() tracks: Array<Track>
 	device_type: string
 	row_height = 60
 	offset_y = 0
@@ -22,17 +22,8 @@ export class PageTracks {
 	ticking = false
 
 	async componentWillLoad() {
-		let url = "/tracks"
-		if (this.match && this.match.params.album_id) {
-			url = `/albums/${this.match.params.album_id}/tracks`
-		}
-		let result = await fetch(url)
-		this.tracks = await result.json()
 		this.device_type = ua_parser.getDevice().type
-		this.calc_start_node(this.el)
-		this.calc_offset_y()
-		this.total_rows_height = this.tracks.length * this.row_height
-		this.container_height = this.el.parentElement.parentElement.parentElement.parentElement.offsetHeight
+		await this.load_page()
 	}
 
 	calc_start_node = (element: HTMLElement) => {
@@ -43,9 +34,6 @@ export class PageTracks {
 
 	calc_offset_y = () => {
 		this.offset_y = this.start_node * this.row_height
-		if (this.offset_y !== 0) {
-			this.offset_y -= 22
-		}
 	}
 
 	visible_row_count = () => {
@@ -72,29 +60,36 @@ export class PageTracks {
 		await controler.set_queue(this.tracks)
 	}
 
-	love_track = async (event: MouseEvent) => {
-		let target = event.target as HTMLPopupMenuItemElement
-		print("love track", target.data)
+	love_track = async (data: Track, popup_menu: HTMLPopupMenuElement) => {
+		print("I love this track!", data)
+		await popup_menu.hide()
 	}
 
-	add_track_to_playlist = async (event: MouseEvent) => {
-		let target = event.target as HTMLPopupMenuItemElement
-		print("add track to playlist", target, target.data)
+	add_track_to_playlist = async (data: Track) => {
+		print("add track to playlist", data)
 	}
 
-	play_track_next = async (event: MouseEvent) => {
-		let target = event.target as HTMLPopupMenuItemElement
-		print("play track next", target.data)
+	play_track_next = async (data: Track, popup_menu: HTMLPopupMenuElement) => {
+		print("play track next", data)
+		await popup_menu.hide()
 	}
 
-	append_track_to_queue = async (event: MouseEvent) => {
-		let target = event.target as HTMLPopupMenuItemElement
-		print("append track to queue", target.data)
+	append_track_to_queue = async (data: Track, popup_menu: HTMLPopupMenuElement) => {
+		print("append track to queue", data)
+		await popup_menu.hide()
 	}
 
-	@Listen("changing_track", {target: "body"})
-	changing_track_handler(event: CustomEvent<Track>) {
-		this.current_track = event.detail
+	load_page = async () => {
+		let url = "/tracks"
+		if (this.match && this.match.params.album_id) {
+			url = `/albums/${this.match.params.album_id}/tracks`
+		}
+		let result = await fetch(url)
+		this.tracks = await result.json()
+		this.calc_start_node(this.el)
+		this.calc_offset_y()
+		this.total_rows_height = this.tracks.length * this.row_height + 22
+		this.container_height = this.el.parentElement.parentElement.parentElement.parentElement.offsetHeight
 	}
 
 	scroll_handler = (event: MouseEvent) => {
@@ -109,28 +104,41 @@ export class PageTracks {
 		}
 	}
 
+	@Listen("changing_track", {target: "body"})
+	changing_track_handler(event: CustomEvent<Track>) {
+		store.current_track = event.detail
+	}
+
+	@Watch("match")
+	async match_handler() {
+		await this.load_page()
+	}
+
 	generate_mobile = index => {
 		let track = this.tracks[index]
 		let playing_track =
-			this.current_track && this.current_track.track_id == track.track_id
+			store.current_track && store.current_track.track_id == track.track_id
 		return (
 			<li key={track.track_id}>
 				<div class="menu cell">
 					<popup-menu>
-						<popup-menu-item onClick={this.love_track} data={track}>
+						<popup-menu-item click_action={this.love_track} data={track}>
 							Love
 						</popup-menu-item>
 						<popup-menu-item
-							onClick={this.add_track_to_playlist}
+							click_action={this.add_track_to_playlist}
 							data={track}
 						>
 							Add to a playlist
 						</popup-menu-item>
-						<popup-menu-item onClick={this.play_track_next} data={track}>
+						<popup-menu-item
+							click_action={this.play_track_next}
+							data={track}
+						>
 							Play Next
 						</popup-menu-item>
 						<popup-menu-item
-							onClick={this.append_track_to_queue}
+							click_action={this.append_track_to_queue}
 							data={track}
 						>
 							Append to Queue
@@ -177,25 +185,28 @@ export class PageTracks {
 	generate_desktop = index => {
 		let track = this.tracks[index]
 		let playing_track =
-			this.current_track && this.current_track.track_id == track.track_id
+			store.current_track && store.current_track.track_id == track.track_id
 		return (
 			<div class="row" key={track.track_id}>
 				<div class="menu cell">
 					<popup-menu>
-						<popup-menu-item onClick={this.love_track} data={track}>
+						<popup-menu-item click_action={this.love_track} data={track}>
 							Love
 						</popup-menu-item>
 						<popup-menu-item
-							onClick={this.add_track_to_playlist}
+							click_action={this.add_track_to_playlist}
 							data={track}
 						>
 							Add to a playlist
 						</popup-menu-item>
-						<popup-menu-item onClick={this.play_track_next} data={track}>
+						<popup-menu-item
+							click_action={this.play_track_next}
+							data={track}
+						>
 							Play Next
 						</popup-menu-item>
 						<popup-menu-item
-							onClick={this.append_track_to_queue}
+							click_action={this.append_track_to_queue}
 							data={track}
 						>
 							Append to Queue
@@ -243,7 +254,7 @@ export class PageTracks {
 			return (
 				<Host class="page_tracks_host">
 					<div class="tracks_container" onScroll={this.scroll_handler}>
-						<h3>Tracks</h3>
+						<h3 class="page_header">Tracks</h3>
 						<div
 							class="tracks_table_container"
 							style={{
@@ -261,7 +272,7 @@ export class PageTracks {
 		return (
 			<Host class="page_tracks_host">
 				<div class="tracks_container" onScroll={this.scroll_handler}>
-					<h3>Tracks</h3>
+					<h3 class="page_header">Tracks</h3>
 					<div
 						class="tracks_table_container"
 						style={{

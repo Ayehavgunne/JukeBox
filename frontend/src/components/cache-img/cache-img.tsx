@@ -1,5 +1,5 @@
 import {Component, Element, h, Prop, State, Watch} from "@stencil/core"
-import {images} from "../../global/app"
+import store from "../../global/store"
 
 @Component({
 	tag: "cache-img",
@@ -17,8 +17,8 @@ export class CacheImg {
 	async componentWillLoad() {
 		let src = this.placeholder
 		if (this.placeholder) {
-			if (this.placeholder in images) {
-				this.load_src = images[this.placeholder]
+			if (this.placeholder in store.images) {
+				this.load_src = store.images[this.placeholder]
 			} else {
 				await this.fetch_image(src)
 			}
@@ -32,7 +32,7 @@ export class CacheImg {
 		let reader = new FileReader()
 		reader.onload = function () {
 			let result = this.result.toString()
-			images[src] = result
+			store.images[src] = result
 			self.load_src = result
 		}
 		reader.readAsDataURL(blob)
@@ -64,8 +64,8 @@ export class CacheImg {
 
 	load = async () => {
 		let src = this.src
-		if (src in images) {
-			this.load_src = images[src]
+		if (src in store.images) {
+			this.load_src = store.images[src]
 		} else {
 			await this.fetch_image(src)
 		}

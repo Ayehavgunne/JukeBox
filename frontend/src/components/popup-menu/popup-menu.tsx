@@ -1,10 +1,8 @@
-import {Component, Host, h, State, Element} from "@stencil/core"
-import {print} from "../../global/app"
+import {Component, Host, h, State, Element, Method} from "@stencil/core"
 
 @Component({
 	tag: "popup-menu",
 	styleUrl: "popup-menu.css",
-	// shadow: true,
 })
 export class PopupMenu {
 	@Element() el: HTMLPopupMenuElement
@@ -12,20 +10,25 @@ export class PopupMenu {
 
 	componentDidRender() {
 		if (this.showing) {
-			print("rendered popup menu")
 			document.addEventListener("click", this.doc_hide_menu)
 		}
 	}
 
 	doc_hide_menu = (event: MouseEvent) => {
-		this.showing = false
 		let target = event.target as HTMLElement
-		print(target)
-		document.removeEventListener("click", this.doc_hide_menu)
+		if (this.el !== target && !this.el.contains(target)) {
+			this.showing = false
+			document.removeEventListener("click", this.doc_hide_menu)
+		}
 	}
 
-	toggle_show = async () => {
+	show_toggle = () => {
 		this.showing = !this.showing
+	}
+
+	@Method()
+	async hide() {
+		this.showing = false
 	}
 
 	render() {
@@ -35,7 +38,7 @@ export class PopupMenu {
 		}
 		return (
 			<Host class="popup_menu_host">
-				<div onClick={this.toggle_show}>
+				<div onClick={this.show_toggle}>
 					<div class="menu_button">
 						<div class="circle" />
 						<div class="circle" />

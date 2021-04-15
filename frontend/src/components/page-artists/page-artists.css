@@ -7,14 +7,8 @@
     overflow: auto;
 }
 
-.page_artists_host h3 {
-    margin-top: 3px;
-    margin-bottom: 3px;
-    font-size: 1.4em;
-}
-
 .page_artists_host ul {
-    padding-left: 0;
+    padding-left: 10px;
 }
 
 .page_artists_host li {

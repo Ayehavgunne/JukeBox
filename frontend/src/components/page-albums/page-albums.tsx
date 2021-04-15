@@ -22,7 +22,7 @@ export class PageAlbums {
 	render() {
 		return (
 			<Host class="page_albums_host">
-				<h3>Albums</h3>
+				<h3 class="page_header">Albums</h3>
 				<ul>
 					{this.albums.map(album => {
 						return (

@@ -5,7 +5,6 @@ import {get_player_controls} from "../../global/app"
 @Component({
 	tag: "play-container",
 	styleUrl: "play-container.css",
-	// shadow: true,
 })
 export class PlayContainer {
 	@Prop() track: Track

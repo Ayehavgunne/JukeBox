@@ -41,7 +41,6 @@ export namespace Components {
     interface PageSettings {
     }
     interface PageTracks {
-        "current_track": Track;
         "match": MatchResults;
     }
     interface PlayButton {
@@ -63,13 +62,17 @@ export namespace Components {
         "set_track": (track: Track) => Promise<void>;
     }
     interface PopupMenu {
+        "hide": () => Promise<void>;
     }
     interface PopupMenuItem {
+        "click_action": (any, HTMLPopupMenuElement) => void;
         "data": any;
     }
     interface ProgressBar {
+        "current_time": number;
         "progress": number;
         "seek_handler": (number) => void;
+        "total_time": number;
     }
     interface ProgressDot {
         "parent": HTMLDivElement;
@@ -77,7 +80,6 @@ export namespace Components {
         "seek_handler": (number) => void;
     }
     interface TrackStats {
-        "track": Track;
     }
     interface VolumeDot {
         "parent": HTMLDivElement;
@@ -270,7 +272,6 @@ declare namespace LocalJSX {
     interface PageSettings {
     }
     interface PageTracks {
-        "current_track"?: Track;
         "match"?: MatchResults;
     }
     interface PlayButton {
@@ -282,16 +283,18 @@ declare namespace LocalJSX {
         "track"?: Track;
     }
     interface PlayerControls {
-        "onChanging_track"?: (event: CustomEvent<Track>) => void;
     }
     interface PopupMenu {
     }
     interface PopupMenuItem {
+        "click_action"?: (any, HTMLPopupMenuElement) => void;
         "data"?: any;
     }
     interface ProgressBar {
+        "current_time"?: number;
         "progress"?: number;
         "seek_handler"?: (number) => void;
+        "total_time"?: number;
     }
     interface ProgressDot {
         "parent"?: HTMLDivElement;
@@ -299,7 +302,6 @@ declare namespace LocalJSX {
         "seek_handler"?: (number) => void;
     }
     interface TrackStats {
-        "track"?: Track;
     }
     interface VolumeDot {
         "parent"?: HTMLDivElement;
