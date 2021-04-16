@@ -13,8 +13,6 @@ export class AppRoot {
 	@State() nav_showing: boolean = true
 
 	async componentWillLoad() {
-		let result = await fetch(`/playlists/${store.user.user_id}`)
-		store.playlist_names = await result.json()
 		let user_cookie = Cookies.get("jukebox-user")
 		let user: User
 		if (user_cookie === undefined) {
@@ -34,6 +32,8 @@ export class AppRoot {
 			user = JSON.parse(user_cookie)
 		}
 		store.user = user
+		let result = await fetch(`/playlists/${store.user.user_id}`)
+		store.playlist_names = await result.json()
 	}
 
 	toggle_nav = async () => {
