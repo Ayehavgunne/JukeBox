@@ -116,6 +116,25 @@ async def get_artist_albums(artist_id: int) -> Response:
         return jsonify([album.to_json() for album in albums])
 
 
+@app.route("/artists/<int:artist_id>/tracks")
+async def get_artist_tracks(artist_id: int) -> Response:
+    with database.atomic():
+        albums = (
+            Track.select()
+            .join(Artist)
+            .switch(Track)
+            .join(Album)
+            .where(Artist.artist_id == artist_id)
+            .order_by(
+                fn.Lower(Artist.name),
+                fn.Lower(Album.title),
+                Track.disc_number,
+                Track.track_number,
+            )
+        )
+        return jsonify([album.to_json() for album in albums])
+
+
 @app.route("/albums")
 @app.route("/albums/<int:album_id>")
 async def get_albums(album_id: int = None) -> Response:

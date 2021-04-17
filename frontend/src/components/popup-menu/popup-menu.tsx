@@ -1,4 +1,5 @@
 import {Component, Host, h, State, Element, Method} from "@stencil/core"
+import {ua_parser} from "../../global/app"
 
 @Component({
 	tag: "popup-menu",
@@ -7,6 +8,12 @@ import {Component, Host, h, State, Element, Method} from "@stencil/core"
 export class PopupMenu {
 	@Element() el: HTMLPopupMenuElement
 	@State() showing = false
+	device_type: string
+	menu_container: HTMLDivElement
+
+	async componentWillLoad() {
+		this.device_type = ua_parser.getDevice().type
+	}
 
 	componentDidRender() {
 		if (this.showing) {
@@ -18,17 +25,23 @@ export class PopupMenu {
 		let target = event.target as HTMLElement
 		if (this.el !== target && !this.el.contains(target)) {
 			this.showing = false
+			this.menu_container.style.width = ""
+			this.menu_container.style.padding = ""
 			document.removeEventListener("click", this.doc_hide_menu)
 		}
 	}
 
 	show_toggle = () => {
 		this.showing = !this.showing
+		this.menu_container.style.width = ""
+		this.menu_container.style.padding = ""
 	}
 
 	@Method()
 	async hide() {
 		this.showing = false
+		this.menu_container.style.width = ""
+		this.menu_container.style.padding = ""
 	}
 
 	render() {
@@ -45,7 +58,7 @@ export class PopupMenu {
 						<div class="circle" />
 					</div>
 				</div>
-				<div class={classes}>
+				<div class={classes} ref={el => (this.menu_container = el as HTMLDivElement)}>
 					<slot />
 				</div>
 			</Host>

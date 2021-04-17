@@ -1,8 +1,4 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .play_container_host {
-  display: block;
-  cursor: pointer;
+	display: block;
+	cursor: pointer;
 }

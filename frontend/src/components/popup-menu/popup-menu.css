@@ -1,57 +1,55 @@
 .popup_menu_host {
-    position: relative;
-    white-space: nowrap;
+	position: relative;
+	white-space: nowrap;
 }
 
 .menu_container {
-    display: none;
-    position: absolute;
-    background-color: rgba(31, 31, 31, 0.66);
-    box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    z-index: 1;
-    top: 8px;
-    left: 14px;
-    padding: 4px 10px;
-    min-width: 172px;
-    border-radius: 3px;
+	display: none;
+	position: absolute;
+	background-color: rgba(31, 31, 31, 0.66);
+	box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+	z-index: 1;
+	top: 8px;
+	left: 14px;
+	padding: 4px 10px;
+	border-radius: 3px;
 }
 
 .show {
-    display: block;
+	display: block;
 }
 
 .menu_button {
-    width: 20px;
-    height: 42px;
-    padding-right: 20px;
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
-    flex-direction: column;
+	width: 20px;
+	height: 42px;
+	padding-right: 20px;
+	display: flex;
+	justify-content: center;
+	cursor: pointer;
+	flex-direction: column;
 }
 
 .circle {
-    width: 6px;
-    height: 6px;
-    margin: 2px;
-    background: #fff;
-    border-radius: 50%;
+	width: 6px;
+	height: 6px;
+	margin: 2px;
+	background: #fff;
+	border-radius: 50%;
 }
 
 .popup_menu_item {
-    margin-bottom: 4px;
+	margin-bottom: 4px;
 }
 
 .popup_menu_item:last-child > div {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 @media (max-width: 600px) {
-    .menu_container {
-        top: -34px;
-        font-size: 1.5em;
-        min-width: 192px;
-    }
+	.menu_container {
+		top: -34px;
+		font-size: 1.3em;
+	}
 }

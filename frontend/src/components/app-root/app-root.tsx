@@ -1,7 +1,7 @@
 import {Component, Element, h, Host, State} from "@stencil/core"
 import {print} from "../../global/app"
 import {User} from "../../global/models"
-import store from "../../global/store"
+import state from "../../global/store"
 import Cookies from "js-cookie"
 
 @Component({
@@ -10,34 +10,41 @@ import Cookies from "js-cookie"
 })
 export class AppRoot {
 	@Element() el: HTMLElement
-	@State() nav_showing: boolean = true
+	@State() nav_showing = true
+	@State() show_modal = true
 
 	async componentWillLoad() {
 		let user_cookie = Cookies.get("jukebox-user")
 		let user: User
-		if (user_cookie === undefined) {
-			let username = prompt("What is your username?")
-			let response = await fetch(`/users/${username}`)
-			let result = await response.json()
-			if (result["error"]) {
-				print(result["error"])
-				return
-			}
-			user = {
-				user_id: result["user_id"],
-				username: result["username"],
-			}
-			Cookies.set("jukebox-user", JSON.stringify(user))
-		} else {
+		if (user_cookie !== undefined) {
 			user = JSON.parse(user_cookie)
+			state.user = user
+			let result = await fetch(`/playlists/${state.user.user_id}`)
+			state.playlist_names = await result.json()
+			this.show_modal = false
 		}
-		store.user = user
-		let result = await fetch(`/playlists/${store.user.user_id}`)
-		store.playlist_names = await result.json()
 	}
 
 	toggle_nav = async () => {
 		this.nav_showing = !this.nav_showing
+	}
+
+	get_username = async username => {
+		let response = await fetch(`/users/${username}`)
+		let result = await response.json()
+		if (result["error"]) {
+			print(result["error"])
+			return
+		}
+		let user = {
+			user_id: result["user_id"],
+			username: result["username"],
+		}
+		Cookies.set("jukebox-user", JSON.stringify(user))
+		state.user = user
+		result = await fetch(`/playlists/${state.user.user_id}`)
+		state.playlist_names = await result.json()
+		this.show_modal = false
 	}
 
 	render() {
@@ -48,6 +55,12 @@ export class AppRoot {
 
 		return (
 			<Host class="app_root_host">
+				{this.show_modal && (
+					<modal-prompt
+						header="What is your name?"
+						close={this.get_username}
+					/>
+				)}
 				<nav class={classes}>
 					<header>
 						<h1>JukeBox</h1>
@@ -58,7 +71,7 @@ export class AppRoot {
 						</li>
 						<li>
 							<stencil-route-link
-								url={`/page/profile/${store.user.username}`}
+								url={`/page/profile/${state.user.username}`}
 							>
 								Profile
 							</stencil-route-link>
@@ -101,7 +114,7 @@ export class AppRoot {
 						<li>
 							<h3>Playlists</h3>
 							<ul>
-								{store.playlist_names.map(playlist_name => {
+								{state.playlist_names.map(playlist_name => {
 									return (
 										<li key={playlist_name}>
 											<stencil-route-link
@@ -137,7 +150,7 @@ export class AppRoot {
 								component="page-albums"
 							/>
 							<stencil-route
-								url="/page/artists"
+								url="/page/artists/:artist_id?"
 								component="page-artists"
 							/>
 							{/*<stencil-route*/}

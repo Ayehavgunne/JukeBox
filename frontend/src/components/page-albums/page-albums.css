@@ -1,44 +1,29 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
-.page_albums_host {
-    height: 100%;
-    overflow: auto;
-}
-
 .page_albums_host ul {
-    padding-left: 10px;
+	padding-left: 10px;
 }
 
 .page_albums_host li {
-    list-style: none;
-    font-size: 2em;
-    height: 110px;
-}
-
-a:visited, a:link, a:hover, a:active {
-    height: 100%;
-    display: inline-block;
-    width: 100%;
+	list-style: none;
+	font-size: 2em;
+	height: 110px;
 }
 
 .page_albums_host img {
-    margin-right: 12px;
+	margin-right: 12px;
 }
 
 .albumart {
-    float: left;
+	float: left;
 }
 
 .name {
-    float: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    width: calc(100% - 112px);
-    word-break: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	float: left;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	width: calc(100% - 112px);
+	word-break: break-word;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

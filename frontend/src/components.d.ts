@@ -12,7 +12,7 @@ export namespace Components {
     }
     interface CacheImg {
         "alt": string;
-        "class"?: string;
+        "classes"?: string;
         "placeholder"?: string;
         "src": string;
     }
@@ -21,10 +21,16 @@ export namespace Components {
         "toggle": () => void;
         "toggling": () => void;
     }
+    interface ModalPrompt {
+        "close": (string) => void;
+        "header": string;
+        "show_cancel"?: boolean;
+    }
     interface PageAlbums {
         "match": MatchResults;
     }
     interface PageArtists {
+        "match": MatchResults;
     }
     interface PageGenres {
     }
@@ -82,6 +88,12 @@ export namespace Components {
     }
     interface TrackStats {
     }
+    interface VirtualScrollTracks {
+        "generate_popup_menu": (Track) => HTMLPopupMenuElement;
+        "header": string;
+        "playing_track_handler": () => void;
+        "tracks": Array<Track>;
+    }
     interface VolumeDot {
         "parent": HTMLDivElement;
         "volume": number;
@@ -106,6 +118,12 @@ declare global {
     var HTMLMenuToggleElement: {
         prototype: HTMLMenuToggleElement;
         new (): HTMLMenuToggleElement;
+    };
+    interface HTMLModalPromptElement extends Components.ModalPrompt, HTMLStencilElement {
+    }
+    var HTMLModalPromptElement: {
+        prototype: HTMLModalPromptElement;
+        new (): HTMLModalPromptElement;
     };
     interface HTMLPageAlbumsElement extends Components.PageAlbums, HTMLStencilElement {
     }
@@ -209,6 +227,12 @@ declare global {
         prototype: HTMLTrackStatsElement;
         new (): HTMLTrackStatsElement;
     };
+    interface HTMLVirtualScrollTracksElement extends Components.VirtualScrollTracks, HTMLStencilElement {
+    }
+    var HTMLVirtualScrollTracksElement: {
+        prototype: HTMLVirtualScrollTracksElement;
+        new (): HTMLVirtualScrollTracksElement;
+    };
     interface HTMLVolumeDotElement extends Components.VolumeDot, HTMLStencilElement {
     }
     var HTMLVolumeDotElement: {
@@ -219,6 +243,7 @@ declare global {
         "app-root": HTMLAppRootElement;
         "cache-img": HTMLCacheImgElement;
         "menu-toggle": HTMLMenuToggleElement;
+        "modal-prompt": HTMLModalPromptElement;
         "page-albums": HTMLPageAlbumsElement;
         "page-artists": HTMLPageArtistsElement;
         "page-genres": HTMLPageGenresElement;
@@ -236,6 +261,7 @@ declare global {
         "progress-bar": HTMLProgressBarElement;
         "progress-dot": HTMLProgressDotElement;
         "track-stats": HTMLTrackStatsElement;
+        "virtual-scroll-tracks": HTMLVirtualScrollTracksElement;
         "volume-dot": HTMLVolumeDotElement;
     }
 }
@@ -244,7 +270,7 @@ declare namespace LocalJSX {
     }
     interface CacheImg {
         "alt"?: string;
-        "class"?: string;
+        "classes"?: string;
         "placeholder"?: string;
         "src"?: string;
     }
@@ -253,10 +279,16 @@ declare namespace LocalJSX {
         "toggle"?: () => void;
         "toggling"?: () => void;
     }
+    interface ModalPrompt {
+        "close"?: (string) => void;
+        "header"?: string;
+        "show_cancel"?: boolean;
+    }
     interface PageAlbums {
         "match"?: MatchResults;
     }
     interface PageArtists {
+        "match"?: MatchResults;
     }
     interface PageGenres {
     }
@@ -305,6 +337,12 @@ declare namespace LocalJSX {
     }
     interface TrackStats {
     }
+    interface VirtualScrollTracks {
+        "generate_popup_menu"?: (Track) => HTMLPopupMenuElement;
+        "header"?: string;
+        "playing_track_handler"?: () => void;
+        "tracks"?: Array<Track>;
+    }
     interface VolumeDot {
         "parent"?: HTMLDivElement;
         "volume"?: number;
@@ -314,6 +352,7 @@ declare namespace LocalJSX {
         "app-root": AppRoot;
         "cache-img": CacheImg;
         "menu-toggle": MenuToggle;
+        "modal-prompt": ModalPrompt;
         "page-albums": PageAlbums;
         "page-artists": PageArtists;
         "page-genres": PageGenres;
@@ -331,6 +370,7 @@ declare namespace LocalJSX {
         "progress-bar": ProgressBar;
         "progress-dot": ProgressDot;
         "track-stats": TrackStats;
+        "virtual-scroll-tracks": VirtualScrollTracks;
         "volume-dot": VolumeDot;
     }
 }
@@ -341,6 +381,7 @@ declare module "@stencil/core" {
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "cache-img": LocalJSX.CacheImg & JSXBase.HTMLAttributes<HTMLCacheImgElement>;
             "menu-toggle": LocalJSX.MenuToggle & JSXBase.HTMLAttributes<HTMLMenuToggleElement>;
+            "modal-prompt": LocalJSX.ModalPrompt & JSXBase.HTMLAttributes<HTMLModalPromptElement>;
             "page-albums": LocalJSX.PageAlbums & JSXBase.HTMLAttributes<HTMLPageAlbumsElement>;
             "page-artists": LocalJSX.PageArtists & JSXBase.HTMLAttributes<HTMLPageArtistsElement>;
             "page-genres": LocalJSX.PageGenres & JSXBase.HTMLAttributes<HTMLPageGenresElement>;
@@ -358,6 +399,7 @@ declare module "@stencil/core" {
             "progress-bar": LocalJSX.ProgressBar & JSXBase.HTMLAttributes<HTMLProgressBarElement>;
             "progress-dot": LocalJSX.ProgressDot & JSXBase.HTMLAttributes<HTMLProgressDotElement>;
             "track-stats": LocalJSX.TrackStats & JSXBase.HTMLAttributes<HTMLTrackStatsElement>;
+            "virtual-scroll-tracks": LocalJSX.VirtualScrollTracks & JSXBase.HTMLAttributes<HTMLVirtualScrollTracksElement>;
             "volume-dot": LocalJSX.VolumeDot & JSXBase.HTMLAttributes<HTMLVolumeDotElement>;
         }
     }

@@ -1,5 +1,5 @@
-import {Component, Element, h, Prop, State, Watch} from "@stencil/core"
-import store from "../../global/store"
+import {Component, Element, h, Host, Prop, State, Watch} from "@stencil/core"
+import state from "../../global/store"
 
 @Component({
 	tag: "cache-img",
@@ -9,7 +9,7 @@ export class CacheImg {
 	@Element() el: HTMLElement
 	@Prop() src: string
 	@Prop() alt: string
-	@Prop() class?: string
+	@Prop() classes?: string
 	@Prop() placeholder?: string
 	@State() load_src: string
 	io?: IntersectionObserver
@@ -17,8 +17,8 @@ export class CacheImg {
 	async componentWillLoad() {
 		let src = this.placeholder
 		if (this.placeholder) {
-			if (this.placeholder in store.images) {
-				this.load_src = store.images[this.placeholder]
+			if (this.placeholder in state.images) {
+				this.load_src = state.images[this.placeholder]
 			} else {
 				await this.fetch_image(src)
 			}
@@ -32,7 +32,7 @@ export class CacheImg {
 		let reader = new FileReader()
 		reader.onload = function () {
 			let result = this.result.toString()
-			store.images[src] = result
+			state.images[src] = result
 			self.load_src = result
 		}
 		reader.readAsDataURL(blob)
@@ -49,12 +49,18 @@ export class CacheImg {
 
 		if ("IntersectionObserver" in window) {
 			await this.remove_io()
-			this.io = new IntersectionObserver(async data => {
-				if (data[0].isIntersecting) {
-					await this.load()
-					await this.remove_io()
-				}
-			})
+			this.io = new IntersectionObserver(
+				async data => {
+					if (data[0].isIntersecting) {
+						await this.load()
+						await this.remove_io()
+					}
+				},
+				{
+					root: document.querySelector(".tracks_container"),
+					rootMargin: "500px 0px 500px 0px",
+				},
+			)
 
 			this.io.observe(this.el)
 		} else {
@@ -64,8 +70,8 @@ export class CacheImg {
 
 	load = async () => {
 		let src = this.src
-		if (src in store.images) {
-			this.load_src = store.images[src]
+		if (src in state.images) {
+			this.load_src = state.images[src]
 		} else {
 			await this.fetch_image(src)
 		}
@@ -84,9 +90,13 @@ export class CacheImg {
 	}
 
 	render() {
-		if (this.class === undefined) {
-			this.class = ""
+		if (this.classes === undefined) {
+			this.classes = ""
 		}
-		return <img src={this.load_src} alt={this.alt} class={this.class} />
+		return (
+			<Host class="cache_image">
+				<img src={this.load_src} alt={this.alt} class={this.classes} />
+			</Host>
+		)
 	}
 }

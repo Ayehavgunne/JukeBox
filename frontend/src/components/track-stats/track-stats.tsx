@@ -1,5 +1,5 @@
 import {Component, Host, h, Listen} from "@stencil/core"
-import store from "../../global/store"
+import state from "../../global/store"
 
 @Component({
 	tag: "track-stats",
@@ -56,7 +56,7 @@ export class TrackStats {
 	}
 
 	render() {
-		if (store.current_track.track_id) {
+		if (state.current_track.track_id) {
 			return (
 				<Host class="track_stats_host">
 					<div class="track_wrapper">
@@ -64,7 +64,7 @@ export class TrackStats {
 							class="slider"
 							ref={el => (this.title_div = el as HTMLDivElement)}
 						>
-							{store.current_track.title}
+							{state.current_track.title}
 						</div>
 					</div>
 					<div class="track_wrapper small">
@@ -72,7 +72,7 @@ export class TrackStats {
 							class="slider"
 							ref={el => (this.artist_div = el as HTMLDivElement)}
 						>
-							{store.current_track.artist}
+							{state.current_track.artist}
 						</div>
 					</div>
 				</Host>

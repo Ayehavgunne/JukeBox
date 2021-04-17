@@ -1,109 +1,111 @@
 .app_root_host {
-    height: 100%;
+	height: 100%;
 }
 
 header {
-    background: #000000;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 5px 2px rgba(0, 0, 0, 0.26);
+	background: #000000;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 2px 5px 2px rgba(0, 0, 0, 0.26);
 }
 
 footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: calc(100% - 133px);
-    height: 56px;
-    background-color: #1d1d1d;
-    z-index: 4;
-    transition: all 500ms ease-in-out;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: calc(100% - 133px);
+	height: 56px;
+	background-color: #1d1d1d;
+	z-index: 4;
+	transition: all 500ms ease-in-out;
 }
 
 footer.nav_closed {
-    width: calc(100% - 60px);
+	width: calc(100% - 60px);
 }
 
 h1 {
-    padding: 0 12px;
+	padding: 0 12px;
 }
 
 nav h3 {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 main {
-    width: calc(100% - 133px);
-    transition: all 500ms ease-in-out;
-    overflow: auto;
+	width: calc(100% - 133px);
+	transition: all 500ms ease-in-out;
+	overflow: auto;
 }
 
 main.nav_closed {
-    width: 100%;
+	width: 100%;
 }
 
 nav {
-    border-right: solid 1px #4d4d4d;
-    width: 133px;
-    transition: all 500ms ease-in-out;
-    white-space: nowrap;
-    overflow: hidden;
+	border-right: solid 1px #4d4d4d;
+	width: 133px;
+	transition: all 500ms ease-in-out;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 nav.nav_closed {
-    width: 0;
-    border-right: 0;
+	width: 0;
+	border-right: 0;
 }
 
-nav, main {
-    float: left;
-    height: calc(100% - 56px);
+nav,
+main {
+	float: left;
+	height: calc(100% - 56px);
 }
 
 nav ul {
-    padding-left: 10px;
+	padding-left: 10px;
 }
 
 nav li {
-    list-style: none;
-    padding-bottom: 5px;
+	list-style: none;
+	padding-bottom: 5px;
 }
 
 menu-toggle {
-    position: absolute;
-    bottom: 9px;
-    left: -95px;
-    transition: all 500ms ease-in-out;
+	position: absolute;
+	bottom: 9px;
+	left: -95px;
+	transition: all 500ms ease-in-out;
 }
 
 menu-toggle.nav_closed {
-    left: -54px;
+	left: -54px;
 }
 
 @media (max-width: 600px) {
-    body {
-        font-size: 12px;
-    }
+	body {
+		font-size: 12px;
+	}
 
-    footer {
-        height: 80px;
-    }
+	footer {
+		height: 80px;
+	}
 
-    nav {
-        font-size: 1.3em;
-    }
+	nav {
+		font-size: 1.3em;
+	}
 
-    nav, main {
-        height: calc(100% - 80px);
-    }
+	nav,
+	main {
+		height: calc(100% - 80px);
+	}
 
-    menu-toggle {
-        bottom: 28px;
-        left: -100px;
-    }
+	menu-toggle {
+		bottom: 28px;
+		left: -100px;
+	}
 
-    menu-toggle.nav_closed {
-        left: -64px;
-    }
+	menu-toggle.nav_closed {
+		left: -64px;
+	}
 }

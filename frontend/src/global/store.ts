@@ -1,6 +1,6 @@
 import {createStore} from "@stencil/store"
 
-const {state} = createStore({
+export const store = createStore({
 	playlist_names: [],
 	current_track: {
 		track_id: 0,
@@ -26,5 +26,6 @@ const {state} = createStore({
 		username: "",
 	},
 })
+const {state} = store
 
 export default state

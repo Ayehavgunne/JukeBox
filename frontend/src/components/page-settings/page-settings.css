@@ -1,16 +1,13 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .page_settings_host {
-    display: block;
+	display: block;
 }
 
 .page_settings_host button {
-    background: transparent;
-    border: 1px solid #4a4a4a;
-    color: white;
-    cursor: pointer;
-    float: left;
-    clear: left;
+	background: transparent;
+	border: 1px solid #4a4a4a;
+	color: white;
+	cursor: pointer;
+	float: left;
+	clear: left;
+	border-radius: 3px;
 }

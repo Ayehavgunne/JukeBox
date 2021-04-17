@@ -1,35 +1,31 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .progress_dot_host {
-    width: 10px;
-    height: 10px;
-    position: relative;
-    display: block;
-    bottom: 4px;
-    left: 0;
-    transform: translateX(-5px);
+	width: 10px;
+	height: 10px;
+	position: relative;
+	display: block;
+	bottom: 4px;
+	left: 0;
+	transform: translateX(-5px);
 }
 
 .progress_dot {
-    border-radius: 50%;
-    background-color: #15dea5;
-    width: 10px;
-    height: 10px;
-    cursor: pointer;
-    transition: transform 100ms ease-in-out;
+	border-radius: 50%;
+	background-color: #15dea5;
+	width: 10px;
+	height: 10px;
+	cursor: pointer;
+	transition: transform 100ms ease-in-out;
 }
 
 @media (max-width: 600px) {
-    .progress_dot_host {
-        width: 15px;
-        height: 15px;
-        bottom: 7px;
-    }
+	.progress_dot_host {
+		width: 15px;
+		height: 15px;
+		bottom: 7px;
+	}
 
-    .progress_dot {
-        width: 15px;
-        height: 15px;
-    }
+	.progress_dot {
+		width: 15px;
+		height: 15px;
+	}
 }

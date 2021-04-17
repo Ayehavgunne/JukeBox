@@ -2,7 +2,7 @@ import {Component, h, Host, Prop, State, Watch} from "@stencil/core"
 import {MatchResults} from "@stencil/router"
 import {get_player_controls, print} from "../../global/app"
 import {Track} from "../../global/models"
-import store from "../../global/store"
+import state from "../../global/store"
 
 @Component({
 	tag: "page-playlist",
@@ -14,6 +14,13 @@ export class PagePlaylist {
 
 	async componentWillLoad() {
 		await this.load_page()
+	}
+
+	load_page = async () => {
+		let result = await fetch(
+			`/playlists/${state.user.user_id}/${this.match.params.name}`,
+		)
+		this.tracks = await result.json()
 	}
 
 	playing_track_handler = async () => {
@@ -52,61 +59,6 @@ export class PagePlaylist {
 		)
 	}
 
-	generate_album_art = (track, playing_track) => {
-		return (
-			<div class="albumart">
-				<cache-img
-					src={`/albums/${track.album_id}/image`}
-					alt={`${track.title} album`}
-					placeholder="/assets/generic_album.png"
-					class="small"
-				/>
-				{playing_track ? (
-					<div class="playing on_image">
-						<div class="playing_bar bar-1" />
-						<div class="playing_bar bar-2" />
-						<div class="playing_bar bar-3" />
-					</div>
-				) : (
-					<div class="play_track" />
-				)}
-			</div>
-		)
-	}
-
-	generate_desktop = track => {
-		let playing_track =
-			store.current_track && store.current_track.track_id == track.track_id
-		return (
-			<div class="row" key={track.track_id}>
-				<div class="menu cell">{this.generate_popup_menu(track)}</div>
-				<play-container
-					track={track}
-					click_handler={this.playing_track_handler}
-					class="cell"
-				>
-					{this.generate_album_art(track, playing_track)}
-				</play-container>
-				<div class="number cell">{track.track_number}</div>
-				<div class="cell">{track.title}</div>
-				<div class="cell">{track.artist}</div>
-				<div class="cell">{track.album}</div>
-				<div class="number cell">{track.disc_number}</div>
-				<div class="number cell">{track.year}</div>
-				<div class="number cell">
-					{new Date(track.length * 1000).toISOString().substr(14, 5)}
-				</div>
-			</div>
-		)
-	}
-
-	load_page = async () => {
-		let result = await fetch(
-			`/playlists/${store.user.user_id}/${this.match.params.name}`,
-		)
-		this.tracks = await result.json()
-	}
-
 	@Watch("match")
 	async match_handler() {
 		await this.load_page()
@@ -116,21 +68,12 @@ export class PagePlaylist {
 		if (this.match && this.match.params.name) {
 			return (
 				<Host class="page_playlist_host">
-					<h3 class="page_header">{this.match.params.name}</h3>
-					<div class="body">
-						<div class="header" />
-						<div class="header" />
-						<div class="header">No.</div>
-						<div class="header">Title</div>
-						<div class="header">Artist</div>
-						<div class="header">Album</div>
-						<div class="header">Disc</div>
-						<div class="header">Year</div>
-						<div class="header">Length</div>
-						{this.tracks.map(track => {
-							return this.generate_desktop(track)
-						})}
-					</div>
+					<virtual-scroll-tracks
+						header={this.match.params.name}
+						tracks={this.tracks}
+						playing_track_handler={this.playing_track_handler}
+						generate_popup_menu={this.generate_popup_menu}
+					/>
 				</Host>
 			)
 		} else {

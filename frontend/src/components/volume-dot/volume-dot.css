@@ -1,37 +1,33 @@
-/** {*/
-/*    box-sizing: border-box;*/
-/*}*/
-
 .volume_dot_host {
-    width: 9px;
-    height: 9px;
-    position: absolute;
-    display: block;
-    bottom: 60%;
-    right: -4px;
-    z-index: 2;
+	width: 9px;
+	height: 9px;
+	position: absolute;
+	display: block;
+	bottom: 60%;
+	right: -4px;
+	z-index: 2;
 }
 
 .volume_dot {
-    border-radius: 50%;
-    background-color: #15dea5;
-    width: 9px;
-    height: 9px;
-    cursor: pointer;
-    transition: transform 100ms ease-in-out;
+	border-radius: 50%;
+	background-color: #15dea5;
+	width: 9px;
+	height: 9px;
+	cursor: pointer;
+	transition: transform 100ms ease-in-out;
 }
 
 @media (max-width: 600px) {
-    .volume_dot_host {
-        width: 30px;
-        height: 15px;
-        right: -15px;
-    }
+	.volume_dot_host {
+		width: 30px;
+		height: 15px;
+		right: -15px;
+	}
 
-    .volume_dot {
-        width: 15px;
-        height: 15px;
-        position: absolute;
-        right: 8px;
-    }
+	.volume_dot {
+		width: 15px;
+		height: 15px;
+		position: absolute;
+		right: 8px;
+	}
 }

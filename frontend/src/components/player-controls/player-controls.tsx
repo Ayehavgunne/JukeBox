@@ -5,7 +5,7 @@ import {Track} from "../../global/models"
 import {worker} from "../../progress.worker?worker"
 import {Howl} from "howler"
 import {print, ua_parser} from "../../global/app"
-import store from "../../global/store"
+import state from "../../global/store"
 import Cookies from "js-cookie"
 
 const formats = ["m4a", "flac", "mp3"]
@@ -114,15 +114,15 @@ export class PlayerControls {
 			html5: true,
 		})
 		this.add_event_listeners(this.current_track_audio)
-		store.current_track = track
-		document.title = store.current_track.title + " - JukeBox"
+		state.current_track = track
+		document.title = state.current_track.title + " - JukeBox"
 	}
 
 	@Method()
 	async set_queue(tracks: Array<Track>) {
 		this.queue = tracks
 		this.ordered_queue = tracks
-		this.queue_index = this.queue.indexOf(store.current_track)
+		this.queue_index = this.queue.indexOf(state.current_track)
 	}
 
 	@Method()
@@ -139,7 +139,7 @@ export class PlayerControls {
 
 	seek = async (percent: number) => {
 		if (this.current_track_audio) {
-			this.current_track_audio.seek((percent / 100) * store.current_track.length)
+			this.current_track_audio.seek((percent / 100) * state.current_track.length)
 		}
 	}
 
@@ -163,18 +163,18 @@ export class PlayerControls {
 		}
 		if (track_index < this.queue.length) {
 			this.queue_index = track_index
-			store.current_track = this.queue[this.queue_index]
+			state.current_track = this.queue[this.queue_index]
 			this.current_track_audio = new Howl({
-				src: "/stream/" + store.current_track.track_id,
+				src: "/stream/" + state.current_track.track_id,
 				format: formats,
 				volume: this.volume,
 				html5: true,
 			})
-			document.title = store.current_track.title + " - JukeBox"
+			document.title = state.current_track.title + " - JukeBox"
 			this.add_event_listeners(this.current_track_audio)
 			this.current_track_audio.play()
 		} else {
-			store.current_track = {
+			state.current_track = {
 				track_id: 0,
 				title: "",
 				album: "",
@@ -208,8 +208,8 @@ export class PlayerControls {
 			this.play().then(() => {
 				// nothin
 			})
-			store.current_track = this.queue[this.queue_index]
-			document.title = store.current_track.title + " - JukeBox"
+			state.current_track = this.queue[this.queue_index]
+			document.title = state.current_track.title + " - JukeBox"
 		}
 	}
 
@@ -244,7 +244,7 @@ export class PlayerControls {
 	}
 
 	timeupdate_handler = async () => {
-		let duration = store.current_track.length
+		let duration = state.current_track.length
 		if (this.current_track_audio) {
 			// @ts-ignore
 			let current_time: number = this.current_track_audio.seek() || 0
@@ -317,7 +317,7 @@ export class PlayerControls {
 		}
 		let total_time = 0
 		if (this.current_track_audio) {
-			total_time = store.current_track.length
+			total_time = state.current_track.length
 		}
 		return (
 			<Host class="player_controls_host">
