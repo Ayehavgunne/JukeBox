@@ -17,7 +17,7 @@
 	transition: transform 100ms ease-in-out;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 	.progress_dot_host {
 		width: 15px;
 		height: 15px;

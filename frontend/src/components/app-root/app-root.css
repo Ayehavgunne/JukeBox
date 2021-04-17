@@ -82,7 +82,7 @@ menu-toggle.nav_closed {
 	left: -54px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 	body {
 		font-size: 12px;
 	}

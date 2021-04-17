@@ -94,7 +94,6 @@
 
 .tracks_container ul {
 	padding-left: 2px;
-	/*height: calc(100% - 51px);*/
 	overflow: auto;
 }
 
@@ -173,7 +172,7 @@
 	height: 60px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 	tbody {
 		font-size: 9px;
 	}
@@ -197,5 +196,13 @@
 
 	.menu {
 		float: left;
+	}
+}
+
+@media not all and (min-resolution: 0.001dpcm) {
+	@media {
+		.on_image {
+			left: calc(50% - 17px);
+		}
 	}
 }

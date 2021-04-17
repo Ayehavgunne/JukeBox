@@ -58,7 +58,10 @@ export class PopupMenu {
 						<div class="circle" />
 					</div>
 				</div>
-				<div class={classes} ref={el => (this.menu_container = el as HTMLDivElement)}>
+				<div
+					class={classes}
+					ref={el => (this.menu_container = el as HTMLDivElement)}
+				>
 					<slot />
 				</div>
 			</Host>

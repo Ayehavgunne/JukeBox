@@ -103,7 +103,7 @@ export class VirtualScrollTracks {
 			state.current_track && state.current_track.track_id == track.track_id
 		return (
 			<li key={track.track_id}>
-				<div class="menu cell">{this.generate_popup_menu(track)}</div>
+				<div class="menu">{this.generate_popup_menu(track)}</div>
 				<play-container
 					track={track}
 					click_handler={this.playing_track_handler}
