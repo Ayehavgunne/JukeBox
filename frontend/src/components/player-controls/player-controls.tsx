@@ -25,8 +25,8 @@ export class PlayerControls {
 	next_track_data: Track
 	ordered_queue: Array<Track> = []
 	os_hide_volume: boolean
-	queue: Array<Track> = []
-	queue_index: number = -1
+	// queue: Array<Track> = []
+	// queue_index: number = -1
 	volume = 0.6
 	volume_wrapper: HTMLDivElement
 	volume_bar: HTMLDivElement
@@ -72,7 +72,7 @@ export class PlayerControls {
 			if (this.current_track_audio.seek() > 1.5) {
 				this.current_track_audio.seek(0)
 			} else {
-				await this.change_to_track(this.queue_index - 1)
+				await this.change_to_track(state.queue_index - 1)
 			}
 			worker.postMessage("start_progress")
 		}
@@ -90,7 +90,7 @@ export class PlayerControls {
 	async play_next_track() {
 		if (this.current_track_audio) {
 			// check if this.next_track has been loaded
-			await this.change_to_track(this.queue_index + 1)
+			await this.change_to_track(state.queue_index + 1)
 			worker.postMessage("start_progress")
 		}
 	}
@@ -116,24 +116,25 @@ export class PlayerControls {
 		this.add_event_listeners(this.current_track_audio)
 		state.current_track = track
 		document.title = state.current_track.title + " - JukeBox"
+		state.queue_index = state.queue.indexOf(track)
 	}
 
 	@Method()
 	async set_queue(tracks: Array<Track>) {
-		this.queue = tracks
+		state.queue = tracks
 		this.ordered_queue = tracks
-		this.queue_index = this.queue.indexOf(state.current_track)
+		state.queue_index = state.queue.indexOf(state.current_track)
 	}
 
 	@Method()
 	async add_next_in_queue(track: Track) {
-		this.queue.splice(this.queue_index + 1, 0, track)
-		this.ordered_queue.splice(this.queue_index + 1, 0, track)
+		state.queue.splice(state.queue_index + 1, 0, track)
+		this.ordered_queue.splice(state.queue_index + 1, 0, track)
 	}
 
 	@Method()
 	async append_to_queue(tracks: Array<Track>) {
-		this.queue.concat(tracks)
+		state.queue.concat(tracks)
 		this.ordered_queue.concat(tracks)
 	}
 
@@ -161,9 +162,9 @@ export class PlayerControls {
 			this.current_track_audio.stop()
 			delete this.current_track_audio
 		}
-		if (track_index < this.queue.length) {
-			this.queue_index = track_index
-			state.current_track = this.queue[this.queue_index]
+		if (track_index < state.queue.length) {
+			state.queue_index = track_index
+			state.current_track = state.queue[state.queue_index]
 			this.current_track_audio = new Howl({
 				src: "/stream/" + state.current_track.track_id,
 				format: formats,
@@ -201,14 +202,14 @@ export class PlayerControls {
 	auto_change_to_next_track = async () => {
 		// this.playlist_index = // loops index around when out of bounds
 		// 	(this.playlist_index + 1 + this.playlist.length) % this.playlist.length
-		this.queue_index += 1
-		if (this.queue_index < this.queue.length) {
+		state.queue_index += 1
+		if (state.queue_index < state.queue.length) {
 			this.current_track_audio = this.next_track_audio
 			delete this.next_track_audio
 			this.play().then(() => {
 				// nothin
 			})
-			state.current_track = this.queue[this.queue_index]
+			state.current_track = state.queue[state.queue_index]
 			document.title = state.current_track.title + " - JukeBox"
 		}
 	}
@@ -226,14 +227,14 @@ export class PlayerControls {
 		if (this.shuffle) {
 			await this.shuffle_playlist()
 		} else {
-			this.queue = this.ordered_queue
+			state.queue = this.ordered_queue
 		}
 	}
 
 	preload_next_track = async () => {
-		if (this.queue_index + 1 < this.queue.length) {
+		if (state.queue_index + 1 < state.queue.length) {
 			print("preloading next track")
-			this.next_track_data = this.queue[this.queue_index + 1]
+			this.next_track_data = state.queue[state.queue_index + 1]
 			this.next_track_audio = new Howl({
 				src: "/get/" + this.next_track_data.track_id,
 				format: formats,
@@ -283,8 +284,8 @@ export class PlayerControls {
 			currentIndex -= 1
 
 			temporaryValue = this.ordered_queue[currentIndex]
-			this.queue[currentIndex] = this.ordered_queue[randomIndex]
-			this.queue[randomIndex] = temporaryValue
+			state.queue[currentIndex] = this.ordered_queue[randomIndex]
+			state.queue[randomIndex] = temporaryValue
 		}
 	}
 
@@ -303,8 +304,6 @@ export class PlayerControls {
 		this.current_track_audio?.volume(this.volume)
 		this.next_track_audio?.volume(this.volume)
 	}
-
-	// cache.delete
 
 	render() {
 		let speaker_class = "speaker -on"

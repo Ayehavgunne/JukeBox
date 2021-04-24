@@ -56,7 +56,7 @@ export namespace Components {
         "toggle_playing": () => void;
     }
     interface PlayContainer {
-        "click_handler": () => void;
+        "click_handler": (Track) => void;
         "track": Track;
     }
     interface PlayerControls {
@@ -92,7 +92,8 @@ export namespace Components {
     }
     interface VirtualScrollTracks {
         "generate_popup_menu": (Track) => HTMLPopupMenuElement;
-        "playing_track_handler": () => void;
+        "playing_track_handler": (Track) => void;
+        "show_headers"?: boolean;
         "tracks": Array<Track>;
     }
     interface VolumeDot {
@@ -315,7 +316,7 @@ declare namespace LocalJSX {
         "toggle_playing"?: () => void;
     }
     interface PlayContainer {
-        "click_handler"?: () => void;
+        "click_handler"?: (Track) => void;
         "track"?: Track;
     }
     interface PlayerControls {
@@ -342,7 +343,8 @@ declare namespace LocalJSX {
     }
     interface VirtualScrollTracks {
         "generate_popup_menu"?: (Track) => HTMLPopupMenuElement;
-        "playing_track_handler"?: () => void;
+        "playing_track_handler"?: (Track) => void;
+        "show_headers"?: boolean;
         "tracks"?: Array<Track>;
     }
     interface VolumeDot {

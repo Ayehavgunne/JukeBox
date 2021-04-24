@@ -10,8 +10,9 @@ import state from "../../global/store"
 export class VirtualScrollTracks {
 	@Element() el: HTMLVirtualScrollTracksElement
 	@Prop() tracks: Array<Track>
-	@Prop() playing_track_handler: () => void
+	@Prop() playing_track_handler: (Track) => void
 	@Prop() generate_popup_menu: (Track) => HTMLPopupMenuElement
+	@Prop() show_headers? = true
 	@State() start_node = 0
 	device_type: string
 	row_height = 60
@@ -79,7 +80,7 @@ export class VirtualScrollTracks {
 			<div class="albumart">
 				<cache-img
 					src={`/albums/${track.album_id}/image`}
-					alt={`${track.title} album`}
+					alt={`${track.title} album cover`}
 					placeholder="/assets/generic_album.png"
 					classes="small"
 				/>
@@ -189,15 +190,15 @@ export class VirtualScrollTracks {
 								willChange: "transform",
 							}}
 						>
-							<div class="header" />
-							<div class="header" />
-							<div class="header">No.</div>
-							<div class="header">Title</div>
-							<div class="header">Artist</div>
-							<div class="header">Album</div>
-							<div class="header">Disc</div>
-							<div class="header">Year</div>
-							<div class="header">Length</div>
+							{this.show_headers && <div class="header" />}
+							{this.show_headers && <div class="header" />}
+							{this.show_headers && <div class="header">No.</div>}
+							{this.show_headers && <div class="header">Title</div>}
+							{this.show_headers && <div class="header">Artist</div>}
+							{this.show_headers && <div class="header">Album</div>}
+							{this.show_headers && <div class="header">Disc</div>}
+							{this.show_headers && <div class="header">Year</div>}
+							{this.show_headers && <div class="header">Length</div>}
 							{this.visible_rows()}
 						</div>
 					</div>

@@ -25,6 +25,8 @@ export const store = createStore({
 		user_id: 0,
 		username: "",
 	},
+	queue: [],
+	queue_index: 0,
 })
 const {state} = store
 

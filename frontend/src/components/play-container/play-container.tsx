@@ -8,14 +8,14 @@ import {get_player_controls} from "../../global/app"
 })
 export class PlayContainer {
 	@Prop() track: Track
-	@Prop() click_handler: () => void
+	@Prop() click_handler: (Track) => void
 
 	@Listen("click")
 	async play() {
 		const controler = await get_player_controls()
 		await controler.set_track(this.track)
 		await controler.play()
-		this.click_handler()
+		this.click_handler(this.track)
 	}
 
 	render() {
