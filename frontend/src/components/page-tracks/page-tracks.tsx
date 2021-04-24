@@ -63,7 +63,7 @@ export class PageTracks {
 	call_add_playlist = async playlist_name => {
 		let response = await fetch(
 			`/playlists/${playlist_name}/${this.track.track_id}/${state.user.user_id}`,
-			{method: "POST"},
+			{method: "PUT"},
 		)
 		let result = await response.text()
 		if (result === "Success") {
@@ -146,8 +146,8 @@ export class PageTracks {
 						show_cancel={true}
 					/>
 				)}
+				<h3 class="page_header">Tracks</h3>
 				<virtual-scroll-tracks
-					header="Tracks"
 					tracks={this.tracks}
 					playing_track_handler={this.playing_track_handler}
 					generate_popup_menu={this.generate_popup_menu}

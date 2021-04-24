@@ -37,13 +37,12 @@ export interface Artist {
 	name: string
 }
 
-export interface Playlist {
-	playlist_name: string
-	track_id: number
-	user_id: number
-}
-
 export interface User {
 	user_id: number
 	username: string
+}
+
+export interface Playlist {
+	playlist_name: string
+	user: User
 }

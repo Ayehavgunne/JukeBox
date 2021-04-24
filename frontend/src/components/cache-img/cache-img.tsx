@@ -49,18 +49,12 @@ export class CacheImg {
 
 		if ("IntersectionObserver" in window) {
 			await this.remove_io()
-			this.io = new IntersectionObserver(
-				async data => {
-					if (data[0].isIntersecting) {
-						await this.load()
-						await this.remove_io()
-					}
-				},
-				{
-					root: document.querySelector(".tracks_container"),
-					rootMargin: "500px 0px 500px 0px",
-				},
-			)
+			this.io = new IntersectionObserver(async data => {
+				if (data[0].isIntersecting) {
+					await this.load()
+					await this.remove_io()
+				}
+			})
 
 			this.io.observe(this.el)
 		} else {

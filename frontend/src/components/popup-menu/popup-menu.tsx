@@ -37,6 +37,10 @@ export class PopupMenu {
 		this.menu_container.style.padding = ""
 	}
 
+	close = () => {
+		this.showing = false
+	}
+
 	@Method()
 	async hide() {
 		this.showing = false
@@ -45,12 +49,15 @@ export class PopupMenu {
 	}
 
 	render() {
-		let classes = "menu_container"
+		let menu_classes = "menu_container"
+		let background_classes = "popup_background"
 		if (this.showing) {
-			classes = "menu_container show"
+			menu_classes = "menu_container show"
+			background_classes = "popup_background show"
 		}
 		return (
 			<Host class="popup_menu_host">
+				<div class={background_classes} onClick={this.close} />
 				<div onClick={this.show_toggle}>
 					<div class="menu_button">
 						<div class="circle" />
@@ -59,7 +66,7 @@ export class PopupMenu {
 					</div>
 				</div>
 				<div
-					class={classes}
+					class={menu_classes}
 					ref={el => (this.menu_container = el as HTMLDivElement)}
 				>
 					<slot />

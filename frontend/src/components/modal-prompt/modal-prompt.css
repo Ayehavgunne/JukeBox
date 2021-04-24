@@ -8,7 +8,6 @@
 
 .modal_container {
 	position: fixed;
-	/*z-index: 6;*/
 	display: grid;
 	justify-items: center;
 	align-items: center;
@@ -41,9 +40,8 @@
 	margin-top: 16px;
 }
 
-.background {
+.modal_background {
 	position: fixed;
-	/*z-index: 5;*/
 	width: 100%;
 	height: 100%;
 	background-color: rgba(31, 31, 31, 0.66);

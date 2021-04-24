@@ -9,7 +9,6 @@ import state from "../../global/store"
 })
 export class VirtualScrollTracks {
 	@Element() el: HTMLVirtualScrollTracksElement
-	@Prop() header: string
 	@Prop() tracks: Array<Track>
 	@Prop() playing_track_handler: () => void
 	@Prop() generate_popup_menu: (Track) => HTMLPopupMenuElement
@@ -158,7 +157,6 @@ export class VirtualScrollTracks {
 		if (this.device_type === "mobile") {
 			return (
 				<div class="tracks_container" onScroll={this.scroll_handler}>
-					<h3 class="page_header">Tracks</h3>
 					<div
 						class="tracks_table_container"
 						style={{
@@ -174,7 +172,6 @@ export class VirtualScrollTracks {
 		}
 		return (
 			<div class="tracks_container" onScroll={this.scroll_handler}>
-				<h3 class="page_header">{this.header}</h3>
 				<div
 					class="tracks_table_container"
 					style={{

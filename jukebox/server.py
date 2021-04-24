@@ -22,11 +22,14 @@ from jukebox.db_models import (
     Album,
     AlbumArtist,
     Artist,
+    LovedTrack,
     Playlist,
     Track,
     User,
     create_tables,
     database,
+    LovedAlbum,
+    LovedArtist,
 )
 from jukebox.scan_files import check_config_file, get_artist_images, scan_files
 
@@ -229,9 +232,21 @@ async def get_genres(genre: str = None) -> Response:
 
 
 @app.route("/playlists/<int:user_id>")
-@app.route("/playlists/<int:user_id>/<string:playlist_name>")
-async def get_playlists(user_id: int, playlist_name: str = None) -> Response:
+@app.route("/playlists/<int:user_id>/<string:playlist_name>", methods=["GET", "DELETE"])
+async def playlist_calls(user_id: int, playlist_name: str = None) -> Response:
     with database.atomic():
+        if request.method == "DELETE":
+            query = Playlist.delete().where(
+                Playlist.user == user_id, Playlist.playlist_name == playlist_name
+            )
+            query.execute()
+            playlists = (
+                Playlist.select(Playlist.playlist_name)
+                .distinct()
+                .where(Playlist.user == user_id)
+                .order_by(fn.Lower(Playlist.playlist_name))
+            )
+            return jsonify([playlist.playlist_name for playlist in playlists])
         if playlist_name is None:
             playlists = (
                 Playlist.select(Playlist.playlist_name)
@@ -253,29 +268,130 @@ async def get_playlists(user_id: int, playlist_name: str = None) -> Response:
 
 
 @app.route(
-    "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>", methods=["POST"]
+    "/playlists/<int:user_id>/<string:old_playlist_name>/<string:new_playlist_name>"
 )
-async def add_to_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
+async def rename_playlist(
+    user_id: int, old_playlist_name: str, new_playlist_name: str
+) -> Response:
     with database.atomic():
-        try:
-            result = (
-                Playlist.select(fn.MAX(Playlist.order).alias("order"))
-                .where(
-                    Playlist.playlist_name == playlist_name,
-                    Playlist.user == user_id,
+        playlists = Playlist.select().where(
+            Playlist.user == user_id, Playlist.playlist_name == old_playlist_name
+        )
+        for playlist in playlists:
+            playlist.playlist_name = new_playlist_name
+        Playlist.bulk_update(playlists, fields=[Playlist.playlist_name])
+        playlists = (
+            Playlist.select(Playlist.playlist_name)
+            .distinct()
+            .where(Playlist.user == user_id)
+            .order_by(fn.Lower(Playlist.playlist_name))
+        )
+        return jsonify([playlist.playlist_name for playlist in playlists])
+
+
+@app.route(
+    "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>",
+    methods=["PUT", "DELETE"],
+)
+async def alter_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
+    with database.atomic():
+        if request.method == "PUT":
+            try:
+                result = (
+                    Playlist.select(fn.MAX(Playlist.order).alias("order"))
+                    .where(
+                        Playlist.playlist_name == playlist_name,
+                        Playlist.user == user_id,
+                    )
+                    .group_by(Playlist.playlist_name, Playlist.user)
                 )
-                .group_by(Playlist.playlist_name, Playlist.user)
+                if result:
+                    order = result[0].order + 1
+                else:
+                    order = 1
+                Playlist.create(
+                    playlist_name=playlist_name,
+                    track=track_id,
+                    user=user_id,
+                    order=order,
+                )
+            except IntegrityError:
+                return "Already exists"
+            return "Success"
+        elif request.method == "DELETE":
+            result = Playlist.select().where(
+                Playlist.playlist_name == playlist_name,
+                Playlist.user == user_id,
+                Playlist.track == track_id,
             )
             if result:
-                order = result[0].order + 1
+                order = result[0].order
             else:
                 order = 1
-            Playlist.create(
-                playlist_name=playlist_name, track=track_id, user=user_id, order=order
+            query = Playlist.delete().where(
+                Playlist.playlist_name == playlist_name,
+                Playlist.user == user_id,
+                Playlist.track == track_id,
             )
-        except IntegrityError:
-            return "Already exists"
-        return "Success"
+            query.execute()
+            tracks = Playlist.select().where(
+                Playlist.playlist_name == playlist_name,
+                Playlist.user == user_id,
+                Playlist.order > order,
+            )
+            for track in tracks:
+                track.order -= 1
+            if tracks:
+                Playlist.bulk_update(tracks, fields=[Playlist.order])
+            return "Success"
+
+
+# noinspection DuplicatedCode
+@app.route("/love/track/<int:user_id>/<int:track_id>", methods=["PUT", "DELETE"])
+async def love_track(user_id: int, track_id: int) -> str:
+    with database.atomic():
+        if request.method == "PUT":
+            try:
+                LovedTrack.create(user=user_id, track=track_id)
+            except IntegrityError:
+                return "Already Exists"
+        elif request.method == "DELETE":
+            query = LovedTrack.delete().where(
+                LovedTrack.user == user_id, LovedTrack.track == track_id
+            )
+            query.execute()
+
+
+# noinspection DuplicatedCode
+@app.route("/love/album/<int:user_id>/<int:album_id>", methods=["PUT", "DELETE"])
+async def love_album(user_id: int, album_id: int) -> str:
+    with database.atomic():
+        if request.method == "PUT":
+            try:
+                LovedAlbum.create(user=user_id, album=album_id)
+            except IntegrityError:
+                return "Already Exists"
+        elif request.method == "DELETE":
+            query = LovedAlbum.delete().where(
+                LovedAlbum.user == user_id, LovedAlbum.album == album_id
+            )
+            query.execute()
+
+
+# noinspection DuplicatedCode
+@app.route("/love/artist/<int:user_id>/<int:artist_id>", methods=["PUT", "DELETE"])
+async def love_artist(user_id: int, artist_id: int) -> str:
+    with database.atomic():
+        if request.method == "PUT":
+            try:
+                LovedArtist.create(user=user_id, artist=artist_id)
+            except IntegrityError:
+                return "Already Exists"
+        elif request.method == "DELETE":
+            query = LovedArtist.delete().where(
+                LovedArtist.user == user_id, LovedArtist.artist == artist_id
+            )
+            query.execute()
 
 
 @app.route("/users")
@@ -403,7 +519,7 @@ if __name__ == "__main__":
     db_file = APP_ROOT / "jukebox.db"
     if not db_file.exists():
         create_tables()
-        # scan_files()
+        scan_files()
     app.run(
         host=CONFIGS["host"],
         port=CONFIGS["port"],

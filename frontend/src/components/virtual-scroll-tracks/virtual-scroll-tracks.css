@@ -133,12 +133,11 @@
 }
 
 .tracks_container {
-	height: 100%;
+	height: calc(100% - 35px);
 	overflow: auto;
 }
 
 .tracks_table_container {
-	overflow: hidden;
 	position: relative;
 	will-change: transform;
 }
@@ -196,13 +195,5 @@
 
 	.menu {
 		float: left;
-	}
-}
-
-@media not all and (min-resolution: 0.001dpcm) {
-	@media {
-		.on_image {
-			left: calc(50% - 17px);
-		}
 	}
 }

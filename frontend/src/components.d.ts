@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { MatchResults } from "@stencil/router";
+import { MatchResults, RouterHistory } from "@stencil/router";
 import { Track } from "./global/models";
 export namespace Components {
     interface AppRoot {
@@ -25,6 +25,7 @@ export namespace Components {
         "close": (string) => void;
         "header": string;
         "show_cancel"?: boolean;
+        "show_input"?: boolean;
     }
     interface PageAlbums {
         "match": MatchResults;
@@ -39,6 +40,7 @@ export namespace Components {
     interface PageNowPlaying {
     }
     interface PagePlaylist {
+        "history": RouterHistory;
         "match": MatchResults;
     }
     interface PageProfile {
@@ -90,7 +92,6 @@ export namespace Components {
     }
     interface VirtualScrollTracks {
         "generate_popup_menu": (Track) => HTMLPopupMenuElement;
-        "header": string;
         "playing_track_handler": () => void;
         "tracks": Array<Track>;
     }
@@ -283,6 +284,7 @@ declare namespace LocalJSX {
         "close"?: (string) => void;
         "header"?: string;
         "show_cancel"?: boolean;
+        "show_input"?: boolean;
     }
     interface PageAlbums {
         "match"?: MatchResults;
@@ -297,6 +299,7 @@ declare namespace LocalJSX {
     interface PageNowPlaying {
     }
     interface PagePlaylist {
+        "history"?: RouterHistory;
         "match"?: MatchResults;
     }
     interface PageProfile {
@@ -339,7 +342,6 @@ declare namespace LocalJSX {
     }
     interface VirtualScrollTracks {
         "generate_popup_menu"?: (Track) => HTMLPopupMenuElement;
-        "header"?: string;
         "playing_track_handler"?: () => void;
         "tracks"?: Array<Track>;
     }

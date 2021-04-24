@@ -180,8 +180,8 @@ export class PageArtists {
 						show_cancel={true}
 					/>
 				)}
+				<h3 class="page_header">{this.artist.name}</h3>
 				<virtual-scroll-tracks
-					header={this.artist.name}
 					tracks={this.tracks}
 					playing_track_handler={this.playing_track_handler}
 					generate_popup_menu={this.generate_popup_menu}
