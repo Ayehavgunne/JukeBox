@@ -119,6 +119,7 @@ export class PageNowPlaying {
 	}
 
 	render() {
+		// SVGs from Font Awsesome https://fontawesome.com/license/free
 		return (
 			<Host class="page_now_playing_host">
 				{this.show_modal && (
@@ -138,9 +139,57 @@ export class PageNowPlaying {
 								class="large"
 							/>
 						</div>
-						<div>{state.current_track.title}</div>
-						<div>{state.current_track.album}</div>
-						<div>{state.current_track.artist}</div>
+						<div class="track_title">
+							<svg
+								focusable="false"
+								data-prefix="fas"
+								data-icon="music"
+								class="svg-inline--fa fa-music fa-w-16 small_icon icon"
+								role="img"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 512 512"
+							>
+								<path
+									fill="#15dea5"
+									d="M470.38 1.51L150.41 96A32 32 0 0 0 128 126.51v261.41A139 139 0 0 0 96 384c-53 0-96 28.66-96 64s43 64 96 64 96-28.66 96-64V214.32l256-75v184.61a138.4 138.4 0 0 0-32-3.93c-53 0-96 28.66-96 64s43 64 96 64 96-28.65 96-64V32a32 32 0 0 0-41.62-30.49z"
+								/>
+							</svg>
+							{state.current_track.title}
+						</div>
+						<div class="album_title">
+							<svg
+								focusable="false"
+								data-prefix="fas"
+								data-icon="compact-disc"
+								class="svg-inline--fa fa-compact-disc fa-w-16 small_icon icon"
+								role="img"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 496 512"
+							>
+								<path
+									fill="#15dea5"
+									d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zM88 256H56c0-105.9 86.1-192 192-192v32c-88.2 0-160 71.8-160 160zm160 96c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96zm0-128c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32z"
+								/>
+							</svg>
+							{state.current_track.album}
+						</div>
+						<div class="artist_name">
+							<svg
+								focusable="false"
+								data-prefix="fas"
+								data-icon="user"
+								class="svg-inline--fa fa-user fa-w-14 small_icon icon"
+								role="img"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 448 512"
+							>
+								<path
+									fill="#15dea5"
+									d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"
+								/>
+							</svg>
+							{state.current_track.artist}
+						</div>
 					</div>
 				)}
 				{state.queue && (

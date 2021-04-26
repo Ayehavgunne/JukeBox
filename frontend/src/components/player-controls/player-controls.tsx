@@ -1,4 +1,4 @@
-import {Component, Element, h, Host, Method, State} from "@stencil/core"
+import {Component, Element, h, Host, Listen, Method, State} from "@stencil/core"
 import {Components} from "../../components"
 import ProgressBar = Components.ProgressBar
 import {Track} from "../../global/models"
@@ -303,6 +303,14 @@ export class PlayerControls {
 		Cookies.set("jukebox-volume", volume + "")
 		this.current_track_audio?.volume(this.volume)
 		this.next_track_audio?.volume(this.volume)
+	}
+
+	@Listen("keydown", {target: "document"})
+	async space_handler(event: KeyboardEvent) {
+		if (this.current_track_audio && event.code === "Space") {
+			event.preventDefault()
+			await this.toggle_playing()
+		}
 	}
 
 	render() {
