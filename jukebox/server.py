@@ -1,39 +1,39 @@
 import asyncio
+import json
+from functools import wraps
 from io import BytesIO
 from logging import getLogger
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator
 
+from jwt import decode, exceptions
 from peewee import DoesNotExist, IntegrityError, fn
 from quart import (
     Quart,
     Response,
+    g,
     jsonify,
     make_response,
     request,
     send_file,
     send_from_directory,
-    g,
 )
 from quart.logging import serving_handler
-from functools import wraps
-from jwt import decode, exceptions
-import json
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import (
     Album,
     AlbumArtist,
     Artist,
+    LovedAlbum,
+    LovedArtist,
     LovedTrack,
     Playlist,
     Track,
     User,
     create_tables,
     database,
-    LovedAlbum,
-    LovedArtist,
 )
 from jukebox.scan_files import check_config_file, get_artist_images, scan_files
 
@@ -88,17 +88,17 @@ async def get_images() -> None:
 @app.route("/")
 @app.route("/page/<path:_>")
 async def root(_: str = None) -> Response:
-    return await send_from_directory(APP_ROOT / "frontend" / "www", "index.html")
+    return await send_from_directory(APP_ROOT / "frontend" / "dist", "index.html")
 
 
-@app.route("/assets/<path:path>")
+@app.route("/<path:path>")
 async def send_assets(path: str) -> Response:
-    return await send_from_directory(APP_ROOT / "frontend" / "www" / "assets", path)
+    return await send_from_directory(APP_ROOT / "frontend" / "dist", path)
 
 
-@app.route("/build/<path:path>")
-async def send_build(path: str) -> Response:
-    return await send_from_directory(APP_ROOT / "frontend" / "www" / "build", path)
+# @app.route("/build/<path:path>")
+# async def send_build(path: str) -> Response:
+#     return await send_from_directory(APP_ROOT / "frontend" / "www" / "build", path)
 
 
 @app.route("/task/get_artist_images")
@@ -551,7 +551,6 @@ if __name__ == "__main__":
     db_file = APP_ROOT / "jukebox.db"
     if not db_file.exists():
         create_tables()
-        scan_files()
     app.run(
         host=CONFIGS["host"],
         port=CONFIGS["port"],

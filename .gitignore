@@ -634,3 +634,4 @@ UserInterfaceState.xcuserstate
 jukebox.json5
 jukebox.db
 jukebox.log*
+/jukebox/test.py

@@ -6,5 +6,7 @@ import {Component} from "@angular/core"
 	styleUrls: ["./app.component.sass"],
 })
 export class AppComponent {
-	title = "jukebox"
+	title = "Jukebox"
+	playlists: string[] = ["favs", "teest"]
+	username: string = "Anthony"
 }

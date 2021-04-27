@@ -1,1 +1,47 @@
-<router-outlet></router-outlet>
+<nav>
+	<header>
+		<h1>JukeBox</h1>
+	</header>
+	<ul>
+		<li>
+			<a routerLink="/">Home</a>
+		</li>
+		<li>
+			<a [routerLink]="['/page/profile/', username]">Profile</a>
+		</li>
+		<li>
+			<a routerLink="/page/now_playing">Now Playing</a>
+		</li>
+		<li>
+			<a routerLink="/page/settings">Settings</a>
+		</li>
+		<li>
+			<h3>Library</h3>
+			<ul>
+				<li>
+					<a routerLink="/page/tracks">Tracks</a>
+				</li>
+				<li>
+					<a routerLink="/page/albums">Albums</a>
+				</li>
+				<li>
+					<a routerLink="/page/artists">Artists</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<h3>Playlists</h3>
+			<ul>
+				<li *ngFor="let playlist_name of playlists">
+					<a [routerLink]="['/page/playlist/', playlist_name]">
+						{{ playlist_name }}
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</nav>
+<main>
+	<router-outlet></router-outlet>
+</main>
+<footer></footer>
