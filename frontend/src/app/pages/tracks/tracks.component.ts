@@ -15,8 +15,9 @@ export class TracksComponent implements OnInit {
 	constructor(private route: ActivatedRoute) {}
 
 	ngOnInit(): void {
-		let track_id = Number(this.route.snapshot.paramMap.get("track"))
-		print(track_id)
-		this.track_id = track_id
+		this.route.params.subscribe(params => {
+			this.track_id = Number(params["track"] || 0)
+			print(this.track_id)
+		})
 	}
 }

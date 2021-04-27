@@ -6,6 +6,8 @@ import {Component, OnInit} from "@angular/core"
 	styleUrls: ["./profile.component.sass"],
 })
 export class ProfileComponent implements OnInit {
+	name: string = "Anthony"
+
 	constructor() {}
 
 	ngOnInit(): void {}

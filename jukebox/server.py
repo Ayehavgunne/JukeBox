@@ -92,13 +92,8 @@ async def root(_: str = None) -> Response:
 
 
 @app.route("/<path:path>")
-async def send_assets(path: str) -> Response:
+async def send_dist(path: str) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "dist", path)
-
-
-# @app.route("/build/<path:path>")
-# async def send_build(path: str) -> Response:
-#     return await send_from_directory(APP_ROOT / "frontend" / "www" / "build", path)
 
 
 @app.route("/task/get_artist_images")

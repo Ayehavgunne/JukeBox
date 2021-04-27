@@ -7,8 +7,13 @@ import {NowPlayingComponent} from "./pages/now-playing/now-playing.component"
 import {SettingsComponent} from "./pages/settings/settings.component"
 import {ProfileComponent} from "./pages/profile/profile.component"
 import {PlaylistsComponent} from "./pages/playlists/playlists.component"
+import {HomeComponent} from "./pages/home/home.component"
 
 const routes: Routes = [
+	{
+		path: "",
+		component: HomeComponent,
+	},
 	{
 		path: "page/tracks/:track",
 		component: TracksComponent,
@@ -34,7 +39,7 @@ const routes: Routes = [
 		component: ArtistsComponent,
 	},
 	{
-		path: "page/playlists/:name",
+		path: "page/playlist/:name",
 		component: PlaylistsComponent,
 	},
 	{
@@ -46,7 +51,7 @@ const routes: Routes = [
 		component: SettingsComponent,
 	},
 	{
-		path: "page/profile/:name",
+		path: "page/profile",
 		component: ProfileComponent,
 	},
 ]

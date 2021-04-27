@@ -1,4 +1,6 @@
 import {Component, OnInit} from "@angular/core"
+import {ActivatedRoute} from "@angular/router"
+import {print} from "../../utils"
 
 @Component({
 	selector: "albums",
@@ -6,7 +8,14 @@ import {Component, OnInit} from "@angular/core"
 	styleUrls: ["./albums.component.sass"],
 })
 export class AlbumsComponent implements OnInit {
-	constructor() {}
+	album_id: number = 0
 
-	ngOnInit(): void {}
+	constructor(private route: ActivatedRoute) {}
+
+	ngOnInit(): void {
+		this.route.params.subscribe(params => {
+			this.album_id = Number(params["album"] || 0)
+			print(this.album_id)
+		})
+	}
 }
