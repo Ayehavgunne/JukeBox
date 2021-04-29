@@ -53,16 +53,28 @@ export interface Playlist {
 	user: User
 }
 
-export interface ModalConfig {
-	modalTitle?: string
-	dismissButtonLabel?: string
-	closeButtonLabel?: string
-	shouldClose?(): Promise<boolean> | boolean
-	shouldDismiss?(): Promise<boolean> | boolean
-	onClose?(): Promise<boolean> | boolean
-	onDismiss?(): Promise<boolean> | boolean
-	disableCloseButton?(): boolean
-	disableDismissButton?(): boolean
-	hideCloseButton?(): boolean
-	hideDismissButton?(): boolean
+export class ModalConfig {
+	modal_title: string = "Hello"
+	dismiss_button_label: string = "Cancel"
+	accept_button_label: string = "Okay"
+	show_input: boolean = true
+	show_dismiss_button: boolean = true
+	on_accept(): Promise<boolean> | boolean {
+		return true
+	}
+	on_dismiss(): Promise<boolean> | boolean {
+		return false
+	}
+	on_input_change(new_value: string): Promise<string> | string {
+		return new_value
+	}
+}
+
+export class ModalResponse {
+	accepted: boolean
+	input: string
+	constructor(accepted: boolean, input: string) {
+		this.accepted = accepted
+		this.input = input
+	}
 }

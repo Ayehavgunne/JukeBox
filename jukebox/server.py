@@ -129,7 +129,7 @@ async def get_artist_image(artist_id: int) -> Response:
             return await send_file(image, mimetype="image/jpg")
         else:
             return await send_file(
-                APP_ROOT / "frontend" / "www" / "assets" / "generic_artist.png",
+                APP_ROOT / "frontend" / "dist" / "assets" / "generic_artist.png",
                 mimetype="image/png",
             )
 
@@ -185,7 +185,7 @@ async def get_album_image(album_id: int) -> Response:
             return await send_file(album.album_art_path)
         else:
             return await send_file(
-                APP_ROOT / "frontend" / "www" / "assets" / "generic_album.png",
+                APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
                 mimetype="image/png",
             )
 
@@ -235,7 +235,7 @@ async def get_track_image(track_id: int) -> Response:
             return await send_file(track.album.album_art_path)
         else:
             return await send_file(
-                APP_ROOT / "frontend" / "www" / "assets" / "generic_album.png",
+                APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
                 mimetype="image/png",
             )
 

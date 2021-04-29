@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core"
 
-@Injectable()
+@Injectable({
+	providedIn: "root",
+})
 export class CookiesService {
 	constructor() {}
 
@@ -22,7 +24,12 @@ export class CookiesService {
 		return ""
 	}
 
-	public set(name: string, value: string, expire_days: number, path: string = "") {
+	public set(
+		name: string,
+		value: string,
+		expire_days: number = 7,
+		path: string = "",
+	) {
 		const date: Date = new Date()
 		date.setTime(date.getTime() + expire_days * 24 * 60 * 60 * 1000)
 		const expires = `expires=${date.toUTCString()}`

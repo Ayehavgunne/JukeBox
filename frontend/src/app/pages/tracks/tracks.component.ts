@@ -2,6 +2,7 @@ import {Component, OnInit} from "@angular/core"
 import {ActivatedRoute} from "@angular/router"
 import {Track} from "../../models"
 import {print} from "../../utils"
+import {TracksService} from "../../services/tracks.service"
 
 @Component({
 	selector: "tracks",
@@ -9,15 +10,23 @@ import {print} from "../../utils"
 	styleUrls: ["./tracks.component.sass"],
 })
 export class TracksComponent implements OnInit {
-	track?: Track
-	track_id: number = 0
+	tracks?: Track[]
+	show_headers: boolean = true
 
-	constructor(private route: ActivatedRoute) {}
+	constructor(private route: ActivatedRoute, private tracks_service: TracksService) {}
 
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
-			this.track_id = Number(params["track"] || 0)
-			print(this.track_id)
+			let track_id = Number(params["track"] || 0)
+			if (track_id) {
+				this.tracks_service.get_tracks(track_id).subscribe(tracks => {
+					this.tracks = tracks
+				})
+			} else {
+				this.tracks_service.get_tracks().subscribe(tracks => {
+					this.tracks = tracks
+				})
+			}
 		})
 	}
 }

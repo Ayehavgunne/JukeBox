@@ -14,9 +14,15 @@ import {ProfileComponent} from "./pages/profile/profile.component"
 import {PlayerComponent} from "./components/player/player.component"
 import {UserComponent} from "./svgs/user/user.component"
 import {MusicComponent} from "./svgs/music/music.component"
-import {DiscComponent} from "./svgs/disc/disc.component";
-import { ModalComponent } from './components/modal/modal.component';
-import { HomeComponent } from './pages/home/home.component'
+import {DiscComponent} from "./svgs/disc/disc.component"
+import {ModalComponent} from "./components/modal/modal.component"
+import {HomeComponent} from "./pages/home/home.component"
+import {FormsModule} from "@angular/forms"
+import {PlayComponent} from "./components/play/play.component";
+import { PlayButtonComponent } from './components/play-button/play-button.component';
+import { TrackStatsComponent } from './components/track-stats/track-stats.component';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+import { VolumeDotComponent } from './components/volume-dot/volume-dot.component'
 
 @NgModule({
 	declarations: [
@@ -32,10 +38,15 @@ import { HomeComponent } from './pages/home/home.component'
 		UserComponent,
 		MusicComponent,
 		DiscComponent,
-  ModalComponent,
-  HomeComponent,
+		ModalComponent,
+		HomeComponent,
+		PlayComponent,
+  PlayButtonComponent,
+  TrackStatsComponent,
+  ProgressBarComponent,
+  VolumeDotComponent,
 	],
-	imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+	imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
 	providers: [],
 	bootstrap: [AppComponent],
 })

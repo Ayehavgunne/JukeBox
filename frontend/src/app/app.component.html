@@ -1,4 +1,5 @@
 <nav>
+	<modal [modal_config]="modal_config" ngModel #modal ngDefaultControl></modal>
 	<header>
 		<h1>JukeBox</h1>
 	</header>
@@ -44,4 +45,6 @@
 <main>
 	<router-outlet></router-outlet>
 </main>
-<footer></footer>
+<footer>
+	<player></player>
+</footer>

@@ -1,1 +1,34 @@
-<p>{{ track_id }}</p>
+<div class="tracks_container">
+	<div class="body">
+		<div *ngIf="show_headers" class="header"></div>
+		<div *ngIf="show_headers" class="header"></div>
+		<div *ngIf="show_headers" class="header">No.</div>
+		<div *ngIf="show_headers" class="header">Title</div>
+		<div *ngIf="show_headers" class="header">Artist</div>
+		<div *ngIf="show_headers" class="header">Album</div>
+		<div *ngIf="show_headers" class="header">Disc</div>
+		<div *ngIf="show_headers" class="header">Year</div>
+		<div *ngIf="show_headers" class="header">Length</div>
+		<div *ngFor="let track of tracks" class="row">
+			<div class="menu cell">...</div>
+			<div class="menu cell">
+				<play>
+					<img
+						src="{{ '/albums/' + track.album_id + '/image' }}"
+						alt="{{ track.title + ' album art' }}"
+						class="small"
+					/>
+				</play>
+			</div>
+			<div class="number cell">{{ track.track_number }}</div>
+			<div class="cell">{{ track.title }}</div>
+			<div class="cell">{{ track.artist }}</div>
+			<div class="cell">{{ track.album }}</div>
+			<div class="number cell">{{ track.disc_number }}</div>
+			<div class="number cell">{{ track.year }}</div>
+			<div class="number cell">
+				{{ track.length * 1000 | date: "mm:ss" }}
+			</div>
+		</div>
+	</div>
+</div>
