@@ -1,4 +1,4 @@
-import {Component, Injectable, Input, OnInit} from "@angular/core"
+import {Component, HostListener, Injectable, Input, OnInit} from "@angular/core"
 import {ModalConfig, ModalResponse} from "../../models"
 
 @Component({
@@ -13,7 +13,6 @@ export class ModalComponent implements OnInit {
 	private response: string = ""
 	private accepted: boolean = false
 	private _resolve: (result?: any) => void
-	private _reject: (reason?: any) => void
 
 	constructor() {}
 
@@ -47,10 +46,16 @@ export class ModalComponent implements OnInit {
 		}
 	}
 
+	@HostListener("keyup", ["$event"])
+	key_up(event: KeyboardEvent) {
+		if (event.code === "Enter") {
+			this.okay()
+		}
+	}
+
 	async get_response(): Promise<ModalResponse> {
-		return new Promise<ModalResponse>((resolve, reject) => {
+		return new Promise<ModalResponse>(resolve => {
 			this._resolve = resolve
-			this._reject = reject
 		})
 	}
 }

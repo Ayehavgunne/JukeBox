@@ -10,17 +10,17 @@ const formats = ["m4a", "flac", "mp3"]
 	providedIn: "root",
 })
 export class PlayerService {
-	private current_track: Track
+	current_track: Track
 	private next_track_data: Track
 	private queue: Track[] = []
 	private ordered_queue: Track[] = []
 	private queue_index: number = 0
 	private current_track_audio?: Howl
 	private next_track_audio?: Howl
-	private paused: boolean = true
+	paused: boolean = true
 	private nearing_track_end: boolean = false
 	private is_shuffle: boolean = false
-	vol: number = 0.6
+	private vol: number = 0.6
 
 	constructor(private cookies_service: CookiesService) {
 		let volume_cookie = this.cookies_service.get("jukebox-volume")
@@ -34,14 +34,14 @@ export class PlayerService {
 		this.vol = volume
 	}
 
-	play = ():void => {
+	play = (): void => {
 		if (this.current_track_audio) {
 			this.current_track_audio.play()
 			this.paused = false
 		}
 	}
 
-	play_previous_track = ():void => {
+	play_previous_track = (): void => {
 		if (this.current_track_audio) {
 			if (this.current_track_audio.seek() > 1.5) {
 				this.current_track_audio.seek(0)
@@ -51,14 +51,14 @@ export class PlayerService {
 		}
 	}
 
-	play_next_track():void {
+	play_next_track(): void {
 		if (this.current_track_audio) {
 			// check if this.next_track has been loaded
 			this.change_to_track(this.queue_index + 1)
 		}
 	}
 
-	change_to_track = (track_index: number):void => {
+	change_to_track = (track_index: number): void => {
 		if (this.current_track_audio) {
 			this.current_track_audio.stop()
 			delete this.current_track_audio
@@ -100,14 +100,14 @@ export class PlayerService {
 		}
 	}
 
-	pause = ():void => {
+	pause = (): void => {
 		if (this.current_track_audio) {
 			this.current_track_audio.pause()
 			this.paused = true
 		}
 	}
 
-	set_track = (track: Track):void => {
+	set_track = (track: Track): void => {
 		if (this.current_track_audio) {
 			this.current_track_audio.stop()
 			delete this.current_track_audio
@@ -121,42 +121,51 @@ export class PlayerService {
 		this.add_event_listeners(this.current_track_audio)
 	}
 
-	set_queue = (tracks: Track[]):void => {
+	set_queue = (tracks: Track[]): void => {
 		this.queue = tracks
 		this.ordered_queue = tracks
 		this.queue_index = this.queue.indexOf(this.current_track)
 	}
 
-	add_next_in_queue = (track: Track):void => {
+	add_next_in_queue = (track: Track): void => {
 		this.queue.splice(this.queue_index + 1, 0, track)
 		this.ordered_queue.splice(this.queue_index + 1, 0, track)
 	}
 
-	append_to_queue = (tracks: Track[]):void => {
+	append_to_queue = (tracks: Track[]): void => {
 		this.queue.concat(tracks)
 		this.ordered_queue.concat(tracks)
 	}
 
-	seek = (percent: number):void => {
+	get seek(): number {
+		// @ts-ignore
+		return this.current_track_audio?.seek() || 0
+	}
+
+	set seek(percent: number) {
 		if (this.current_track_audio) {
 			this.current_track_audio.seek((percent / 100) * this.current_track.length)
 		}
 	}
 
-	play_handler = ():void => {
+	get total_time(): number {
+		return this.current_track.length
+	}
+
+	play_handler = (): void => {
 		this.paused = false
 	}
 
-	pause_handler = ():void => {
+	pause_handler = (): void => {
 		this.paused = true
 	}
 
-	track_done = ():void => {
+	track_done = (): void => {
 		this.nearing_track_end = false
 		this.auto_change_to_next_track()
 	}
 
-	auto_change_to_next_track = ():void => {
+	auto_change_to_next_track = (): void => {
 		// this.playlist_index = // loops index around when out of bounds
 		// 	(this.playlist_index + 1 + this.playlist.length) % this.playlist.length
 		this.queue_index += 1
@@ -169,7 +178,7 @@ export class PlayerService {
 		}
 	}
 
-	toggle_playing = ():void => {
+	toggle_playing = (): void => {
 		if (this.paused) {
 			this.play()
 		} else {
@@ -177,7 +186,7 @@ export class PlayerService {
 		}
 	}
 
-	toggle_shuffle = ():void => {
+	toggle_shuffle = (): void => {
 		this.is_shuffle = !this.is_shuffle
 		if (this.is_shuffle) {
 			this.shuffle_playlist()
@@ -186,7 +195,7 @@ export class PlayerService {
 		}
 	}
 
-	preload_next_track = ():void => {
+	preload_next_track = (): void => {
 		if (this.queue_index + 1 < this.queue.length) {
 			print("preloading next track")
 			this.next_track_data = this.queue[this.queue_index + 1]
@@ -199,7 +208,7 @@ export class PlayerService {
 		}
 	}
 
-	shuffle_playlist = ():void => {
+	shuffle_playlist = (): void => {
 		let currentIndex = this.ordered_queue.length,
 			temporaryValue,
 			randomIndex

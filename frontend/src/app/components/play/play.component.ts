@@ -1,5 +1,7 @@
-import {Component, HostListener, OnInit} from "@angular/core"
+import {Component, HostListener, Input, OnInit} from "@angular/core"
 import {print} from "../../utils"
+import {Track} from "../../models"
+import {PlayerService} from "../../services/player.service"
 
 @Component({
 	selector: "play",
@@ -7,12 +9,19 @@ import {print} from "../../utils"
 	styleUrls: ["./play.component.sass"],
 })
 export class PlayComponent implements OnInit {
-	constructor() {}
+	@Input() track?: Track
+
+	constructor(private player_service: PlayerService) {}
 
 	ngOnInit(): void {}
 
-	@HostListener("click", ["$event.target"])
-	play(target: EventTarget) {
-		print("play!", target)
+	@HostListener("click")
+	play() {
+		if (this.track) {
+			this.player_service.set_track(this.track)
+			this.player_service.play()
+		} else {
+			this.player_service.toggle_playing()
+		}
 	}
 }

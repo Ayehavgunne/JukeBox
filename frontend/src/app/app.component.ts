@@ -11,6 +11,7 @@ import {print} from "./utils"
 	styleUrls: ["./app.component.sass"],
 })
 export class AppComponent implements AfterViewInit {
+	@ViewChild("modal") modal: ModalComponent
 	title = "Jukebox"
 	playlists: string[] = ["favs", "teest"]
 	user: User = {
@@ -18,7 +19,6 @@ export class AppComponent implements AfterViewInit {
 		username: "",
 	}
 	modal_config: ModalConfig = new ModalConfig()
-	@ViewChild("modal") modal: ModalComponent
 
 	constructor(
 		private user_service: UserService,

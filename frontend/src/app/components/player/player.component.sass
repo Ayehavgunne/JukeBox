@@ -4,6 +4,21 @@
 	padding-right: 10px
 	display: block
 
+.play_button
+	cursor: pointer
+	width: 28px
+	height: 40px
+	border-width: 20px 0 20px 40px
+	border-style: solid
+	border-color: transparent transparent transparent #bebebe
+	transition: all 100ms ease-in-out
+	float: left
+	margin-right: 14px
+
+.playing
+	border-style: double
+	border-width: 0 0 0 40px
+
 .volume
 	float: right
 	width: 28px
@@ -124,10 +139,10 @@
 	left: 0.2em
 
 @media (max-width: 700px)
-	.player_controls_host
+	\:host
 		padding: 0
 
-	.player_controls_host .wrapper
+	.wrapper
 		position: absolute
 		bottom: 68px
 		right: 19px
@@ -141,4 +156,8 @@
 
 	.next
 		margin-right: 10px
+		transform: scale(0.6)
+
+	.play_button
+		margin-right: -2px
 		transform: scale(0.6)

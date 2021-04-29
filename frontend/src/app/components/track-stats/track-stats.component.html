@@ -1,1 +1,18 @@
-<p>track-stats works!</p>
+<div
+	[ngClass]="{track_wrapper: true, slide: title_slide}"
+	[ngStyle]="{animationDuration: title_anim_duration, width: title_anim_width}"
+	#title_div
+>
+	<div class="slider" (transitionend)="done_animating()">
+		{{ player_service.current_track?.title }}
+	</div>
+</div>
+<div
+	[ngClass]="{track_wrapper: true, small: true, slide: title_slide}"
+	[ngStyle]="{animationDuration: artist_anim_duration, width: artist_anim_width}"
+	#artist_div
+>
+	<div class="slider" (transitionend)="done_animating()">
+		{{ player_service.current_track?.artist }}
+	</div>
+</div>

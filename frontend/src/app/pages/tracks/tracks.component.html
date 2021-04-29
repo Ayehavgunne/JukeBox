@@ -12,7 +12,7 @@
 		<div *ngFor="let track of tracks" class="row">
 			<div class="menu cell">...</div>
 			<div class="menu cell">
-				<play>
+				<play [track]="track">
 					<img
 						src="{{ '/albums/' + track.album_id + '/image' }}"
 						alt="{{ track.title + ' album art' }}"

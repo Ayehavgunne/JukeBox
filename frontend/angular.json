@@ -33,10 +33,7 @@
 						"assets": ["src/favicon.ico", "src/assets"],
 						"styles": ["src/styles.sass"],
 						"scripts": [],
-						"allowedCommonJsDependencies": [
-							"ua-parser-js",
-							"howler"
-						]
+						"allowedCommonJsDependencies": ["ua-parser-js", "howler"]
 					},
 					"configurations": {
 						"production": {

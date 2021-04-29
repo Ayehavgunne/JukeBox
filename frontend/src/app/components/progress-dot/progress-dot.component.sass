@@ -1,28 +1,26 @@
 \:host
-	width: 9px
-	height: 9px
-	position: absolute
+	width: 10px
+	height: 10px
+	position: relative
 	display: block
-	bottom: 60%
-	right: -4px
-	z-index: 2
+	bottom: 4px
+	left: 0
+	transform: translateX(-5px)
 
-.volume_dot
+.progress_dot
 	border-radius: 50%
 	background-color: #15dea5
-	width: 9px
-	height: 9px
+	width: 10px
+	height: 10px
 	cursor: pointer
 	transition: transform 100ms ease-in-out
 
 @media (max-width: 700px)
 	\:host
-		width: 30px
-		height: 15px
-		right: -15px
-
-	.volume_dot
 		width: 15px
 		height: 15px
-		position: absolute
-		right: 8px
+		bottom: 7px
+
+	.progress_dot
+		width: 15px
+		height: 15px

@@ -1,20 +1,19 @@
 <div class="prev" (click)="player_service.play_previous_track()"></div>
-<play-button
-	paused={this.paused}
-	toggle_playing={this.toggle_playing}
-></play-button>
+<play>
+	<div [ngClass]="{play_button: true, playing: !player_service.paused}"></div>
+</play>
 <div class="next" (click)="player_service.play_next_track()"></div>
 <track-stats></track-stats>
-<div *ngIf="os_hide_volume" class="volume" (click)="toggle_volume_showing()">
-	<div class={speaker_class} [ngClass]="{'speaker': true, '-on': volume}"></div>
-	<div *ngIf="volume_bar_hidden" class="volume_wrapper">
-		<div class="bar">
-			<volume-dot
-				volume={this.volume}
-				parent={this.volume_bar}
-				volume_handler={this.change_volume}
-			></volume-dot>
+<div *ngIf="os_show_volume" class="volume">
+	<div
+		class="{speaker_class}"
+		[ngClass]="{'speaker': true, '-on': volume > 0, '-off': volume === 0}"
+		(click)="toggle_volume_showing()"
+	></div>
+	<div *ngIf="show_volume_bar" class="volume_wrapper">
+		<div class="bar" #bar>
+			<volume-dot [parent]="bar"></volume-dot>
 		</div>
 	</div>
 </div>
-<progress-bar seek_handler={this.seek} total_time={total_time}></progress-bar>
+<progress-bar></progress-bar>

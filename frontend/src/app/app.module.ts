@@ -18,11 +18,11 @@ import {DiscComponent} from "./svgs/disc/disc.component"
 import {ModalComponent} from "./components/modal/modal.component"
 import {HomeComponent} from "./pages/home/home.component"
 import {FormsModule} from "@angular/forms"
-import {PlayComponent} from "./components/play/play.component";
-import { PlayButtonComponent } from './components/play-button/play-button.component';
-import { TrackStatsComponent } from './components/track-stats/track-stats.component';
-import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
-import { VolumeDotComponent } from './components/volume-dot/volume-dot.component'
+import {PlayComponent} from "./components/play/play.component"
+import {TrackStatsComponent} from "./components/track-stats/track-stats.component"
+import {ProgressBarComponent} from "./components/progress-bar/progress-bar.component"
+import {VolumeDotComponent} from "./components/volume-dot/volume-dot.component";
+import { ProgressDotComponent } from './components/progress-dot/progress-dot.component'
 
 @NgModule({
 	declarations: [
@@ -41,10 +41,10 @@ import { VolumeDotComponent } from './components/volume-dot/volume-dot.component
 		ModalComponent,
 		HomeComponent,
 		PlayComponent,
-  PlayButtonComponent,
-  TrackStatsComponent,
-  ProgressBarComponent,
-  VolumeDotComponent,
+		TrackStatsComponent,
+		ProgressBarComponent,
+		VolumeDotComponent,
+  ProgressDotComponent,
 	],
 	imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
 	providers: [],

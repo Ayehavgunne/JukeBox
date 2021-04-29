@@ -1,1 +1,5 @@
-<p>progress-bar works!</p>
+<div class="current_time">{{ current_time }}</div>
+<div class="total_time">{{ total_time }}</div>
+<div id="progress_bar" #bar>
+	<progress-dot [parent]="bar"></progress-dot>
+</div>

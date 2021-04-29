@@ -18,16 +18,16 @@ export class TracksService {
 		return this.http.get<Track[]>(this.url)
 	}
 
-	get_track_image(track_id: number): Observable<any> {
-		return this.http.get<any>(`${this.url}/${track_id}/image`)
-	}
+	// get_track_image(track_id: number): Observable<any> {
+	// 	return this.http.get<any>(`${this.url}/${track_id}/image`)
+	// }
 
-	get_track_file(track_id: number, start?: number, end?: number): Observable<any> {
-		if (start && (end === undefined || end === null)) {
-			return this.http.get<any>(`/get/${track_id}/${start}`)
-		} else if (start && end) {
-			return this.http.get<any>(`/get/${track_id}/${start}/${end}`)
-		}
-		return this.http.get<any>(`/get/${track_id}`)
-	}
+	// get_track_file(track_id: number, start?: number, end?: number): Observable<any> {
+	// 	if (start && (end === undefined || end === null)) {
+	// 		return this.http.get<any>(`/get/${track_id}/${start}`)
+	// 	} else if (start && end) {
+	// 		return this.http.get<any>(`/get/${track_id}/${start}/${end}`)
+	// 	}
+	// 	return this.http.get<any>(`/get/${track_id}`)
+	// }
 }
