@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core"
 import {BrowserModule} from "@angular/platform-browser"
-import {HttpClientModule} from "@angular/common/http"
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http"
 
 import {AppRoutingModule} from "./app-routing.module"
 import {AppComponent} from "./app.component"
@@ -21,8 +21,10 @@ import {FormsModule} from "@angular/forms"
 import {PlayComponent} from "./components/play/play.component"
 import {TrackStatsComponent} from "./components/track-stats/track-stats.component"
 import {ProgressBarComponent} from "./components/progress-bar/progress-bar.component"
-import {VolumeDotComponent} from "./components/volume-dot/volume-dot.component";
-import { ProgressDotComponent } from './components/progress-dot/progress-dot.component'
+import {VolumeDotComponent} from "./components/volume-dot/volume-dot.component"
+import {ProgressDotComponent} from "./components/progress-dot/progress-dot.component"
+import {LoadOverlayComponent} from "./components/load-overlay/load-overlay.component"
+import {LoadingInterceptor} from "./interceptors/loading"
 
 @NgModule({
 	declarations: [
@@ -44,10 +46,13 @@ import { ProgressDotComponent } from './components/progress-dot/progress-dot.com
 		TrackStatsComponent,
 		ProgressBarComponent,
 		VolumeDotComponent,
-  ProgressDotComponent,
+		ProgressDotComponent,
+		LoadOverlayComponent,
 	],
 	imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
-	providers: [],
+	providers: [
+		{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}
