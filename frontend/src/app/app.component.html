@@ -34,7 +34,7 @@
 		<li>
 			<h3>Playlists</h3>
 			<ul>
-				<li *ngFor="let playlist_name of playlists">
+				<li *ngFor="let playlist_name of playlist_service.names">
 					<a [routerLink]="['/page/playlist/', playlist_name]">
 						{{ playlist_name }}
 					</a>

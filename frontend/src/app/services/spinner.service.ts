@@ -11,6 +11,8 @@ export class SpinnerService {
 	constructor() {}
 
 	set_spinning(set: boolean) {
-		this.is_loading$$.next(set)
+		Promise.resolve(null).then(() => {
+			this.is_loading$$.next(set)
+		})
 	}
 }

@@ -25,6 +25,9 @@ import {VolumeDotComponent} from "./components/volume-dot/volume-dot.component"
 import {ProgressDotComponent} from "./components/progress-dot/progress-dot.component"
 import {LoadOverlayComponent} from "./components/load-overlay/load-overlay.component"
 import {LoadingInterceptor} from "./interceptors/loading"
+import {PopupMenuComponent} from "./components/popup-menu/popup-menu.component"
+import {PopupMenuItemComponent} from "./components/popup-menu-item/popup-menu-item.component"
+import {ScrollingModule} from "@angular/cdk/scrolling"
 
 @NgModule({
 	declarations: [
@@ -48,8 +51,16 @@ import {LoadingInterceptor} from "./interceptors/loading"
 		VolumeDotComponent,
 		ProgressDotComponent,
 		LoadOverlayComponent,
+		PopupMenuComponent,
+		PopupMenuItemComponent,
 	],
-	imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		HttpClientModule,
+		FormsModule,
+		ScrollingModule,
+	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
 	],

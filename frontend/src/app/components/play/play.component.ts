@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit} from "@angular/core"
-import {print} from "../../utils"
 import {Track} from "../../models"
 import {PlayerService} from "../../services/player.service"
+import {print} from "../../utils"
 
 @Component({
 	selector: "play",

@@ -4,13 +4,17 @@
 .number
 	text-align: right
 
-.row:hover
+.row:hover .cell
 	background-color: #373737
 
 .playing_row
 	background-color: #696969
 
+.play_track
+	display: none
+
 .row:hover .play_track
+	display: block
 	width: 18px
 	height: 16px
 	box-sizing: border-box
@@ -19,7 +23,7 @@
 	border-color: transparent transparent transparent #bebebe
 	position: absolute
 	bottom: 14px
-	left: 14px
+	left: 25px
 	filter: drop-shadow(1px 1px 2px black)
 
 .playing
@@ -109,7 +113,7 @@
 	height: 50px
 	width: 50px
 
-.menu
+.rel
 	position: relative
 
 .tracks_container
@@ -126,7 +130,11 @@
 .header
 	text-align: center
 
-.body
+cdk-virtual-scroll-viewport
+	height: 100%
+
+//.body
+.cdk-virtual-scroll-content-wrapper
 	display: grid
 	grid-template-columns: 25px 66px repeat(7, auto)
 
@@ -160,5 +168,5 @@
 		display: block
 		border-bottom: 0
 
-	.menu
+	.rel
 		float: left

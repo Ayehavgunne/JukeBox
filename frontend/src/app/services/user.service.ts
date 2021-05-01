@@ -7,7 +7,8 @@ import {UserQueryResponse, User} from "../models"
 	providedIn: "root",
 })
 export class UserService {
-	url: string = "/users"
+	private url: string = "/users"
+	current_user: User
 
 	constructor(private http: HttpClient) {}
 
