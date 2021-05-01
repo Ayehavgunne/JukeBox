@@ -1,19 +1,6 @@
 <modal [modal_config]="modal_config" #modal></modal>
-<div *ngIf="tracks" class="tracks_container">
-	<cdk-virtual-scroll-viewport itemSize="60">
-		<!--		<div class="body">-->
-		<div *ngIf="show_headers" class="header"></div>
-		<div *ngIf="show_headers" class="header"></div>
-		<div *ngIf="show_headers" class="header">No.</div>
-		<div *ngIf="show_headers" class="header">Title</div>
-		<div *ngIf="show_headers" class="header">Artist</div>
-		<div *ngIf="show_headers" class="header">Album</div>
-		<div *ngIf="show_headers" class="header">Disc</div>
-		<div *ngIf="show_headers" class="header">Year</div>
-		<div *ngIf="show_headers" class="header">Length</div>
-		<div *cdkVirtualFor="let track of tracks" class="row">
-			<div class="rel cell">
-				<popup-menu>
+<track-table>
+	<popup-menu>
 					<popup-menu-item (click)="love_this_track(track)" [data]="track">
 						Love
 					</popup-menu-item>
@@ -45,27 +32,4 @@
 						Append to Queue
 					</popup-menu-item>
 				</popup-menu>
-			</div>
-			<div class="rel cell">
-				<play [track]="track">
-					<div class="play_track"></div>
-					<img
-						src="{{ '/albums/' + track.album_id + '/image' }}"
-						alt="{{ track.title + ' album art' }}"
-						class="small"
-					/>
-				</play>
-			</div>
-			<div class="number cell">{{ track.track_number }}</div>
-			<div class="cell">{{ track.title }}</div>
-			<div class="cell">{{ track.artist }}</div>
-			<div class="cell">{{ track.album }}</div>
-			<div class="number cell">{{ track.disc_number }}</div>
-			<div class="number cell">{{ track.year }}</div>
-			<div class="number cell">
-				{{ track.length * 1000 | date: "mm:ss" }}
-			</div>
-		</div>
-		<!--		</div>-->
-	</cdk-virtual-scroll-viewport>
-</div>
+</track-table>

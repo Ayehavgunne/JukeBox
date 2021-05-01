@@ -27,34 +27,25 @@ export class AppComponent implements AfterViewInit {
 		let user_id: number = Number(this.cookies_service.get("user_id") || 0)
 		if (user_id) {
 			this.user_service.get_user_by_id(user_id).subscribe(user => {
-				this.user_service.current_user = {
-					username: user.username,
-					user_id: user.user_id,
-				}
-				this.playlist_service
-					.get_names(this.user_service.current_user.user_id)
-					.subscribe(names => {
-						this.playlist_service.names = names
-					})
-			})
-		} else {
-			let username: string = await this.get_username()
-			if (username) {
-				this.user_service.get_user_by_name(username).subscribe(user => {
-					if (user.error === "User does not exist") {
-						this.user_service.create_user(username).subscribe(user => {
-							this.user_service.current_user = {
-								username: user.username,
-								user_id: user.user_id,
-							}
-							this.cookies_service.set("user_id", user.user_id + "")
-							this.playlist_service
-								.get_names(this.user_service.current_user.user_id)
-								.subscribe(names => {
-									this.playlist_service.names = names
-								})
+				if (user.error !== "User does not exist") {
+					this.user_service.current_user = {
+						username: user.username,
+						user_id: user.user_id,
+					}
+					this.playlist_service
+						.get_names(this.user_service.current_user.user_id)
+						.subscribe(names => {
+							this.playlist_service.names = names
 						})
-					} else {
+					return
+				}
+			})
+		}
+		let username: string = await this.get_username()
+		if (username) {
+			this.user_service.get_user_by_name(username).subscribe(user => {
+				if (user.error === "User does not exist") {
+					this.user_service.create_user(username).subscribe(user => {
 						this.user_service.current_user = {
 							username: user.username,
 							user_id: user.user_id,
@@ -65,9 +56,20 @@ export class AppComponent implements AfterViewInit {
 							.subscribe(names => {
 								this.playlist_service.names = names
 							})
+					})
+				} else {
+					this.user_service.current_user = {
+						username: user.username,
+						user_id: user.user_id,
 					}
-				})
-			}
+					this.cookies_service.set("user_id", user.user_id + "")
+					this.playlist_service
+						.get_names(this.user_service.current_user.user_id)
+						.subscribe(names => {
+							this.playlist_service.names = names
+						})
+				}
+			})
 		}
 	}
 

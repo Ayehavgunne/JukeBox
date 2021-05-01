@@ -27,7 +27,8 @@ import {LoadOverlayComponent} from "./components/load-overlay/load-overlay.compo
 import {LoadingInterceptor} from "./interceptors/loading"
 import {PopupMenuComponent} from "./components/popup-menu/popup-menu.component"
 import {PopupMenuItemComponent} from "./components/popup-menu-item/popup-menu-item.component"
-import {ScrollingModule} from "@angular/cdk/scrolling"
+import {ScrollingModule} from "@angular/cdk/scrolling";
+import { TrackTableComponent } from './components/track-table/track-table.component'
 
 @NgModule({
 	declarations: [
@@ -53,6 +54,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling"
 		LoadOverlayComponent,
 		PopupMenuComponent,
 		PopupMenuItemComponent,
+  TrackTableComponent,
 	],
 	imports: [
 		BrowserModule,
