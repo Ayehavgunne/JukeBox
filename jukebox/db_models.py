@@ -200,7 +200,7 @@ class LovedTrack(BaseModel):
 
 
 class LovedAlbum(BaseModel):
-    loved_track_id = AutoField(primary_key=True)
+    loved_album_id = AutoField(primary_key=True)
     album = ForeignKeyField(Album)
     user = ForeignKeyField(User, backref="loved_albums")
 
@@ -211,7 +211,7 @@ class LovedAlbum(BaseModel):
 
 
 class LovedArtist(BaseModel):
-    loved_track_id = AutoField(primary_key=True)
+    loved_artist_id = AutoField(primary_key=True)
     artist = ForeignKeyField(Artist)
     user = ForeignKeyField(User, backref="loved_artists")
 

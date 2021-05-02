@@ -6,6 +6,7 @@ import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {ModalComponent} from "../../components/modal/modal.component"
 import {print} from "../../utils"
+import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
 
 @Component({
 	selector: "tracks",
@@ -13,10 +14,10 @@ import {print} from "../../utils"
 	styleUrls: ["./tracks.component.sass"],
 })
 export class TracksComponent implements OnInit {
-	tracks?: Track[]
-	playlists: string[] = []
-	show_headers: boolean = true
 	@ViewChild("modal") modal: ModalComponent
+	@ViewChild("popup_menu") popup_menu: PopupMenuComponent
+	tracks: Track[]
+	playlists: string[] = []
 	modal_config: ModalConfig = new ModalConfig()
 
 	constructor(
@@ -40,7 +41,6 @@ export class TracksComponent implements OnInit {
 	}
 
 	async add_to_playlist(track: Track, name?: string) {
-		print(track, name)
 		if (!name) {
 			name = await this.get_playlist_name()
 		}

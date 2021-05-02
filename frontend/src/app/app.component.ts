@@ -4,7 +4,6 @@ import {UserService} from "./services/user.service"
 import {ModalConfig} from "./models"
 import {ModalComponent} from "./components/modal/modal.component"
 import {PlaylistsService} from "./services/playlists.service"
-import {print} from "./utils"
 
 @Component({
 	selector: "app-root",
@@ -24,61 +23,23 @@ export class AppComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		let user_id: number = Number(this.cookies_service.get("user_id") || 0)
-		if (user_id) {
-			this.user_service.get_user_by_id(user_id).subscribe(user => {
-				if (user.error !== "User does not exist") {
-					this.user_service.current_user = {
-						username: user.username,
-						user_id: user.user_id,
-					}
-					this.playlist_service
-						.get_names(this.user_service.current_user.user_id)
-						.subscribe(names => {
-							this.playlist_service.names = names
-						})
-					return
-				}
-			})
-		}
-		let username: string = await this.get_username()
-		if (username) {
-			this.user_service.get_user_by_name(username).subscribe(user => {
-				if (user.error === "User does not exist") {
-					this.user_service.create_user(username).subscribe(user => {
-						this.user_service.current_user = {
-							username: user.username,
-							user_id: user.user_id,
-						}
-						this.cookies_service.set("user_id", user.user_id + "")
-						this.playlist_service
-							.get_names(this.user_service.current_user.user_id)
-							.subscribe(names => {
-								this.playlist_service.names = names
-							})
-					})
-				} else {
-					this.user_service.current_user = {
-						username: user.username,
-						user_id: user.user_id,
-					}
-					this.cookies_service.set("user_id", user.user_id + "")
-					this.playlist_service
-						.get_names(this.user_service.current_user.user_id)
-						.subscribe(names => {
-							this.playlist_service.names = names
-						})
-				}
-			})
+		if (this.user_service.current_user === undefined) {
+			await this.user_service.set_current_user(
+				this.cookies_service,
+				this.playlist_service,
+				this.modal,
+				this.modal_config,
+				this.change_detector,
+			)
 		}
 	}
 
-	async get_username(): Promise<string> {
-		this.modal_config.modal_title = "What is your username?"
-		this.modal_config.show_dismiss_button = false
-		this.modal.show()
-		this.change_detector.detectChanges()
-		let response = await this.modal.get_response()
-		return response.input
-	}
+	// async get_username(): Promise<string> {
+	// 	this.modal_config.modal_title = "What is your username?"
+	// 	this.modal_config.show_dismiss_button = false
+	// 	this.modal.show()
+	// 	this.change_detector.detectChanges()
+	// 	let response = await this.modal.get_response()
+	// 	return response.input
+	// }
 }

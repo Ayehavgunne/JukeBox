@@ -14,7 +14,6 @@ export class PopupMenuComponent implements OnInit {
 	ngOnInit(): void {}
 
 	show_toggle = () => {
-		print("toggle popup!")
 		this.showing = !this.showing
 	}
 

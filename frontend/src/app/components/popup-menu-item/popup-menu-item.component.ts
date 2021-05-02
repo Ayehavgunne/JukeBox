@@ -1,4 +1,5 @@
-import {Component, HostListener, Input, OnInit} from "@angular/core"
+import {Component, HostListener, Injector, Input, OnInit} from "@angular/core"
+import {PopupMenuComponent} from "../popup-menu/popup-menu.component"
 
 @Component({
 	selector: "popup-menu-item",
@@ -6,11 +7,13 @@ import {Component, HostListener, Input, OnInit} from "@angular/core"
 	styleUrls: ["./popup-menu-item.component.sass"],
 })
 export class PopupMenuItemComponent implements OnInit {
-	@Input() data: any
-	@Input() contains_submenu: boolean
+	@Input() contains_submenu?: boolean
+	parent?: PopupMenuComponent
 	show_submenu = false
 
-	constructor() {}
+	constructor(private injector: Injector) {
+		this.parent = this.injector.get<PopupMenuComponent>(PopupMenuComponent)
+	}
 
 	ngOnInit(): void {}
 
@@ -18,6 +21,8 @@ export class PopupMenuItemComponent implements OnInit {
 	click_handler() {
 		if (this.contains_submenu) {
 			this.toggle_submenu()
+		} else {
+			this.parent?.close()
 		}
 	}
 

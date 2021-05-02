@@ -1,172 +1,172 @@
-\:host
-	float: left
-
-.number
-	text-align: right
-
-.row:hover .cell
-	background-color: #373737
-
-.playing_row
-	background-color: #696969
-
-.play_track
-	display: none
-
-.row:hover .play_track
-	display: block
-	width: 18px
-	height: 16px
-	box-sizing: border-box
-	border-style: solid
-	border-width: 14px 0 14px 22px
-	border-color: transparent transparent transparent #bebebe
-	position: absolute
-	bottom: 14px
-	left: 25px
-	filter: drop-shadow(1px 1px 2px black)
-
-.playing
-	position: relative
-	right: 2px
-
-.playing_bars
-	position: absolute
-	bottom: 14px
-	left: 13px
-
-.small
-	width: 50px
-	height: 50px
-
-.on_image
-	position: absolute
-	left: calc(50% - 10px)
-	bottom: calc(50% - 10px)
-	width: 24px
-
-.playing_bar
-	float: left
-	width: 6px
-	height: 28px
-	margin-right: 3px
-	background-color: #15dea5
-	animation: bars 500ms backwards infinite ease-in-out alternate
-	box-shadow: 1px 1px 2px black
-
-.on_image > .playing_bar
-	width: 5px
-	height: 22px
-
-.active
-	animation: bars 500ms backwards infinite ease-in-out alternate
-
-.bar-1
-	animation-delay: 100ms
-
-.bar-2
-	animation-delay: 200ms
-
-.bar-3
-	animation-delay: 300ms
-
-@keyframes bars
-	0%
-		transform: scaleY(0.5)
-
-	100%
-		transform: scaleY(1)
-
-.albumart
-	position: relative
-
-.albumart, .info, .title, .artist
-	float: left
-
-.tracks_container ul
-	padding-left: 2px
-	overflow: auto
-
-.tracks_container li
-	list-style: none
-	height: 60px
-
-.info
-	margin-left: 3px
-	height: 50px
-	display: flex
-	flex-direction: column
-	justify-content: center
-
-.title
-	font-size: 1.15em
-	overflow: hidden
-	text-overflow: ellipsis
-	white-space: nowrap
-
-.artist
-	clear: left
-	font-size: 0.8em
-	white-space: nowrap
-
-.tracks_container .small
-	height: 50px
-	width: 50px
-
-.rel
-	position: relative
-
-.tracks_container
-	height: calc(100% - 35px)
-	overflow: auto
-
-.tracks_table_container
-	position: relative
-	will-change: transform
-
-.table
-	float: left
-
-.header
-	text-align: center
-
-cdk-virtual-scroll-viewport
-	height: 100%
-
-//.body
-.cdk-virtual-scroll-content-wrapper
-	display: grid
-	grid-template-columns: 25px 66px repeat(7, auto)
-
-.row
-	display: contents
-
-.row:last-child .cell
-	border-bottom: 0
-
-.cell
-	display: grid
-	align-items: center
-	padding: 4px 8px 0 8px
-	border-bottom: 1px solid #4a4a4a
-	height: 60px
-
-@media (max-width: 700px)
-	tbody
-		font-size: 9px
-
-	.info
-		width: calc(100% - 101px)
-
-	.title
-		white-space: normal
-
-	.artist
-		white-space: normal
-
-	.cell
-		display: block
-		border-bottom: 0
-
-	.rel
-		float: left
+//\:host
+//	float: left
+//
+//.number
+//	text-align: right
+//
+//.row:hover .cell
+//	background-color: #373737
+//
+//.playing_row
+//	background-color: #696969
+//
+//.play_track
+//	display: none
+//
+//.row:hover .play_track
+//	display: block
+//	width: 18px
+//	height: 16px
+//	box-sizing: border-box
+//	border-style: solid
+//	border-width: 14px 0 14px 22px
+//	border-color: transparent transparent transparent #bebebe
+//	position: absolute
+//	bottom: 14px
+//	left: 25px
+//	filter: drop-shadow(1px 1px 2px black)
+//
+//.playing
+//	position: relative
+//	right: 2px
+//
+//.playing_bars
+//	position: absolute
+//	bottom: 14px
+//	left: 13px
+//
+//.small
+//	width: 50px
+//	height: 50px
+//
+//.on_image
+//	position: absolute
+//	left: calc(50% - 10px)
+//	bottom: calc(50% - 10px)
+//	width: 24px
+//
+//.playing_bar
+//	float: left
+//	width: 6px
+//	height: 28px
+//	margin-right: 3px
+//	background-color: #15dea5
+//	animation: bars 500ms backwards infinite ease-in-out alternate
+//	box-shadow: 1px 1px 2px black
+//
+//.on_image > .playing_bar
+//	width: 5px
+//	height: 22px
+//
+//.active
+//	animation: bars 500ms backwards infinite ease-in-out alternate
+//
+//.bar-1
+//	animation-delay: 100ms
+//
+//.bar-2
+//	animation-delay: 200ms
+//
+//.bar-3
+//	animation-delay: 300ms
+//
+//@keyframes bars
+//	0%
+//		transform: scaleY(0.5)
+//
+//	100%
+//		transform: scaleY(1)
+//
+//.albumart
+//	position: relative
+//
+//.albumart, .info, .title, .artist
+//	float: left
+//
+//.tracks_container ul
+//	padding-left: 2px
+//	overflow: auto
+//
+//.tracks_container li
+//	list-style: none
+//	height: 60px
+//
+//.info
+//	margin-left: 3px
+//	height: 50px
+//	display: flex
+//	flex-direction: column
+//	justify-content: center
+//
+//.title
+//	font-size: 1.15em
+//	overflow: hidden
+//	text-overflow: ellipsis
+//	white-space: nowrap
+//
+//.artist
+//	clear: left
+//	font-size: 0.8em
+//	white-space: nowrap
+//
+//.tracks_container .small
+//	height: 50px
+//	width: 50px
+//
+//.rel
+//	position: relative
+//
+//.tracks_container
+//	height: calc(100% - 35px)
+//	overflow: auto
+//
+//.tracks_table_container
+//	position: relative
+//	will-change: transform
+//
+//.table
+//	float: left
+//
+//.header
+//	text-align: center
+//
+//cdk-virtual-scroll-viewport
+//	height: 100%
+//
+////.body
+//.cdk-virtual-scroll-content-wrapper
+//	display: grid
+//	grid-template-columns: 25px 66px repeat(7, auto)
+//
+//.row
+//	display: contents
+//
+//.row:last-child .cell
+//	border-bottom: 0
+//
+//.cell
+//	display: grid
+//	align-items: center
+//	padding: 4px 8px 0 8px
+//	border-bottom: 1px solid #4a4a4a
+//	height: 60px
+//
+//@media (max-width: 700px)
+//	tbody
+//		font-size: 9px
+//
+//	.info
+//		width: calc(100% - 101px)
+//
+//	.title
+//		white-space: normal
+//
+//	.artist
+//		white-space: normal
+//
+//	.cell
+//		display: block
+//		border-bottom: 0
+//
+//	.rel
+//		float: left

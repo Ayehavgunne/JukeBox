@@ -1,1 +1,34 @@
-<p>playlist {{ name }} works!</p>
+<modal [modal_config]="modal_config" #modal></modal>
+<h3>{{ name }}</h3>
+<track-table
+	[tracks]="tracks"
+	[popup_menu]="popup_menu_template"
+	[show_headers]="true"
+></track-table>
+
+<ng-template #popup_menu_template let-track="track">
+	<popup-menu>
+		<popup-menu-item (click)="love_this_track(track)">Love</popup-menu-item>
+		<popup-menu-item [contains_submenu]="true">
+			Add to a playlist
+			<span class="submenu">
+				<popup-menu-item (click)="add_to_playlist(track)">
+					+ New Playlist
+				</popup-menu-item>
+				<popup-menu-item
+					*ngFor="let name of other_playlist_names"
+					(click)="add_to_playlist(track, name)"
+				>
+					{{ name }}
+				</popup-menu-item>
+			</span>
+		</popup-menu-item>
+		<popup-menu-item (click)="delete_from_playlist(track)">
+			Delete
+		</popup-menu-item>
+		<popup-menu-item (click)="play_track_next(track)">Play Next</popup-menu-item>
+		<popup-menu-item (click)="append_track_to_queue(track)">
+			Append to Queue
+		</popup-menu-item>
+	</popup-menu>
+</ng-template>

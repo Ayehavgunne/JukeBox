@@ -11,7 +11,9 @@
 		<div *ngIf="show_headers" class="header">Length</div>
 		<div *ngFor="let track of tracks" class="row">
 			<div class="rel cell">
-				<ng-content></ng-content>
+				<ng-container
+					*ngTemplateOutlet="popup_menu; context: {track: track}"
+				></ng-container>
 			</div>
 			<div class="rel cell">
 				<play [track]="track">

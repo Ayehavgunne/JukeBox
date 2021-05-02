@@ -20,33 +20,41 @@ export class PlaylistsService {
 		return this.http.get<Track[]>(`${this.url}/${user_id}/${name}`)
 	}
 
-	delete_playlist(user_id: number, name: string): Observable<void> {
+	delete_playlist(user_id: number, name: string): Observable<string[]> {
 		if (this.names.includes(name)) {
 			this.names.splice(this.names.indexOf(name), 1)
 		}
-		return this.http.delete<void>(`${this.url}/${user_id}/${name}`)
+		return this.http.delete<string[]>(`${this.url}/${user_id}/${name}`)
 	}
 
 	rename_playlist(
 		user_id: number,
 		old_name: string,
 		new_name: string,
-	): Observable<void> {
-		return this.http.get<void>(`${this.url}/${user_id}/${old_name}/${new_name}`)
+	): Observable<string[]> {
+		return this.http.get<string[]>(`${this.url}/${user_id}/${old_name}/${new_name}`)
 	}
 
-	add_to_playlist(name: string, track_id: number, user_id: number): Observable<void> {
+	add_to_playlist(
+		name: string,
+		track_id: number,
+		user_id: number,
+	): Observable<string> {
 		if (!this.names.includes(name)) {
 			this.names.push(name)
 		}
-		return this.http.put<void>(`${this.url}/${name}/${track_id}/${user_id}`, "")
+		return this.http.put(`${this.url}/${name}/${track_id}/${user_id}`, "", {
+			responseType: "text",
+		})
 	}
 
 	delete_from_playlist(
 		name: string,
 		track_id: number,
 		user_id: number,
-	): Observable<void> {
-		return this.http.delete<void>(`${this.url}/${name}/${track_id}/${user_id}`)
+	): Observable<string> {
+		return this.http.delete(`${this.url}/${name}/${track_id}/${user_id}`, {
+			responseType: "text",
+		})
 	}
 }
