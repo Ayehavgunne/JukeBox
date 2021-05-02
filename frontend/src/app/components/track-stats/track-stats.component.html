@@ -4,7 +4,7 @@
 	#title_div
 >
 	<div class="slider" (transitionend)="done_animating()">
-		{{ player_service.current_track?.title }}
+		{{ title }}
 	</div>
 </div>
 <div
@@ -13,6 +13,6 @@
 	#artist_div
 >
 	<div class="slider" (transitionend)="done_animating()">
-		{{ player_service.current_track?.artist }}
+		{{ artist }}
 	</div>
 </div>

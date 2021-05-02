@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
+import {print} from "../../utils"
 
 @Component({
 	selector: "track-stats",
@@ -9,6 +10,8 @@ import {PlayerService} from "../../services/player.service"
 export class TrackStatsComponent implements OnInit {
 	@ViewChild("title_div") title_div: HTMLDivElement
 	@ViewChild("artist_div") artist_div: HTMLDivElement
+	title: string
+	artist: string
 	title_slide: boolean = false
 	title_anim_duration: string
 	title_anim_width: string
@@ -18,17 +21,24 @@ export class TrackStatsComponent implements OnInit {
 
 	constructor(public player_service: PlayerService) {}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		// print("On Init!")
+		this.title = this.player_service.current_track?.title || ""
+		this.artist = this.player_service.current_track?.artist || ""
+	}
 
 	ngAfterViewInit(): void {
+		// print("After Init!")
 		this.check_slide()
 	}
 
 	ngOnChanges(): void {
+		// print("changed!")
 		this.clear_slide()
 	}
 
 	check_slide = () => {
+		print("check_slide")
 		if (this.is_overflowing(this.title_div)) {
 			this.title_slide = true
 			this.title_anim_duration = this.title_div.scrollWidth / 30 + "s"
@@ -44,6 +54,7 @@ export class TrackStatsComponent implements OnInit {
 	}
 
 	clear_slide = () => {
+		print("clear_slide")
 		this.title_slide = false
 		this.title_anim_width = ""
 		this.artist_slide = false
@@ -51,6 +62,7 @@ export class TrackStatsComponent implements OnInit {
 	}
 
 	done_animating = () => {
+		print("done_animating")
 		this.clear_slide()
 		this.check_slide()
 	}

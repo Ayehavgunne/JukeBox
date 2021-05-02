@@ -11,7 +11,7 @@ export class ProgressDotComponent implements OnInit {
 	progress: number
 	active = false
 
-	constructor(private player_service: PlayerService) {}
+	constructor(public player_service: PlayerService) {}
 
 	ngOnInit(): void {
 		this.progress = this.player_service.seek

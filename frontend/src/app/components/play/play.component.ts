@@ -1,7 +1,13 @@
-import {Component, HostListener, Input, OnInit} from "@angular/core"
+import {
+	Component,
+	EventEmitter,
+	HostListener,
+	Input,
+	OnInit,
+	Output,
+} from "@angular/core"
 import {Track} from "../../models"
 import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "play",
@@ -10,6 +16,7 @@ import {print} from "../../utils"
 })
 export class PlayComponent implements OnInit {
 	@Input() track?: Track
+	@Output() play_track_event: EventEmitter<void> = new EventEmitter<void>()
 
 	constructor(private player_service: PlayerService) {}
 
@@ -17,6 +24,7 @@ export class PlayComponent implements OnInit {
 
 	@HostListener("click")
 	play() {
+		this.play_track_event.emit()
 		if (this.track) {
 			this.player_service.set_track(this.track)
 			this.player_service.play()

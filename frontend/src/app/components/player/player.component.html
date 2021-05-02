@@ -6,7 +6,6 @@
 <track-stats></track-stats>
 <div *ngIf="os_show_volume" class="volume">
 	<div
-		class="{speaker_class}"
 		[ngClass]="{'speaker': true, '-on': volume > 0, '-off': volume === 0}"
 		(click)="toggle_volume_showing()"
 	></div>

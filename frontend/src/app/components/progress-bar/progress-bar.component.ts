@@ -1,5 +1,6 @@
 import {Component, HostListener, OnInit, ViewChild} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
+import {print} from "../../utils"
 
 @Component({
 	selector: "progress-bar",
@@ -8,26 +9,14 @@ import {PlayerService} from "../../services/player.service"
 })
 export class ProgressBarComponent implements OnInit {
 	@ViewChild("bar") bar: HTMLDivElement
-	current_time: string
-	total_time: string
 
-	constructor(private player_service: PlayerService) {}
+	constructor(public player_service: PlayerService) {}
 
-	ngOnInit(): void {
-		if (this.player_service.seek) {
-			this.current_time = new Date(this.player_service.seek * 1000)
-				.toISOString()
-				.substr(14, 5)
-		}
-		if (this.total_time) {
-			this.total_time = new Date(this.player_service.total_time * 1000)
-				.toISOString()
-				.substr(14, 5)
-		}
-	}
+	ngOnInit(): void {}
 
 	@HostListener("click", ["$event"])
 	click_handler(event: MouseEvent) {
+		print("clicked seek")
 		this.player_service.seek = (event.offsetX / this.bar.offsetWidth) * 100
 	}
 }

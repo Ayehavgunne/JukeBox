@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, TemplateRef} from "@angular/core"
 import {Track} from "../../models"
+import {PlayerService} from "../../services/player.service"
 
 @Component({
 	selector: "track-table",
@@ -11,7 +12,11 @@ export class TrackTableComponent implements OnInit {
 	@Input() tracks: Track[]
 	@Input() show_headers: boolean
 
-	constructor() {}
+	constructor(private player_service: PlayerService) {}
+
+	playing_event_handler() {
+		this.player_service.set_queue(this.tracks)
+	}
 
 	ngOnInit(): void {}
 }

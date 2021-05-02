@@ -16,7 +16,7 @@
 				></ng-container>
 			</div>
 			<div class="rel cell">
-				<play [track]="track">
+				<play [track]="track" (play_track_event)="playing_event_handler()">
 					<div class="play_track"></div>
 					<img
 						src="{{ '/albums/' + track.album_id + '/image' }}"
