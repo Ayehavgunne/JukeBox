@@ -18,6 +18,14 @@
 			<div class="rel cell">
 				<play [track]="track" (play_track_event)="playing_event_handler()">
 					<div class="play_track"></div>
+					<div
+						*ngIf="track === player_service.track"
+						class="playing on_image"
+					>
+						<div class="playing_bar bar-1"></div>
+						<div class="playing_bar bar-2"></div>
+						<div class="playing_bar bar-3"></div>
+					</div>
 					<img
 						src="{{ '/albums/' + track.album_id + '/image' }}"
 						alt="{{ track.title + ' album art' }}"

@@ -1,8 +1,9 @@
 import {Injectable} from "@angular/core"
+import {HttpClient} from "@angular/common/http"
 
 @Injectable({
 	providedIn: "root",
 })
 export class AlbumsService {
-	constructor() {}
+	constructor(private http: HttpClient) {}
 }

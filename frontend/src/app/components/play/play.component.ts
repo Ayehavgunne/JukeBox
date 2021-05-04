@@ -26,8 +26,7 @@ export class PlayComponent implements OnInit {
 	play() {
 		this.play_track_event.emit()
 		if (this.track) {
-			this.player_service.set_track(this.track)
-			this.player_service.play()
+			this.player_service.play(this.track)
 		} else {
 			this.player_service.toggle_playing()
 		}

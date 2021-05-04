@@ -3,8 +3,8 @@
 	[ngStyle]="{animationDuration: title_anim_duration, width: title_anim_width}"
 	#title_div
 >
-	<div class="slider" (transitionend)="done_animating()">
-		{{ title }}
+	<div class="slider" #title_slider (transitionend)="done_animating()">
+		{{ track?.title || "" }}
 	</div>
 </div>
 <div
@@ -12,7 +12,7 @@
 	[ngStyle]="{animationDuration: artist_anim_duration, width: artist_anim_width}"
 	#artist_div
 >
-	<div class="slider" (transitionend)="done_animating()">
-		{{ artist }}
+	<div class="slider" #artist_slider (transitionend)="done_animating()">
+		{{ track?.artist || "" }}
 	</div>
 </div>

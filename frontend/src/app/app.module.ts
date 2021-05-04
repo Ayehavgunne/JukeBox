@@ -1,5 +1,6 @@
 import {NgModule} from "@angular/core"
 import {BrowserModule} from "@angular/platform-browser"
+import {DatePipe} from "@angular/common"
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http"
 
 import {AppRoutingModule} from "./app-routing.module"
@@ -67,6 +68,7 @@ import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
+		DatePipe,
 	],
 	bootstrap: [AppComponent],
 })

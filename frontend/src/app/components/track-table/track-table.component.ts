@@ -12,7 +12,7 @@ export class TrackTableComponent implements OnInit {
 	@Input() tracks: Track[]
 	@Input() show_headers: boolean
 
-	constructor(private player_service: PlayerService) {}
+	constructor(public player_service: PlayerService) {}
 
 	playing_event_handler() {
 		this.player_service.set_queue(this.tracks)

@@ -1,5 +1,6 @@
 import {Component, HostListener, Input, OnInit} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
+import {print} from "../../utils"
 
 @Component({
 	selector: "volume-dot",
@@ -22,20 +23,19 @@ export class VolumeDotComponent implements OnInit {
 	async drag_start() {
 		document.querySelector("body")!.classList.add("noselect")
 		document.documentElement.style.overflow = "hidden"
-
 		this.active = true
 	}
 
-	@HostListener("touchend")
-	@HostListener("mouseup")
+	@HostListener("document:touchend")
+	@HostListener("document:mouseup")
 	async drag_end() {
 		document.querySelector("body")!.classList.remove("noselect")
 		document.documentElement.style.overflow = "auto"
 		this.active = false
 	}
 
-	@HostListener("touchmove", ["$event"])
-	@HostListener("mousemove", ["$event"])
+	@HostListener("document:touchmove", ["$event"])
+	@HostListener("document:mousemove", ["$event"])
 	async drag(event: MouseEvent | TouchEvent) {
 		if (this.active) {
 			event.preventDefault()

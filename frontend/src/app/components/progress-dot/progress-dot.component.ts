@@ -31,7 +31,7 @@ export class ProgressDotComponent implements OnInit {
 		if (this.active) {
 			document.querySelector("body")!.classList.remove("noselect")
 			this.active = false
-			this.player_service.seek = this.progress
+			this.player_service.seek_percent(this.progress)
 		}
 	}
 

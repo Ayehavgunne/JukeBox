@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core"
 import {HttpClient} from "@angular/common/http"
 import {Track} from "../models"
 import {Observable} from "rxjs"
+import {print} from "../utils"
 
 @Injectable({
 	providedIn: "root",
@@ -17,12 +18,20 @@ export class TracksService {
 		return this.http.get<Track[]>(url)
 	}
 
-	change_track_love(track_id: number, is_loved: boolean): Observable<string> {
+	get_track_audio(track_id: number): Promise<Blob> {
+		return fetch(`/get/${track_id}`).then(response => {
+			return response.blob()
+		})
+	}
+
+	change_track_love(track_id: number, is_loved: boolean): Promise<string> {
 		let url: string = "/love/tracks"
-		if (is_loved) {
-			return this.http.put(url, "", {responseType: "text"})
-		} else {
-			return this.http.delete(url, {responseType: "text"})
+		let method = "PUT"
+		if (!is_loved) {
+			method = "DELETE"
 		}
+		return fetch(url, {method: method}).then(response => {
+			return response.text()
+		})
 	}
 }

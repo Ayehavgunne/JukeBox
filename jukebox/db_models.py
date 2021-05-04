@@ -64,6 +64,7 @@ class Album(BaseModel):
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
     album_art_path = CharField(null=True)
+    type = CharField(null=True)
 
     class Meta:
         database = database
@@ -77,6 +78,7 @@ class Album(BaseModel):
             "title": self.title,
             "total_discs": self.total_discs,
             "year": self.year,
+            "type": self.type,
         }
 
 
@@ -157,7 +159,12 @@ class Track(BaseModel):
 
 class User(BaseModel):
     user_id = AutoField(primary_key=True)
-    username = CharField()
+    username = CharField(unique=True)
+
+    class Meta:
+        database = database
+        legacy_table_names = False
+        order_by = ("username",)
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         # noinspection PyTypeChecker

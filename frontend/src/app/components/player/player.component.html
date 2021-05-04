@@ -4,6 +4,11 @@
 </play>
 <div class="next" (click)="player_service.play_next_track()"></div>
 <track-stats></track-stats>
+<div
+	class="volume_background"
+	*ngIf="show_volume_bar"
+	(click)="toggle_volume_showing()"
+></div>
 <div *ngIf="os_show_volume" class="volume">
 	<div
 		[ngClass]="{'speaker': true, '-on': volume > 0, '-off': volume === 0}"

@@ -1,5 +1,7 @@
 import {Component, OnInit} from "@angular/core"
 import {ActivatedRoute} from "@angular/router"
+import {Artist, Track} from "../../models"
+import {ArtistsService} from "../../services/artists.service"
 import {print} from "../../utils"
 
 @Component({
@@ -8,13 +10,31 @@ import {print} from "../../utils"
 	styleUrls: ["./artists.component.sass"],
 })
 export class ArtistsComponent implements OnInit {
-	artist_id: number = 0
-	constructor(private route: ActivatedRoute) {}
+	artists: Array<Artist>
+	tracks: Array<Track>
+	artist: Artist
+	track: Track
+
+	constructor(
+		private route: ActivatedRoute,
+		private artist_service: ArtistsService,
+	) {}
 
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
-			this.artist_id = Number(params["artist"] || 0)
-			print(this.artist_id)
+			let artist_id = Number(params["artist"] || 0)
+			if (artist_id) {
+				this.artist_service.get_tracks(artist_id).subscribe(tracks => {
+					this.tracks = tracks
+				})
+				this.artist_service.get_artist(artist_id).subscribe(artist => {
+					this.artist = artist
+				})
+			} else {
+				this.artist_service.get_artists().subscribe(artists => {
+					this.artists = artists
+				})
+			}
 		})
 	}
 }

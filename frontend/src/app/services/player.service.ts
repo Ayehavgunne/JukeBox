@@ -1,29 +1,41 @@
 import {Injectable} from "@angular/core"
-import {Howl} from "howler"
+import {Observable, Subject} from "rxjs"
+import {DatePipe} from "@angular/common"
 import {Track} from "../models"
 import {CookiesService} from "./cookies.service"
+import {TracksService} from "./tracks.service"
 import {print} from "../utils"
 
-const formats = ["m4a", "flac", "mp3"]
+const codecs = new Map<string, string>([
+	["m4a", "audio/mp4; codecs=mp4a.40.2"],
+	["flac", "audio/flac"],
+	["mp3", "audio/mpeg"],
+])
 
 @Injectable({
 	providedIn: "root",
 })
 export class PlayerService {
-	current_track?: Track
+	track?: Track
 	paused: boolean = true
 	percent_complete: number = 0
-	private next_track_data: Track
+	private subject = new Subject<Track>()
 	private queue: Track[] = []
 	private ordered_queue: Track[] = []
 	private queue_index: number = 0
-	private current_track_audio?: Howl
-	private next_track_audio?: Howl
+	private audio: HTMLAudioElement = new Audio()
+	private media_source: MediaSource
+	private source_buffer: SourceBuffer
+	private next_track_array_buffer: ArrayBuffer
 	private nearing_track_end: boolean = false
 	private is_shuffle: boolean = false
 	private vol: number = 0.6
 
-	constructor(private cookies_service: CookiesService) {
+	constructor(
+		private cookies_service: CookiesService,
+		private tracks_service: TracksService,
+		private date_pipe: DatePipe,
+	) {
 		let volume_cookie = this.cookies_service.get("jukebox-volume")
 		let volume: number
 		if (!volume_cookie) {
@@ -33,84 +45,90 @@ export class PlayerService {
 			volume = parseFloat(volume_cookie)
 		}
 		this.vol = volume
+		this.audio.volume = volume
+		this.add_event_listeners(this.audio)
 	}
 
-	play = (): void => {
-		if (this.current_track_audio) {
-			print("playing!", this.current_track_audio, this.current_track)
-			this.current_track_audio.play()
-			this.paused = false
-		}
+	add_source(track: Track) {
+		this.media_source = new MediaSource()
+		this.audio.src = URL.createObjectURL(this.media_source)
+		this.media_source.addEventListener("sourceopen", () => {
+			let codec: string = codecs.get(track.mimetype) || "audio/mpeg"
+			this.source_buffer = this.media_source.addSourceBuffer(codec)
+			this.source_buffer.addEventListener("updateend", () => {
+				this.play()
+			})
+			this.source_buffer.appendBuffer(this.next_track_array_buffer)
+		})
+	}
+
+	async prepare_source(track: Track): Promise<void> {
+		let buf: Blob = await this.tracks_service.get_track_audio(track.track_id)
+		this.next_track_array_buffer = await buf.arrayBuffer()
 	}
 
 	play_previous_track = (): void => {
-		if (this.current_track_audio) {
-			if (this.current_track_audio.seek() > 1.5) {
-				this.current_track_audio.seek(0)
+		if (this.track) {
+			if (this.seek > 1.5) {
+				this.seek = 0
 			} else {
 				this.change_to_track(this.queue_index - 1)
 			}
 		}
 	}
 
-	play_next_track(): void {
-		if (this.current_track_audio) {
-			// check if this.next_track has been loaded
+	play_next_track = (): void => {
+		if (this.track) {
+			// check if next track has been loaded
 			this.change_to_track(this.queue_index + 1)
 		}
 	}
 
 	change_to_track = (track_index: number): void => {
-		if (this.current_track_audio) {
-			this.current_track_audio.stop()
-			delete this.current_track_audio
-		}
+		this.audio.pause()
 		if (track_index < this.queue.length) {
 			this.queue_index = track_index
-			this.current_track = this.queue[this.queue_index]
-			this.current_track_audio = new Howl({
-				src: "/stream/" + this.current_track.track_id,
-				format: formats,
-				volume: this.volume,
-				html5: true,
+			this.track = this.queue[this.queue_index]
+			this.prepare_source(this.track).then(() => {
+				this.add_source(this.track!)
 			})
-			document.title = this.current_track.title + " - JukeBox"
-			this.add_event_listeners(this.current_track_audio)
-			this.current_track_audio.play()
+			document.title = this.track.title + " - JukeBox"
 		} else {
-			this.current_track = undefined
+			this.track = undefined
 		}
+		this.subject.next(this.track)
 	}
 
 	pause = (): void => {
-		if (this.current_track_audio) {
-			this.current_track_audio.pause()
-			this.paused = true
-		}
+		this.audio.pause()
+		this.paused = true
 	}
 
-	set_track = (track: Track): void => {
-		if (this.current_track_audio) {
-			this.current_track_audio.stop()
-			delete this.current_track_audio
+	watch_track(): Observable<Track> {
+		return this.subject.asObservable()
+	}
+
+	play = (track?: Track): void => {
+		if (track) {
+			this.audio.pause()
+			this.track = track
+			this.subject.next(track)
+			document.title = this.track.title + " - JukeBox"
+			this.prepare_source(track).then(() => {
+				this.add_source(track)
+			})
+		} else {
+			this.audio.play().then()
 		}
-		this.current_track_audio = new Howl({
-			src: "/stream/" + track.track_id,
-			format: formats,
-			volume: this.vol,
-			html5: true,
-		})
-		this.add_event_listeners(this.current_track_audio)
-		this.current_track = track
+		this.paused = false
 	}
 
 	set_queue = (tracks: Track[]): void => {
 		this.queue = tracks
 		this.ordered_queue = tracks
-		if (this.current_track) {
-			this.queue_index = this.queue.indexOf(this.current_track)
+		if (this.track) {
+			this.queue_index = this.queue.indexOf(this.track)
 		}
-		print("set queue", this.queue_index, this.current_track)
 	}
 
 	add_next_in_queue = (track: Track): void => {
@@ -123,27 +141,36 @@ export class PlayerService {
 		this.ordered_queue.concat(tracks)
 	}
 
-	get seek(): number {
-		// @ts-ignore
-		return this.current_track_audio?.seek() || 0
+	current_time(): string {
+		return (
+			this.date_pipe.transform((this.audio.currentTime || 0) * 1000, "mm:ss") ||
+			""
+		)
 	}
 
-	set seek(percent: number) {
-		if (this.current_track_audio && this.current_track) {
-			this.current_track_audio.seek((percent / 100) * this.current_track.length)
+	get seek(): number {
+		return this.audio.currentTime || 0
+	}
+
+	set seek(time: number) {
+		this.audio.currentTime = time
+	}
+
+	seek_percent(percent: number) {
+		if (this.track) {
+			this.audio.currentTime = (percent / 100) * this.track.length
 		}
 	}
 
 	get total_time(): number {
-		if (this.current_track) {
-			return this.current_track.length
+		if (this.track) {
+			return this.track.length
 		} else {
 			return 0
 		}
 	}
 
 	play_handler = (): void => {
-		print("play handler", this.current_track, this.current_track_audio)
 		this.paused = false
 	}
 
@@ -152,7 +179,6 @@ export class PlayerService {
 	}
 
 	track_done = (): void => {
-		print("track done!")
 		this.nearing_track_end = false
 		this.auto_change_to_next_track()
 	}
@@ -162,12 +188,12 @@ export class PlayerService {
 		// 	(this.playlist_index + 1 + this.playlist.length) % this.playlist.length
 		this.queue_index += 1
 		if (this.queue_index < this.queue.length) {
-			this.current_track_audio = this.next_track_audio!
-			delete this.next_track_audio
+			this.track = this.queue[this.queue_index]
+			this.subject.next(this.track)
+			document.title = this.track.title + " - JukeBox"
+			this.add_source(this.track)
+			this.audio.src = URL.createObjectURL(this.media_source)
 			this.play()
-			this.current_track = this.queue[this.queue_index]
-			document.title = this.current_track.title + " - JukeBox"
-			this.add_event_listeners(this.current_track_audio)
 			this.preload_next_track()
 		}
 	}
@@ -192,14 +218,7 @@ export class PlayerService {
 	preload_next_track = (): void => {
 		if (this.queue_index + 1 < this.queue.length) {
 			print("preloading next track")
-			this.next_track_data = this.queue[this.queue_index + 1]
-			this.next_track_audio = new Howl({
-				src: "/stream/" + this.next_track_data.track_id,
-				format: formats,
-				volume: this.volume,
-				html5: true,
-			})
-			// this.add_event_listeners(this.next_track_audio)
+			this.prepare_source(this.queue[this.queue_index + 1]).then()
 		}
 	}
 
@@ -218,26 +237,21 @@ export class PlayerService {
 		}
 	}
 
-	add_event_listeners = (audio: Howl) => {
-		print("adding event listeners", audio)
-		audio.on("play", this.play_handler)
-		audio.on("pause", this.pause_handler)
-		audio.on("end", this.track_done)
-		// @ts-ignore
-		let node = audio._sounds[0]._node
-		node.onpause = () => {
-			this.pause_handler()
-		}
-		node.onplaying = () => {
-			this.play_handler()
-		}
-		node.ontimeupdate = () => {
-			print("ontimeupdate")
-			this.percent_complete = (this.seek / this.total_time) * 100
-		}
-		node.onloadeddata = () => {
-			this.preload_next_track()
-		}
+	timeupdate_handler = () => {
+		this.percent_complete = (this.seek / this.total_time) * 100
+	}
+
+	add_event_listeners = (audio: HTMLAudioElement) => {
+		audio.removeEventListener("play", this.play_handler)
+		audio.addEventListener("play", this.play_handler)
+		audio.removeEventListener("pause", this.pause_handler)
+		audio.addEventListener("pause", this.pause_handler)
+		audio.removeEventListener("ended", this.track_done)
+		audio.addEventListener("ended", this.track_done)
+		audio.removeEventListener("loadeddata", this.preload_next_track)
+		audio.addEventListener("loadeddata", this.preload_next_track)
+		audio.removeEventListener("timeupdate", this.timeupdate_handler)
+		audio.addEventListener("timeupdate", this.timeupdate_handler)
 	}
 
 	get volume(): number {
@@ -246,5 +260,7 @@ export class PlayerService {
 
 	set volume(vol: number) {
 		this.vol = vol
+		this.audio.volume = vol
+		this.cookies_service.set("jukebox-volume", vol + "")
 	}
 }

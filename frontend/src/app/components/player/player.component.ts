@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core"
+import {Component, OnInit} from "@angular/core"
 // import {CookiesService} from "../../services/cookies.service"
 import {PlayerService} from "../../services/player.service"
 import {ua_parser} from "../../utils"
@@ -10,7 +10,7 @@ import {ua_parser} from "../../utils"
 	// providers: [CookiesService],
 })
 export class PlayerComponent implements OnInit {
-	@ViewChild("bar") bar: HTMLDivElement
+	// @ViewChild("bar") bar: ElementRef
 	os_show_volume: boolean = true
 	show_volume_bar: boolean = false
 	volume: number = this.player_service.volume

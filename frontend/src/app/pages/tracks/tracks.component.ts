@@ -28,6 +28,21 @@ export class TracksComponent implements OnInit {
 		private change_detector: ChangeDetectorRef,
 	) {}
 
+	ngOnInit(): void {
+		this.route.params.subscribe(params => {
+			let track_id = Number(params["track"] || 0)
+			if (track_id) {
+				this.tracks_service.get_tracks(track_id).subscribe(tracks => {
+					this.tracks = tracks
+				})
+			} else {
+				this.tracks_service.get_tracks().subscribe(tracks => {
+					this.tracks = tracks
+				})
+			}
+		})
+	}
+
 	love_this_track(track: Track) {
 		print(track)
 	}
@@ -60,20 +75,5 @@ export class TracksComponent implements OnInit {
 		this.change_detector.detectChanges()
 		let response = await this.modal.get_response()
 		return response.input
-	}
-
-	ngOnInit(): void {
-		this.route.params.subscribe(params => {
-			let track_id = Number(params["track"] || 0)
-			if (track_id) {
-				this.tracks_service.get_tracks(track_id).subscribe(tracks => {
-					this.tracks = tracks
-				})
-			} else {
-				this.tracks_service.get_tracks().subscribe(tracks => {
-					this.tracks = tracks
-				})
-			}
-		})
 	}
 }

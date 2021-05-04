@@ -119,8 +119,8 @@ async def get_artists() -> Response:
 @app.route("/artists/<int:artist_id>")
 async def get_artist(artist_id: int) -> Response:
     with database.atomic():
-        artists = [Artist.get(artist_id)]
-        return jsonify([artist.to_json() for artist in artists])
+        artist = Artist.get(artist_id)
+        return jsonify(artist.to_json())
 
 
 @app.route("/artists/<int:artist_id>/image")

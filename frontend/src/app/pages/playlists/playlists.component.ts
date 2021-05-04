@@ -31,7 +31,7 @@ export class PlaylistsComponent implements OnInit {
 
 	love_this_track(track: Track) {
 		print(track)
-		this.tracks_service.change_track_love(track.track_id, true).subscribe()
+		this.tracks_service.change_track_love(track.track_id, true).then()
 	}
 
 	play_track_next(track: Track) {
