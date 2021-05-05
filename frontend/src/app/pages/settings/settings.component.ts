@@ -1,4 +1,5 @@
 import {Component, OnInit} from "@angular/core"
+import {SettingsService} from "../../services/settings.service"
 
 @Component({
 	selector: "settings",
@@ -6,7 +7,7 @@ import {Component, OnInit} from "@angular/core"
 	styleUrls: ["./settings.component.sass"],
 })
 export class SettingsComponent implements OnInit {
-	constructor() {}
+	constructor(public settings_service: SettingsService) {}
 
 	ngOnInit(): void {}
 }

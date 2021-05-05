@@ -29,6 +29,33 @@ export class PlaylistsComponent implements OnInit {
 		private change_detector: ChangeDetectorRef,
 	) {}
 
+	async ngOnInit() {
+		if (this.user_service.current_user === undefined) {
+			await this.user_service.set_current_user(
+				this.cookies_service,
+				this.playlist_service,
+				this.modal,
+				this.modal_config,
+				this.change_detector,
+			)
+		}
+		this.route.params.subscribe(params => {
+			this.name = params["name"] || ""
+			this.playlist_service
+				.get_tracks(this.user_service.current_user.user_id, this.name)
+				.subscribe(tracks => {
+					this.tracks = tracks
+				})
+			this.playlist_service
+				.get_names(this.user_service.current_user.user_id)
+				.subscribe(names => {
+					this.other_playlist_names = names.filter(item => {
+						return item !== this.name
+					})
+				})
+		})
+	}
+
 	love_this_track(track: Track) {
 		print(track)
 		this.tracks_service.change_track_love(track.track_id, true).then()
@@ -86,32 +113,5 @@ export class PlaylistsComponent implements OnInit {
 		this.change_detector.detectChanges()
 		let response = await this.modal.get_response()
 		return response.input
-	}
-
-	async ngOnInit() {
-		if (this.user_service.current_user === undefined) {
-			await this.user_service.set_current_user(
-				this.cookies_service,
-				this.playlist_service,
-				this.modal,
-				this.modal_config,
-				this.change_detector,
-			)
-		}
-		this.route.params.subscribe(params => {
-			this.name = params["name"] || ""
-			this.playlist_service
-				.get_tracks(this.user_service.current_user.user_id, this.name)
-				.subscribe(tracks => {
-					this.tracks = tracks
-				})
-			this.playlist_service
-				.get_names(this.user_service.current_user.user_id)
-				.subscribe(names => {
-					this.other_playlist_names = names.filter(item => {
-						return item !== this.name
-					})
-				})
-		})
 	}
 }

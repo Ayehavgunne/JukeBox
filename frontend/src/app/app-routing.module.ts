@@ -15,7 +15,7 @@ const routes: Routes = [
 		component: HomeComponent,
 	},
 	{
-		path: "page/tracks/:track",
+		path: "page/tracks/:album",
 		component: TracksComponent,
 	},
 	{
@@ -23,7 +23,7 @@ const routes: Routes = [
 		component: TracksComponent,
 	},
 	{
-		path: "page/albums/:album",
+		path: "page/albums/:artist",
 		component: AlbumsComponent,
 	},
 	{

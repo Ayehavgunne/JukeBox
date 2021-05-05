@@ -1,3 +1,38 @@
 \:host
 	padding: 10px
 	display: block
+
+.large
+	width: 500px
+	height: 500px
+
+music, disc, user
+	margin-right: 5px
+	width: 16px
+	height: 16px
+	display: block
+	float: left
+
+.current_track_info
+	float: left
+	width: 500px
+
+.track_title
+	font-size: 1.5em
+
+.album_title, .artist_name
+	font-size: 1.2em
+
+@media (max-width: 700px)
+	.large
+		width: 300px
+		height: 300px
+
+	.current_track_info
+		float: none
+		margin-left: auto
+		margin-right: auto
+		width: 300px
+
+	page-now-playing .tracks_container
+		height: calc(100% - 406px)

@@ -10,12 +10,11 @@ import {print} from "../utils"
 export class TracksService {
 	constructor(private http: HttpClient) {}
 
-	get_tracks(track_id?: number): Observable<Track[]> {
-		let url: string = "/tracks"
-		if (track_id) {
-			return this.http.get<Track[]>(`${url}/${track_id}`)
+	get_tracks(album_id?: number): Observable<Track[]> {
+		if (album_id) {
+			return this.http.get<Track[]>(`albums/${album_id}/tracks`)
 		}
-		return this.http.get<Track[]>(url)
+		return this.http.get<Track[]>("/tracks")
 	}
 
 	get_track_audio(track_id: number): Promise<Blob> {

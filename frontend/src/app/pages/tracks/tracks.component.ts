@@ -30,9 +30,9 @@ export class TracksComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
-			let track_id = Number(params["track"] || 0)
-			if (track_id) {
-				this.tracks_service.get_tracks(track_id).subscribe(tracks => {
+			let album_id = Number(params["album"] || 0)
+			if (album_id) {
+				this.tracks_service.get_tracks(album_id).subscribe(tracks => {
 					this.tracks = tracks
 				})
 			} else {

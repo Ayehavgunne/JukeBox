@@ -19,8 +19,8 @@ export class PlayerService {
 	track?: Track
 	paused: boolean = true
 	percent_complete: number = 0
+	queue: Track[] = []
 	private subject = new Subject<Track>()
-	private queue: Track[] = []
 	private ordered_queue: Track[] = []
 	private queue_index: number = 0
 	private audio: HTMLAudioElement = new Audio()
@@ -67,6 +67,29 @@ export class PlayerService {
 		this.next_track_array_buffer = await buf.arrayBuffer()
 	}
 
+	play = (track?: Track): void => {
+		if (track) {
+			this.audio.pause()
+			this.track = track
+			if (this.queue) {
+				this.queue_index = this.queue.indexOf(this.track)
+			}
+			this.subject.next(track)
+			document.title = this.track.title + " - JukeBox"
+			this.prepare_source(track).then(() => {
+				this.add_source(track)
+			})
+		} else {
+			this.audio.play().then()
+		}
+		this.paused = false
+	}
+
+	pause = (): void => {
+		this.audio.pause()
+		this.paused = true
+	}
+
 	play_previous_track = (): void => {
 		if (this.track) {
 			if (this.seek > 1.5) {
@@ -99,28 +122,8 @@ export class PlayerService {
 		this.subject.next(this.track)
 	}
 
-	pause = (): void => {
-		this.audio.pause()
-		this.paused = true
-	}
-
 	watch_track(): Observable<Track> {
 		return this.subject.asObservable()
-	}
-
-	play = (track?: Track): void => {
-		if (track) {
-			this.audio.pause()
-			this.track = track
-			this.subject.next(track)
-			document.title = this.track.title + " - JukeBox"
-			this.prepare_source(track).then(() => {
-				this.add_source(track)
-			})
-		} else {
-			this.audio.play().then()
-		}
-		this.paused = false
 	}
 
 	set_queue = (tracks: Track[]): void => {
