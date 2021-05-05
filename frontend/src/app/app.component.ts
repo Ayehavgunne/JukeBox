@@ -4,6 +4,7 @@ import {UserService} from "./services/user.service"
 import {ModalConfig} from "./models"
 import {ModalComponent} from "./components/modal/modal.component"
 import {PlaylistsService} from "./services/playlists.service"
+import {MenuToggleService} from "./services/menu-toggle.service"
 
 @Component({
 	selector: "app-root",
@@ -20,6 +21,7 @@ export class AppComponent implements AfterViewInit {
 		private cookies_service: CookiesService,
 		private change_detector: ChangeDetectorRef,
 		public playlist_service: PlaylistsService,
+		public menu_toggle_service: MenuToggleService,
 	) {}
 
 	async ngAfterViewInit() {
@@ -33,13 +35,4 @@ export class AppComponent implements AfterViewInit {
 			)
 		}
 	}
-
-	// async get_username(): Promise<string> {
-	// 	this.modal_config.modal_title = "What is your username?"
-	// 	this.modal_config.show_dismiss_button = false
-	// 	this.modal.show()
-	// 	this.change_detector.detectChanges()
-	// 	let response = await this.modal.get_response()
-	// 	return response.input
-	// }
 }

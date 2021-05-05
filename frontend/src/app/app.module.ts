@@ -31,6 +31,7 @@ import {PopupMenuItemComponent} from "./components/popup-menu-item/popup-menu-it
 import {ScrollingModule} from "@angular/cdk/scrolling"
 import {TrackTableComponent} from "./components/track-table/track-table.component"
 import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
+import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.component"
 
 @NgModule({
 	declarations: [
@@ -58,6 +59,7 @@ import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
 		PopupMenuItemComponent,
 		TrackTableComponent,
 		KeepHtmlPipe,
+		MenuToggleComponent,
 	],
 	imports: [
 		BrowserModule,

@@ -1,4 +1,4 @@
-<nav>
+<nav [ngClass]="{nav_closed: !menu_toggle_service.nav_showing}">
 	<load-overlay></load-overlay>
 	<modal [modal_config]="modal_config" ngModel #modal ngDefaultControl></modal>
 	<header>
@@ -43,10 +43,10 @@
 		</li>
 	</ul>
 </nav>
-<main>
+<main [ngClass]="{nav_closed: !menu_toggle_service.nav_showing}">
 	<router-outlet></router-outlet>
 </main>
 <footer>
-	<div class="nav_toggle">&nbsp;</div>
+	<menu-toggle class="nav_toggle"></menu-toggle>
 	<player></player>
 </footer>

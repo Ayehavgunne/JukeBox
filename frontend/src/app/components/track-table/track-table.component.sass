@@ -1,10 +1,12 @@
 \:host
 	float: left
+	height: calc(100% - 52px)
 
 .number
 	text-align: right
 
-.row:hover .cell
+//.row:hover .cell
+tr:hover td
 	background-color: #373737
 
 .playing_row
@@ -13,7 +15,8 @@
 .play_track
 	display: none
 
-.row:hover .play_track
+//.row:hover .play_track
+tr:hover .play_track
 	display: block
 	width: 18px
 	height: 16px
@@ -23,7 +26,7 @@
 	border-color: transparent transparent transparent #bebebe
 	position: absolute
 	bottom: 14px
-	left: 25px
+	left: 18px
 	filter: drop-shadow(1px 1px 2px black)
 
 .playing
@@ -123,31 +126,39 @@
 	position: relative
 	will-change: transform
 
-.table
+//.table
+table
 	float: left
+	width: 100%
+	border-collapse: collapse
 
-.header
+//.header
+th
 	text-align: center
+
+td
+	padding-right: 4px
+	padding-left: 4px
 
 cdk-virtual-scroll-viewport
 	height: 100%
 
-.body
-	display: grid
-	grid-template-columns: 25px 66px repeat(7, auto)
-
-.row
-	display: contents
-
-.row:last-child .cell
-	border-bottom: 0
-
-.cell
-	display: grid
-	align-items: center
-	padding: 4px 8px 0 8px
-	border-bottom: 1px solid #4a4a4a
-	height: 60px
+//.body
+//	display: grid
+//	grid-template-columns: 25px 66px repeat(7, auto)
+//
+//.row
+//	display: contents
+//
+//.row:last-child .cell
+//	border-bottom: 0
+//
+//.cell
+//	display: grid
+//	align-items: center
+//	padding: 4px 8px 0 8px
+//	border-bottom: 1px solid #4a4a4a
+//	height: 60px
 
 @media (max-width: 700px)
 	tbody

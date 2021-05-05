@@ -59,6 +59,9 @@ export class TracksComponent implements OnInit {
 		if (!name) {
 			name = await this.get_playlist_name()
 		}
+		if (!name) {
+			return
+		}
 		this.playlist_service
 			.add_to_playlist(
 				name,

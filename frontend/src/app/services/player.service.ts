@@ -7,8 +7,8 @@ import {TracksService} from "./tracks.service"
 import {print} from "../utils"
 
 const codecs = new Map<string, string>([
-	["m4a", "audio/mp4; codecs=mp4a.40.2"],
-	["flac", "audio/flac"],
+	["mp4a.40.2", 'audio/mp4; codecs="mp4a.40.2"'],
+	["flac", 'audio/mp4; codecs="flac"'],
 	["mp3", "audio/mpeg"],
 ])
 
@@ -53,7 +53,7 @@ export class PlayerService {
 		this.media_source = new MediaSource()
 		this.audio.src = URL.createObjectURL(this.media_source)
 		this.media_source.addEventListener("sourceopen", () => {
-			let codec: string = codecs.get(track.mimetype) || "audio/mpeg"
+			let codec: string = codecs.get(track.codec) || "audio/mpeg"
 			this.source_buffer = this.media_source.addSourceBuffer(codec)
 			this.source_buffer.addEventListener("updateend", () => {
 				this.play()
@@ -80,7 +80,9 @@ export class PlayerService {
 				this.add_source(track)
 			})
 		} else {
-			this.audio.play().then()
+			this.audio.play().then(() => {
+				print("playing")
+			})
 		}
 		this.paused = false
 	}
@@ -221,7 +223,9 @@ export class PlayerService {
 	preload_next_track = (): void => {
 		if (this.queue_index + 1 < this.queue.length) {
 			print("preloading next track")
-			this.prepare_source(this.queue[this.queue_index + 1]).then()
+			this.prepare_source(this.queue[this.queue_index + 1]).then(() => {
+				print("preloaded")
+			})
 		}
 	}
 

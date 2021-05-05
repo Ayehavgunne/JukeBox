@@ -1,47 +1,56 @@
-<div *ngIf="tracks" class="tracks_container">
-	<div class="body">
-		<div *ngIf="show_headers" class="header"></div>
-		<div *ngIf="show_headers" class="header"></div>
-		<div *ngIf="show_headers" class="header">No.</div>
-		<div *ngIf="show_headers" class="header">Title</div>
-		<div *ngIf="show_headers" class="header">Artist</div>
-		<div *ngIf="show_headers" class="header">Album</div>
-		<div *ngIf="show_headers" class="header">Disc</div>
-		<div *ngIf="show_headers" class="header">Year</div>
-		<div *ngIf="show_headers" class="header">Length</div>
-		<div *ngFor="let track of tracks" class="row">
-			<div class="rel cell">
-				<ng-container
-					*ngTemplateOutlet="popup_menu; context: {track: track}"
-				></ng-container>
-			</div>
-			<div class="rel cell">
-				<play [track]="track" (play_track_event)="playing_event_handler()">
-					<div class="play_track"></div>
-					<div
-						*ngIf="track === player_service.track"
-						class="playing on_image"
-					>
-						<div class="playing_bar bar-1"></div>
-						<div class="playing_bar bar-2"></div>
-						<div class="playing_bar bar-3"></div>
-					</div>
-					<img
-						src="{{ '/albums/' + track.album_id + '/image' }}"
-						alt="{{ track.title + ' album art' }}"
-						class="small"
-					/>
-				</play>
-			</div>
-			<div class="number cell">{{ track.track_number }}</div>
-			<div class="cell">{{ track.title }}</div>
-			<div class="cell">{{ track.artist }}</div>
-			<div class="cell">{{ track.album }}</div>
-			<div class="number cell">{{ track.disc_number }}</div>
-			<div class="number cell">{{ track.year }}</div>
-			<div class="number cell">
-				{{ track.length * 1000 | date: "mm:ss" }}
-			</div>
-		</div>
-	</div>
-</div>
+<cdk-virtual-scroll-viewport itemSize="60" *ngIf="tracks">
+	<table *ngIf="tracks">
+		<thead *ngIf="show_headers">
+			<tr>
+				<th style="width: 22px"></th>
+				<th style="width: 52px"></th>
+				<th style="width: 40px">No.</th>
+				<th>Title</th>
+				<th>Artist</th>
+				<th>Album</th>
+				<th style="width: 50px">Disc</th>
+				<th style="width: 50px">Year</th>
+				<th style="width: 70px">Length</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr
+				*cdkVirtualFor="let track of tracks"
+				[ngClass]="{playing_row: track === player_service.track}"
+			>
+				<td class="rel">
+					<ng-container
+						*ngTemplateOutlet="popup_menu; context: {track: track}"
+					></ng-container>
+				</td>
+				<td class="rel">
+					<play [track]="track" (play_track_event)="playing_event_handler()">
+						<div class="play_track"></div>
+						<div
+							*ngIf="track === player_service.track"
+							class="playing on_image"
+						>
+							<div class="playing_bar bar-1"></div>
+							<div class="playing_bar bar-2"></div>
+							<div class="playing_bar bar-3"></div>
+						</div>
+						<img
+							src="{{ '/albums/' + track.album_id + '/image' }}"
+							alt="{{ track.title + ' album art' }}"
+							class="small"
+						/>
+					</play>
+				</td>
+				<td class="number">{{ track.track_number }}</td>
+				<td>{{ track.title }}</td>
+				<td>{{ track.artist }}</td>
+				<td>{{ track.album }}</td>
+				<td class="number">{{ track.disc_number }}</td>
+				<td class="number">{{ track.year }}</td>
+				<td class="number">
+					{{ track.length * 1000 | date: "mm:ss" }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</cdk-virtual-scroll-viewport>
