@@ -6,12 +6,6 @@ import {CookiesService} from "./cookies.service"
 import {TracksService} from "./tracks.service"
 import {print} from "../utils"
 
-const codecs = new Map<string, string>([
-	["mp4a.40.2", 'audio/mp4; codecs="mp4a.40.2"'],
-	["flac", 'audio/mp4; codecs="flac"'],
-	["mp3", "audio/mpeg"],
-])
-
 @Injectable({
 	providedIn: "root",
 })
@@ -24,9 +18,7 @@ export class PlayerService {
 	private ordered_queue: Track[] = []
 	private queue_index: number = 0
 	private audio: HTMLAudioElement = new Audio()
-	private media_source: MediaSource
-	private source_buffer: SourceBuffer
-	private next_track_array_buffer: ArrayBuffer
+	private preloaded_audio?: Blob
 	private nearing_track_end: boolean = false
 	private is_shuffle: boolean = false
 	private vol: number = 0.6
@@ -50,21 +42,16 @@ export class PlayerService {
 	}
 
 	add_source(track: Track) {
-		this.media_source = new MediaSource()
-		this.audio.src = URL.createObjectURL(this.media_source)
-		this.media_source.addEventListener("sourceopen", () => {
-			let codec: string = codecs.get(track.codec) || "audio/mpeg"
-			this.source_buffer = this.media_source.addSourceBuffer(codec)
-			this.source_buffer.addEventListener("updateend", () => {
-				this.play()
-			})
-			this.source_buffer.appendBuffer(this.next_track_array_buffer)
-		})
+		if (this.preloaded_audio) {
+			this.audio.src = URL.createObjectURL(this.preloaded_audio)
+		} else {
+			this.audio.src = `/stream/${track.track_id}`
+		}
+		this.play()
 	}
 
-	async prepare_source(track: Track): Promise<void> {
-		let buf: Blob = await this.tracks_service.get_track_audio(track.track_id)
-		this.next_track_array_buffer = await buf.arrayBuffer()
+	async load_audio(track: Track): Promise<void> {
+		this.preloaded_audio = await this.tracks_service.get_track_audio(track.track_id)
 	}
 
 	play = (track?: Track): void => {
@@ -76,13 +63,10 @@ export class PlayerService {
 			}
 			this.subject.next(track)
 			document.title = this.track.title + " - JukeBox"
-			this.prepare_source(track).then(() => {
-				this.add_source(track)
-			})
+			this.preloaded_audio = undefined
+			this.add_source(track)
 		} else {
-			this.audio.play().then(() => {
-				print("playing")
-			})
+			this.audio.play().then()
 		}
 		this.paused = false
 	}
@@ -114,9 +98,8 @@ export class PlayerService {
 		if (track_index < this.queue.length) {
 			this.queue_index = track_index
 			this.track = this.queue[this.queue_index]
-			this.prepare_source(this.track).then(() => {
-				this.add_source(this.track!)
-			})
+			this.preloaded_audio = undefined
+			this.add_source(this.track)
 			document.title = this.track.title + " - JukeBox"
 		} else {
 			this.track = undefined
@@ -197,7 +180,6 @@ export class PlayerService {
 			this.subject.next(this.track)
 			document.title = this.track.title + " - JukeBox"
 			this.add_source(this.track)
-			this.audio.src = URL.createObjectURL(this.media_source)
 			this.play()
 			this.preload_next_track()
 		}
@@ -222,10 +204,7 @@ export class PlayerService {
 
 	preload_next_track = (): void => {
 		if (this.queue_index + 1 < this.queue.length) {
-			print("preloading next track")
-			this.prepare_source(this.queue[this.queue_index + 1]).then(() => {
-				print("preloaded")
-			})
+			this.load_audio(this.queue[this.queue_index + 1]).then()
 		}
 	}
 

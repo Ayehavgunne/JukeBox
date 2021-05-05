@@ -1,5 +1,4 @@
 import {Component, OnInit} from "@angular/core"
-// import {CookiesService} from "../../services/cookies.service"
 import {PlayerService} from "../../services/player.service"
 import {ua_parser} from "../../utils"
 
@@ -7,10 +6,8 @@ import {ua_parser} from "../../utils"
 	selector: "player",
 	templateUrl: "./player.component.html",
 	styleUrls: ["./player.component.sass"],
-	// providers: [CookiesService],
 })
 export class PlayerComponent implements OnInit {
-	// @ViewChild("bar") bar: ElementRef
 	os_show_volume: boolean = true
 	show_volume_bar: boolean = false
 	volume: number = this.player_service.volume
