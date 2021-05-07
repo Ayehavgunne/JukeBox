@@ -1,5 +1,6 @@
 from typing import Dict, Union
 
+import peewee
 from peewee import (
     SQL,
     AutoField,
@@ -13,6 +14,7 @@ from peewee import (
     Model,
     SqliteDatabase,
 )
+from werkzeug.security import check_password_hash
 
 from jukebox import APP_ROOT
 
@@ -160,11 +162,33 @@ class Track(BaseModel):
 class User(BaseModel):
     user_id = AutoField(primary_key=True)
     username = CharField(unique=True)
+    password = CharField()
 
     class Meta:
         database = database
         legacy_table_names = False
         order_by = ("username",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._authenticated = False
+
+    @classmethod
+    def authenticate(cls, **kwargs):
+        username = kwargs.get("username")
+        password = kwargs.get("password")
+
+        if not username or not password:
+            return None
+
+        try:
+            user = cls.get(username=username)
+        except peewee.DoesNotExist:
+            return None
+        if not check_password_hash(user.password, password):
+            return None
+
+        return user
 
     def to_json(self) -> Dict[str, Union[str, int]]:
         # noinspection PyTypeChecker

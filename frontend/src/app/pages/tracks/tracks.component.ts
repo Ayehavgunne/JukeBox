@@ -5,8 +5,8 @@ import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {ModalComponent} from "../../components/modal/modal.component"
-import {print} from "../../utils"
 import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
+import {print} from "../../utils"
 
 @Component({
 	selector: "tracks",

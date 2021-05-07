@@ -8,6 +8,7 @@ import {SettingsComponent} from "./pages/settings/settings.component"
 import {ProfileComponent} from "./pages/profile/profile.component"
 import {PlaylistsComponent} from "./pages/playlists/playlists.component"
 import {HomeComponent} from "./pages/home/home.component"
+import {LoginComponent} from "./pages/login/login.component"
 
 const routes: Routes = [
 	{
@@ -53,6 +54,10 @@ const routes: Routes = [
 	{
 		path: "page/profile",
 		component: ProfileComponent,
+	},
+	{
+		path: "login",
+		component: LoginComponent,
 	},
 ]
 

@@ -7,7 +7,6 @@ import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.compone
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {print} from "../../utils"
-import {CookiesService} from "../../services/cookies.service"
 
 @Component({
 	selector: "artists",
@@ -25,23 +24,13 @@ export class ArtistsComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
-		private cookies_service: CookiesService,
 		private artist_service: ArtistsService,
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
 		private change_detector: ChangeDetectorRef,
 	) {}
 
-	async ngOnInit() {
-		if (this.user_service.current_user === undefined) {
-			await this.user_service.set_current_user(
-				this.cookies_service,
-				this.playlist_service,
-				this.modal,
-				this.modal_config,
-				this.change_detector,
-			)
-		}
+	ngOnInit() {
 		this.route.params.subscribe(params => {
 			let artist_id = Number(params["artist"] || 0)
 			if (artist_id) {

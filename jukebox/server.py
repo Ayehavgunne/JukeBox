@@ -1,5 +1,6 @@
 import asyncio
 import json
+from datetime import datetime, timedelta
 from functools import partial, wraps
 from io import BytesIO
 from logging import getLogger
@@ -7,12 +8,11 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator, Type, Union
 
-from jwt import decode, exceptions
+import jwt
 from peewee import DoesNotExist, IntegrityError, fn
 from quart import (
     Quart,
     Response,
-    g,
     jsonify,
     make_response,
     request,
@@ -40,34 +40,41 @@ from jukebox.scan_files import check_config_file, get_artist_images, scan_files
 check_config_file()
 
 
-def login_required(f):
+app = Quart(__name__)
+
+
+def token_required(f):
     @wraps(f)
-    def wrap(*args, **kwargs):
-        authorization = request.headers.get("authorization", None)
-        if not authorization:
-            return (
-                json.dumps({"error": "no authorization token provided"}),
-                401,
-                {"Content-type": "application/json"},
-            )
+    async def verify(*args, **kwargs):
+        invalid_msg = {
+            "message": "Invalid token. Registeration and / or authentication required.",
+            "authenticated": False,
+        }
+        expired_msg = {
+            "message": "Expired token. Reauthentication required.",
+            "authenticated": False,
+        }
 
         try:
-            token = authorization.split(" ")[1]
-            resp = decode(token, None, verify=False, algorithms=["HS256"])
-            g.user = resp["sub"]
-        except exceptions.DecodeError:
-            return (
-                json.dumps({"error": "invalid authorization token"}),
-                401,
-                {"Content-type": "application/json"},
+            token = request.cookies["jwttoken"]
+            jwt.decode(token, CONFIGS["secret_key"], algorithms=["HS256"])
+            return await f(*args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return Response(
+                response=json.dumps(expired_msg),
+                headers={"Location": "/login", "Content-Type": "application/json"},
+                status=307,
+            )
+        except (jwt.InvalidTokenError, Exception):
+            return Response(
+                response=json.dumps(invalid_msg),
+                headers={"Location": "/login", "Content-Type": "application/json"},
+                status=307,
             )
 
-        return f(*args, **kwargs)
-
-    return wrap
+    return verify
 
 
-app = Quart(__name__)
 if CONFIGS["logging"]["enabled"]:
     handler = RotatingFileHandler(
         APP_ROOT / "jukebox.log",
@@ -87,6 +94,7 @@ async def get_images() -> None:
 
 @app.route("/")
 @app.route("/page/<path:_>")
+@token_required
 async def root(_: str = None) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "dist", "index.html")
 
@@ -96,13 +104,53 @@ async def send_dist(path: str) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "dist", path)
 
 
+@app.route("/login")
+async def login_page() -> Response:
+    return await send_from_directory(APP_ROOT / "frontend" / "dist", "index.html")
+
+
+@app.route("/login", methods=["POST"])
+async def login_authenticate() -> Response:
+    # noinspection PyUnresolvedReferences
+    data = await request.get_data()
+    data = json.loads(data.decode("utf-8"))
+    user = User.authenticate(**data)
+
+    if not user:
+        return jsonify(
+            {"message": "Invalid credentials", "authenticated": False},
+        )
+
+    token = jwt.encode(
+        {
+            "sub": user.username,
+            "iat": datetime.utcnow(),
+            "exp": datetime.utcnow() + timedelta(minutes=30),
+        },
+        CONFIGS["secret_key"],
+        algorithm="HS256",
+    )
+    resp = jsonify({"message": "Authenticated", "user": user.to_json()})
+    resp.set_cookie(
+        "jwttoken",
+        token,
+        expires=datetime.utcnow() + timedelta(days=7),
+        secure=CONFIGS["ssl"],
+        samesite="Strict",
+        httponly=True,
+    )
+    return resp
+
+
 @app.route("/task/get_artist_images")
+@token_required
 async def get_images() -> str:
     asyncio.create_task(get_artist_images())
     return "Success"
 
 
 @app.route("/task/scan_files")
+@token_required
 async def update_files() -> str:
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, scan_files)
@@ -110,6 +158,7 @@ async def update_files() -> str:
 
 
 @app.route("/artists")
+@token_required
 async def get_artists() -> Response:
     with database.atomic():
         artists = Artist.select().order_by(fn.Lower(Artist.name))
@@ -117,6 +166,7 @@ async def get_artists() -> Response:
 
 
 @app.route("/artists/<int:artist_id>")
+@token_required
 async def get_artist(artist_id: int) -> Response:
     with database.atomic():
         artist = Artist.get(artist_id)
@@ -124,6 +174,7 @@ async def get_artist(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/image")
+@token_required
 async def get_artist_image(artist_id: int) -> Response:
     with database.atomic():
         artist = Artist.get(artist_id)
@@ -138,6 +189,7 @@ async def get_artist_image(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/albums")
+@token_required
 async def get_artist_albums(artist_id: int) -> Response:
     with database.atomic():
         albums = (
@@ -150,6 +202,7 @@ async def get_artist_albums(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/tracks")
+@token_required
 async def get_artist_tracks(artist_id: int) -> Response:
     with database.atomic():
         albums = (
@@ -169,17 +222,23 @@ async def get_artist_tracks(artist_id: int) -> Response:
 
 
 @app.route("/albums")
-@app.route("/albums/<int:album_id>")
-async def get_albums(album_id: int = None) -> Response:
+@token_required
+async def get_albums() -> Response:
     with database.atomic():
-        if album_id is None:
-            albums = Album.select().order_by(fn.Lower(Album.title))
-        else:
-            albums = [Album.get(album_id)]
+        albums = Album.select().order_by(fn.Lower(Album.title))
         return jsonify([album.to_json() for album in albums])
 
 
+@app.route("/albums/<int:album_id>")
+@token_required
+async def get_album(album_id: int = None) -> Response:
+    with database.atomic():
+        album = Album.get(album_id)
+        return jsonify(album.to_json())
+
+
 @app.route("/albums/<int:album_id>/image")
+@token_required
 async def get_album_image(album_id: int) -> Response:
     with database.atomic():
         album = Album.get(album_id)
@@ -194,6 +253,7 @@ async def get_album_image(album_id: int) -> Response:
 
 
 @app.route("/albums/<int:album_id>/tracks")
+@token_required
 async def get_albums_tracks(album_id: int) -> Response:
     with database.atomic():
         tracks = (
@@ -207,6 +267,7 @@ async def get_albums_tracks(album_id: int) -> Response:
 
 
 @app.route("/tracks")
+@token_required
 async def get_tracks() -> Response:
     with database.atomic():
         tracks = (
@@ -226,6 +287,7 @@ async def get_tracks() -> Response:
 
 
 @app.route("/tracks/<int:track_id>")
+@token_required
 async def get_track(track_id: int) -> Response:
     with database.atomic():
         track = Track.get(int(track_id))
@@ -247,6 +309,7 @@ async def get_track_image(track_id: int) -> Response:
 
 
 @app.route("/genres")
+@token_required
 async def get_genres() -> Response:
     with database.atomic():
         genres = Track.select(Track.genre).distinct().order_by(fn.Lower(Track.genre))
@@ -254,6 +317,7 @@ async def get_genres() -> Response:
 
 
 @app.route("/genres/<string:genre>")
+@token_required
 async def get_tracks_by_genre(genre: str) -> Response:
     with database.atomic():
         tracks = [
@@ -263,6 +327,7 @@ async def get_tracks_by_genre(genre: str) -> Response:
 
 
 @app.route("/playlists/<int:user_id>")
+@token_required
 async def get_playlist_names(user_id: int) -> Response:
     with database.atomic():
         playlists = (
@@ -275,6 +340,7 @@ async def get_playlist_names(user_id: int) -> Response:
 
 
 @app.route("/playlists/<int:user_id>/<string:playlist_name>", methods=["GET"])
+@token_required
 async def get_playlist_tracks(user_id: int, playlist_name: str) -> Response:
     with database.atomic():
         tracks = (
@@ -287,6 +353,7 @@ async def get_playlist_tracks(user_id: int, playlist_name: str) -> Response:
 
 
 @app.route("/playlists/<int:user_id>/<string:playlist_name>", methods=["DELETE"])
+@token_required
 async def delete_track_from_playlist(user_id: int, playlist_name: str) -> Response:
     with database.atomic():
         query = Playlist.delete().where(
@@ -305,6 +372,7 @@ async def delete_track_from_playlist(user_id: int, playlist_name: str) -> Respon
 @app.route(
     "/playlists/<int:user_id>/<string:old_playlist_name>/<string:new_playlist_name>"
 )
+@token_required
 async def rename_playlist(
     user_id: int, old_playlist_name: str, new_playlist_name: str
 ) -> Response:
@@ -328,6 +396,7 @@ async def rename_playlist(
     "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>",
     methods=["PUT"],
 )
+@token_required
 async def alter_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
     with database.atomic():
         try:
@@ -358,6 +427,7 @@ async def alter_playlists(playlist_name: str, track_id: int, user_id: int) -> st
     "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>",
     methods=["DELETE"],
 )
+@token_required
 async def delete_from_playlist(playlist_name: str, track_id: int, user_id: int) -> str:
     with database.atomic():
         result = Playlist.select().where(
@@ -401,6 +471,7 @@ def get_love_table(
 
 
 @app.route("/love/<string:love_type>/<int:user_id>", methods=["GET"])
+@token_required
 async def get_loved(love_type: str, user_id: int) -> Response:
     try:
         table = get_love_table(love_type)
@@ -417,6 +488,7 @@ async def get_loved(love_type: str, user_id: int) -> Response:
 
 
 @app.route("/love/<string:love_type>/<int:user_id>/<int:loved_id>", methods=["PUT"])
+@token_required
 async def love(love_type: str, user_id: int, loved_id: int) -> str:
     try:
         table = get_love_table(love_type)
@@ -437,6 +509,7 @@ async def love(love_type: str, user_id: int, loved_id: int) -> str:
 
 
 @app.route("/love/<string:love_type>/<int:user_id>/<int:loved_id>", methods=["DELETE"])
+@token_required
 async def unlove(love_type: str, user_id: int, loved_id: int) -> str:
     try:
         table = get_love_table(love_type)
@@ -455,6 +528,7 @@ async def unlove(love_type: str, user_id: int, loved_id: int) -> str:
 
 
 @app.route("/users")
+@token_required
 async def get_users() -> Response:
     with database.atomic():
         users = User.select()
@@ -462,6 +536,7 @@ async def get_users() -> Response:
 
 
 @app.route("/users/<int:user_id>")
+@token_required
 async def get_user_by_id(user_id: int) -> Response:
     with database.atomic():
         try:
@@ -478,39 +553,37 @@ async def get_user_by_id(user_id: int) -> Response:
 
 
 @app.route("/users/<string:username>", methods=["GET"])
+@token_required
 async def get_user_by_username(username: str) -> Response:
     with database.atomic():
         try:
-            return jsonify(
-                {
-                    "error": None,
-                    "user_id": User.create(username=username).user_id,
-                    "username": username,
-                }
-            )
+            user = User.get(username=username)
+            return jsonify({"error": None, **user.to_json()})
         except IntegrityError:
             return jsonify(
                 {"error": "Already Exists", "user_id": None, "username": None}
             )
 
 
-@app.route("/users/<string:username>", methods=["PUT"])
-async def create_user(username: str) -> Response:
-    with database.atomic():
-        try:
-            user = User.get(username=username)
-        except DoesNotExist as err:
-            return jsonify(
-                {
-                    "error": None,
-                    "user_id": User.create(username=username).user_id,
-                    "username": username,
-                }
-            )
-        return jsonify({"error": None, **user.to_json()})
+# @app.route("/users/<string:username>", methods=["PUT"])
+# @token_required
+# async def create_user(username: str) -> Response:
+#     with database.atomic():
+#         try:
+#             user = User.get(username=username)
+#         except DoesNotExist:
+#             return jsonify(
+#                 {
+#                     "error": None,
+#                     "user_id": User.create(username=username).user_id,
+#                     "username": username,
+#                 }
+#             )
+#         return jsonify({"error": None, **user.to_json()})
 
 
 @app.route("/stream/<int:track_id>")
+@token_required
 async def stream(track_id: int) -> Response:
     with database.atomic():
         track = Track.get(track_id)
@@ -554,6 +627,7 @@ async def stream(track_id: int) -> Response:
 @app.route("/get/<int:track_id>")
 @app.route("/get/<int:track_id>/<int:range_start>")
 @app.route("/get/<int:track_id>/<int:range_start>/<int:range_end>")
+@token_required
 async def get(
     track_id: int, range_start: int = None, range_end: int = None
 ) -> Response:

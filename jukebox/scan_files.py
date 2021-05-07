@@ -1,5 +1,6 @@
 import asyncio
 import mimetypes
+import os
 import sys
 from functools import partial
 from pathlib import Path
@@ -36,6 +37,8 @@ def check_config_file() -> None:
             "exclude_paths": [],
             "host": "127.0.0.1",
             "port": 5000,
+            "secret_key": os.urandom(16),
+            "ssl": False,
             "debug_mode": False,
             "use_reloader": False,
             "logging": {

@@ -8,7 +8,7 @@ import {Track} from "../models"
 })
 export class PlaylistsService {
 	url: string = "/playlists"
-	names: string[]
+	names: string[] = []
 
 	constructor(private http: HttpClient) {}
 

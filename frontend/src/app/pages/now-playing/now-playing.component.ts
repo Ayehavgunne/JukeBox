@@ -2,12 +2,10 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core"
 import {ModalComponent} from "../../components/modal/modal.component"
 import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
 import {ModalConfig, Track} from "../../models"
-import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
-import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
-import {CookiesService} from "../../services/cookies.service"
+import {print} from "../../utils"
+import {PlayerService} from "../../services/player.service"
 
 @Component({
 	selector: "now-playing",
@@ -21,24 +19,12 @@ export class NowPlayingComponent implements OnInit {
 
 	constructor(
 		public player_service: PlayerService,
-		private cookies_service: CookiesService,
-		private tracks_service: TracksService,
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
 		private change_detector: ChangeDetectorRef,
 	) {}
 
-	async ngOnInit() {
-		if (this.user_service.current_user === undefined) {
-			await this.user_service.set_current_user(
-				this.cookies_service,
-				this.playlist_service,
-				this.modal,
-				this.modal_config,
-				this.change_detector,
-			)
-		}
-	}
+	async ngOnInit() {}
 
 	love_this_track(track: Track) {
 		print(track)

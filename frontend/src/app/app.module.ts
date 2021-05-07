@@ -18,7 +18,7 @@ import {MusicComponent} from "./svgs/music/music.component"
 import {DiscComponent} from "./svgs/disc/disc.component"
 import {ModalComponent} from "./components/modal/modal.component"
 import {HomeComponent} from "./pages/home/home.component"
-import {FormsModule} from "@angular/forms"
+import {FormsModule, ReactiveFormsModule} from "@angular/forms"
 import {PlayComponent} from "./components/play/play.component"
 import {TrackStatsComponent} from "./components/track-stats/track-stats.component"
 import {ProgressBarComponent} from "./components/progress-bar/progress-bar.component"
@@ -32,6 +32,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling"
 import {TrackTableComponent} from "./components/track-table/track-table.component"
 import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
 import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.component"
+import {LoginComponent} from "./pages/login/login.component"
 
 @NgModule({
 	declarations: [
@@ -60,6 +61,7 @@ import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.componen
 		TrackTableComponent,
 		KeepHtmlPipe,
 		MenuToggleComponent,
+		LoginComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -67,6 +69,7 @@ import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.componen
 		HttpClientModule,
 		FormsModule,
 		ScrollingModule,
+		ReactiveFormsModule,
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
