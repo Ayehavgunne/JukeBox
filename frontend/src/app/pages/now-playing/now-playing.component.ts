@@ -6,6 +6,8 @@ import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {PlayerService} from "../../services/player.service"
 import {UaService} from "../../services/ua.service"
+import {CookiesService} from "../../services/cookies.service"
+import {Router} from "@angular/router"
 import {print} from "../../utils"
 
 @Component({
@@ -25,10 +27,25 @@ export class NowPlayingComponent implements OnInit {
 		private user_service: UserService,
 		private ua_service: UaService,
 		private change_detector: ChangeDetectorRef,
+		private cookies_service: CookiesService,
+		private router: Router,
 	) {}
 
 	async ngOnInit() {
 		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
+		if (this.user_service.current_user === undefined) {
+			let user_id = Number(this.cookies_service.get("user_id") || 0)
+			if (user_id === 0) {
+				this.router.navigateByUrl("/login").then()
+			}
+			let user = await this.user_service.get_user_by_id(user_id).toPromise()
+			this.user_service.set_current_user(user)
+		}
+		this.playlist_service
+			.get_names(this.user_service.current_user.user_id)
+			.subscribe(names => {
+				this.playlist_service.names = names
+			})
 	}
 
 	love_this_track(track: Track) {

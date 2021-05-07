@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core"
-import {ActivatedRoute} from "@angular/router"
+import {ActivatedRoute, Router} from "@angular/router"
 import {ModalConfig, Track} from "../../models"
 import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
@@ -8,6 +8,7 @@ import {ModalComponent} from "../../components/modal/modal.component"
 import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
 import {UaService} from "../../services/ua.service"
 import {print} from "../../utils"
+import {CookiesService} from "../../services/cookies.service"
 
 @Component({
 	selector: "tracks",
@@ -29,10 +30,25 @@ export class TracksComponent implements OnInit {
 		private user_service: UserService,
 		private ua_service: UaService,
 		private change_detector: ChangeDetectorRef,
+		private cookies_service: CookiesService,
+		private router: Router,
 	) {}
 
-	ngOnInit(): void {
+	async ngOnInit() {
 		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
+		if (this.user_service.current_user === undefined) {
+			let user_id = Number(this.cookies_service.get("user_id") || 0)
+			if (user_id === 0) {
+				this.router.navigateByUrl("/login").then()
+			}
+			let user = await this.user_service.get_user_by_id(user_id).toPromise()
+			this.user_service.set_current_user(user)
+		}
+		this.playlist_service
+			.get_names(this.user_service.current_user.user_id)
+			.subscribe(names => {
+				this.playlist_service.names = names
+			})
 		this.route.params.subscribe(params => {
 			let album_id = Number(params["album"] || 0)
 			if (album_id) {

@@ -1,5 +1,11 @@
 <modal [modal_config]="modal_config" #modal></modal>
-<h3>{{ name }}</h3>
+<h3>
+	<popup-menu>
+		<popup-menu-item (click)="rename_playlist()">Rename</popup-menu-item>
+		<popup-menu-item (click)="delete_playlist()">Delete</popup-menu-item>
+	</popup-menu>
+	{{ name }}
+</h3>
 <track-table
 	*ngIf="!is_mobile"
 	[tracks]="tracks"

@@ -4,6 +4,7 @@
 		<div class="modal_box">
 			<h3 [innerHTML]="modal_config.modal_title | keepHtml"></h3>
 			<input
+				#input
 				*ngIf="modal_config.show_input"
 				type="text"
 				(change)="input_change($event.target)"

@@ -1,5 +1,14 @@
-import {Component, HostListener, Injectable, Input, OnInit} from "@angular/core"
+import {
+	Component,
+	ElementRef,
+	HostListener,
+	Injectable,
+	Input,
+	OnInit,
+	ViewChild,
+} from "@angular/core"
 import {ModalConfig, ModalResponse} from "../../models"
+import {print} from "../../utils"
 
 @Component({
 	selector: "modal",
@@ -9,6 +18,7 @@ import {ModalConfig, ModalResponse} from "../../models"
 @Injectable()
 export class ModalComponent implements OnInit {
 	@Input() public modal_config: ModalConfig
+	@ViewChild("input") input: ElementRef<HTMLInputElement>
 	showing: boolean = false
 	private response: string = ""
 	private accepted: boolean = false
@@ -20,6 +30,11 @@ export class ModalComponent implements OnInit {
 
 	show = (): void => {
 		this.showing = true
+		if (this.modal_config.show_input) {
+			setTimeout(() => {
+				this.input.nativeElement.focus()
+			}, 200)
+		}
 	}
 
 	okay() {

@@ -19,8 +19,8 @@ export class AppComponent implements OnInit {
 	mobile: boolean = false
 
 	constructor(
-		public playlist_service: PlaylistsService,
 		public menu_toggle_service: MenuToggleService,
+		public playlist_service: PlaylistsService,
 		private user_service: UserService,
 		private ua_service: UaService,
 		private cookies_service: CookiesService,

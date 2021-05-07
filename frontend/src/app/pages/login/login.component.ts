@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core"
+import {Component, ElementRef, OnInit, ViewChild} from "@angular/core"
 import {FormBuilder, FormGroup, Validators} from "@angular/forms"
 import {Router} from "@angular/router"
 import {AuthService} from "../../services/auth.service"
@@ -13,6 +13,7 @@ import {print} from "../../utils"
 	styleUrls: ["./login.component.sass"],
 })
 export class LoginComponent implements OnInit {
+	@ViewChild("username_input") username_input: ElementRef<HTMLInputElement>
 	form: FormGroup
 
 	constructor(
@@ -29,7 +30,11 @@ export class LoginComponent implements OnInit {
 		})
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		setTimeout(() => {
+			this.username_input.nativeElement.focus()
+		}, 200)
+	}
 
 	login() {
 		const val = this.form.value

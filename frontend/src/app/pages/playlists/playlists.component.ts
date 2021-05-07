@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core"
-import {ActivatedRoute} from "@angular/router"
+import {ActivatedRoute, Router} from "@angular/router"
 import {ModalComponent} from "../../components/modal/modal.component"
 import {ModalConfig, Track} from "../../models"
 import {TracksService} from "../../services/tracks.service"
@@ -7,6 +7,7 @@ import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {UaService} from "../../services/ua.service"
 import {print} from "../../utils"
+import {CookiesService} from "../../services/cookies.service"
 
 @Component({
 	selector: "playlists",
@@ -27,11 +28,26 @@ export class PlaylistsComponent implements OnInit {
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
 		private ua_service: UaService,
+		private router: Router,
 		private change_detector: ChangeDetectorRef,
+		private cookies_service: CookiesService,
 	) {}
 
-	ngOnInit() {
+	async ngOnInit() {
 		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
+		if (this.user_service.current_user === undefined) {
+			let user_id = Number(this.cookies_service.get("user_id") || 0)
+			if (user_id === 0) {
+				this.router.navigateByUrl("/login").then()
+			}
+			let user = await this.user_service.get_user_by_id(user_id).toPromise()
+			this.user_service.set_current_user(user)
+		}
+		this.playlist_service
+			.get_names(this.user_service.current_user.user_id)
+			.subscribe(names => {
+				this.playlist_service.names = names
+			})
 		this.route.params.subscribe(params => {
 			this.name = params["name"] || ""
 			this.playlist_service
@@ -73,6 +89,44 @@ export class PlaylistsComponent implements OnInit {
 				this.user_service.current_user.user_id,
 			)
 			.subscribe()
+	}
+
+	async rename_playlist() {
+		this.modal_config.modal_title = "Rename Playlist"
+		this.modal_config.show_dismiss_button = true
+		this.modal_config.show_input = true
+		this.modal.show()
+		this.change_detector.detectChanges()
+		let response = await this.modal.get_response()
+		if (response.accepted) {
+			this.playlist_service
+				.rename_playlist(
+					this.user_service.current_user.user_id,
+					this.name,
+					response.input,
+				)
+				.subscribe(names => {
+					this.playlist_service.names = names
+					this.router.navigateByUrl(`/page/playlist/${response.input}`)
+				})
+		}
+	}
+
+	async delete_playlist() {
+		this.modal_config.modal_title = `Are you sure you want to delete playlist <span class="code">${this.name}</span>?`
+		this.modal_config.show_dismiss_button = true
+		this.modal_config.show_input = false
+		this.modal.show()
+		this.change_detector.detectChanges()
+		let response = await this.modal.get_response()
+		if (response.accepted) {
+			this.playlist_service
+				.delete_playlist(this.user_service.current_user.user_id, this.name)
+				.subscribe(names => {
+					this.playlist_service.names = names
+					this.router.navigateByUrl("/").then()
+				})
+		}
 	}
 
 	async delete_from_playlist(track: Track) {
