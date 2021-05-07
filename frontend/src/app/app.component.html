@@ -1,33 +1,56 @@
 <nav [ngClass]="{nav_closed: !menu_toggle_service.nav_showing}">
 	<load-overlay></load-overlay>
-	<!--	<modal [modal_config]="modal_config" ngModel #modal ngDefaultControl></modal>-->
 	<header>
 		<h1>JukeBox</h1>
 	</header>
 	<ul>
 		<li>
-			<a routerLink="/">Home</a>
+			<a routerLink="/" (click)="menu_toggle_service.toggle_nav(mobile)">Home</a>
 		</li>
 		<li>
-			<a routerLink="/page/profile">Profile</a>
+			<a
+				routerLink="/page/profile"
+				(click)="menu_toggle_service.toggle_nav(mobile)"
+				>Profile</a
+			>
 		</li>
 		<li>
-			<a routerLink="/page/now_playing">Now Playing</a>
+			<a
+				routerLink="/page/now_playing"
+				(click)="menu_toggle_service.toggle_nav(mobile)"
+				>Now Playing</a
+			>
 		</li>
 		<li>
-			<a routerLink="/page/settings">Settings</a>
+			<a
+				routerLink="/page/settings"
+				(click)="menu_toggle_service.toggle_nav(mobile)"
+				>Settings</a
+			>
 		</li>
 		<li>
 			<h3>Library</h3>
 			<ul>
 				<li>
-					<a routerLink="/page/tracks">Tracks</a>
+					<a
+						routerLink="/page/tracks"
+						(click)="menu_toggle_service.toggle_nav(mobile)"
+						>Tracks</a
+					>
 				</li>
 				<li>
-					<a routerLink="/page/albums">Albums</a>
+					<a
+						routerLink="/page/albums"
+						(click)="menu_toggle_service.toggle_nav(mobile)"
+						>Albums</a
+					>
 				</li>
 				<li>
-					<a routerLink="/page/artists">Artists</a>
+					<a
+						routerLink="/page/artists"
+						(click)="menu_toggle_service.toggle_nav(mobile)"
+						>Artists</a
+					>
 				</li>
 			</ul>
 		</li>
@@ -35,7 +58,10 @@
 			<h3>Playlists</h3>
 			<ul>
 				<li *ngFor="let playlist_name of playlist_service.names">
-					<a [routerLink]="['/page/playlist/', playlist_name]">
+					<a
+						[routerLink]="['/page/playlist/', playlist_name]"
+						(click)="menu_toggle_service.toggle_nav(mobile)"
+					>
 						{{ playlist_name }}
 					</a>
 				</li>

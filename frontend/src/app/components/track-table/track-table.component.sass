@@ -23,7 +23,7 @@ tr:hover .play_track
 	border-width: 14px 0 14px 22px
 	border-color: transparent transparent transparent #bebebe
 	position: absolute
-	bottom: 14px
+	bottom: 16px
 	left: 18px
 	filter: drop-shadow(1px 1px 2px black)
 
@@ -31,19 +31,15 @@ tr:hover .play_track
 	position: relative
 	right: 2px
 
-.playing_bars
-	position: absolute
-	bottom: 14px
-	left: 13px
-
 .small
 	width: 50px
 	height: 50px
+	margin-top: 5px
 
 .on_image
 	position: absolute
-	left: calc(50% - 10px)
-	bottom: calc(50% - 10px)
+	left: calc(50% - 11px)
+	bottom: calc(50% - 11px)
 	width: 24px
 
 .playing_bar
@@ -58,9 +54,6 @@ tr:hover .play_track
 .on_image > .playing_bar
 	width: 5px
 	height: 22px
-
-.active
-	animation: bars 500ms backwards infinite ease-in-out alternate
 
 .bar-1
 	animation-delay: 100ms
@@ -78,22 +71,8 @@ tr:hover .play_track
 	100%
 		transform: scaleY(1)
 
-.albumart
-	position: relative
-
-.tracks_container .small
-	height: 50px
-	width: 50px
-
 .rel
 	position: relative
-
-.tracks_container
-	height: calc(100% - 35px)
-
-.tracks_table_container
-	position: relative
-	will-change: transform
 
 table
 	float: left
@@ -110,10 +89,3 @@ td
 
 cdk-virtual-scroll-viewport
 	height: 100%
-
-@media (max-width: 700px)
-	tbody
-		font-size: 9px
-
-	.rel
-		float: left

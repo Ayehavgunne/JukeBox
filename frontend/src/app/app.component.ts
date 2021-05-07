@@ -5,6 +5,7 @@ import {PlaylistsService} from "./services/playlists.service"
 import {MenuToggleService} from "./services/menu-toggle.service"
 import {UserService} from "./services/user.service"
 import {CookiesService} from "./services/cookies.service"
+import {UaService} from "./services/ua.service"
 import {print} from "./utils"
 
 @Component({
@@ -15,16 +16,19 @@ import {print} from "./utils"
 export class AppComponent implements OnInit {
 	title = "Jukebox"
 	modal_config: ModalConfig = new ModalConfig()
+	mobile: boolean = false
 
 	constructor(
 		public playlist_service: PlaylistsService,
 		public menu_toggle_service: MenuToggleService,
 		private user_service: UserService,
+		private ua_service: UaService,
 		private cookies_service: CookiesService,
 		private router: Router,
 	) {}
 
 	async ngOnInit() {
+		this.mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
 		if (this.user_service.current_user === undefined) {
 			let user_id = Number(this.cookies_service.get("user_id") || 0)
 			if (user_id === 0) {

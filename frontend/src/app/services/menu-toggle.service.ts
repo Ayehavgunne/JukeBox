@@ -13,7 +13,13 @@ export class MenuToggleService {
 		}
 	}
 
-	toggle_nav = () => {
+	toggle_nav = (mobile?: boolean): void => {
+		if (mobile !== undefined) {
+			if (mobile) {
+				this.nav_showing = !this.nav_showing
+			}
+			return
+		}
 		this.nav_showing = !this.nav_showing
 	}
 }
