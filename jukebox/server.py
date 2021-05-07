@@ -125,7 +125,7 @@ async def login_authenticate() -> Response:
         {
             "sub": user.username,
             "iat": datetime.utcnow(),
-            "exp": datetime.utcnow() + timedelta(minutes=30),
+            "exp": datetime.utcnow() + timedelta(days=7),
         },
         CONFIGS["secret_key"],
         algorithm="HS256",
