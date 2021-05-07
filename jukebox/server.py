@@ -134,7 +134,7 @@ async def login_authenticate() -> Response:
     resp.set_cookie(
         "jwttoken",
         token,
-        expires=datetime.utcnow() + timedelta(days=7),
+        expires=datetime.now() + timedelta(days=7),
         secure=CONFIGS["ssl"],
         samesite="Strict",
         httponly=True,

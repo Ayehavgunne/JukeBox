@@ -32,7 +32,8 @@ import {ScrollingModule} from "@angular/cdk/scrolling"
 import {TrackTableComponent} from "./components/track-table/track-table.component"
 import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
 import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.component"
-import {LoginComponent} from "./pages/login/login.component"
+import {LoginComponent} from "./pages/login/login.component";
+import { TrackListComponent } from './components/track-list/track-list.component'
 
 @NgModule({
 	declarations: [
@@ -62,6 +63,7 @@ import {LoginComponent} from "./pages/login/login.component"
 		KeepHtmlPipe,
 		MenuToggleComponent,
 		LoginComponent,
+  TrackListComponent,
 	],
 	imports: [
 		BrowserModule,

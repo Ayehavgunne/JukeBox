@@ -1,0 +1,38 @@
+<cdk-virtual-scroll-viewport itemSize="60" *ngIf="tracks">
+	<ul *ngIf="tracks">
+		<li
+			*cdkVirtualFor="let track of tracks"
+			[ngClass]="{
+				playing_row: track.track_id === player_service.track?.track_id
+			}"
+		>
+			<ng-container
+				*ngTemplateOutlet="popup_menu; context: {track: track}"
+			></ng-container>
+			<play [track]="track" (play_track_event)="playing_event_handler()">
+				<div class="albumart">
+					<img
+						src="{{ '/albums/' + track.album_id + '/image' }}"
+						alt="{{ track.title + ' album art' }}"
+						class="small"
+					/>
+					<div class="play_track"></div>
+					<div
+						*ngIf="track.track_id === player_service.track?.track_id"
+						class="playing on_image"
+					>
+						<div class="playing_bar bar-1"></div>
+						<div class="playing_bar bar-2"></div>
+						<div class="playing_bar bar-3"></div>
+					</div>
+				</div>
+				<div class="info">
+					<div class="title">
+						{{ track.track_number }} - {{ track.title }}
+					</div>
+					<div class="artist">{{ track.artist }} - {{ track.album }}</div>
+				</div>
+			</play>
+		</li>
+	</ul>
+</cdk-virtual-scroll-viewport>

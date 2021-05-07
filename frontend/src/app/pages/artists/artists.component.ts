@@ -6,6 +6,7 @@ import {ModalComponent} from "../../components/modal/modal.component"
 import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
+import {UaService} from "../../services/ua.service"
 import {print} from "../../utils"
 
 @Component({
@@ -21,16 +22,19 @@ export class ArtistsComponent implements OnInit {
 	tracks: Array<Track>
 	selected_artist: Artist
 	track: Track
+	is_mobile: boolean = false
 
 	constructor(
 		private route: ActivatedRoute,
 		private artist_service: ArtistsService,
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
+		private ua_service: UaService,
 		private change_detector: ChangeDetectorRef,
 	) {}
 
 	ngOnInit() {
+		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
 		this.route.params.subscribe(params => {
 			let artist_id = Number(params["artist"] || 0)
 			if (artist_id) {

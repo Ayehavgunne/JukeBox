@@ -49,8 +49,6 @@ export class LoginComponent implements OnInit {
 							this.playlist_service.names = names
 						})
 					this.router.navigateByUrl("/").then()
-				} else {
-					this.router.navigateByUrl("/login").then()
 				}
 			})
 		}

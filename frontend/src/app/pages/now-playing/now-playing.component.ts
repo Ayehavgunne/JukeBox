@@ -4,8 +4,9 @@ import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.compone
 import {ModalConfig, Track} from "../../models"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
-import {print} from "../../utils"
 import {PlayerService} from "../../services/player.service"
+import {UaService} from "../../services/ua.service"
+import {print} from "../../utils"
 
 @Component({
 	selector: "now-playing",
@@ -16,15 +17,19 @@ export class NowPlayingComponent implements OnInit {
 	@ViewChild("modal") modal: ModalComponent
 	@ViewChild("popup_menu") popup_menu: PopupMenuComponent
 	modal_config: ModalConfig = new ModalConfig()
+	is_mobile: boolean = false
 
 	constructor(
 		public player_service: PlayerService,
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
+		private ua_service: UaService,
 		private change_detector: ChangeDetectorRef,
 	) {}
 
-	async ngOnInit() {}
+	async ngOnInit() {
+		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
+	}
 
 	love_this_track(track: Track) {
 		print(track)

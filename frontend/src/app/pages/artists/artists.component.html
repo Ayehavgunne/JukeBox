@@ -19,10 +19,16 @@
 	<modal [modal_config]="modal_config" #modal></modal>
 	<h3 class="page_header">{{ selected_artist.name }}</h3>
 	<track-table
+		*ngIf="!is_mobile"
 		[tracks]="tracks"
 		[popup_menu]="popup_menu_template"
 		[show_headers]="true"
 	></track-table>
+	<track-list
+		*ngIf="is_mobile"
+		[tracks]="tracks"
+		[popup_menu]="popup_menu_template"
+	></track-list>
 </ng-container>
 
 <ng-template #popup_menu_template let-track="track">

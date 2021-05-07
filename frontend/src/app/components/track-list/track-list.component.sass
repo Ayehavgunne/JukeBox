@@ -1,31 +1,10 @@
 \:host
 	float: left
 	height: calc(100% - 52px)
-
-.number
-	text-align: right
-
-tr:hover td
-	background-color: #373737
+	width: 100%
 
 .playing_row
 	background-color: #696969
-
-.play_track
-	display: none
-
-tr:hover .play_track
-	display: block
-	width: 18px
-	height: 16px
-	box-sizing: border-box
-	border-style: solid
-	border-width: 14px 0 14px 22px
-	border-color: transparent transparent transparent #bebebe
-	position: absolute
-	bottom: 14px
-	left: 18px
-	filter: drop-shadow(1px 1px 2px black)
 
 .playing
 	position: relative
@@ -35,10 +14,6 @@ tr:hover .play_track
 	position: absolute
 	bottom: 14px
 	left: 13px
-
-.small
-	width: 50px
-	height: 50px
 
 .on_image
 	position: absolute
@@ -81,39 +56,48 @@ tr:hover .play_track
 .albumart
 	position: relative
 
-.tracks_container .small
+.albumart, .info, .title, .artist
+	float: left
+
+ul
+	padding-left: 2px
+	overflow: auto
+
+li
+	list-style: none
+	height: 60px
+	position: relative
+
+.info
+	width: calc(100% - 73px)
+	height: 60px
+	margin-left: 3px
+	display: flex
+	flex-direction: column
+	justify-content: center
+
+.title
+	font-size: 1.05em
+	overflow: hidden
+	text-overflow: ellipsis
+	line-height: 1em
+
+.artist
+	clear: left
+	font-size: 0.8em
+	line-height: 1em
+
+.small
 	height: 50px
 	width: 50px
+	margin-top: 4px
 
-.rel
+.menu
 	position: relative
-
-.tracks_container
-	height: calc(100% - 35px)
-
-.tracks_table_container
-	position: relative
-	will-change: transform
-
-table
 	float: left
-	width: 100%
-	border-collapse: collapse
 
-th
+.header
 	text-align: center
-
-td
-	padding-right: 4px
-	padding-left: 4px
-	height: 60px
 
 cdk-virtual-scroll-viewport
 	height: 100%
-
-@media (max-width: 700px)
-	tbody
-		font-size: 9px
-
-	.rel
-		float: left

@@ -29,14 +29,25 @@ music, disc, user
 
 @media (max-width: 700px)
 	.large
-		width: 300px
-		height: 300px
+		width: 200px
+		height: 200px
+
+	.track_title
+		font-size: 1.1em
+
+	.album_title, .artist_name
+		font-size: .8em
 
 	.current_track_info
 		float: none
 		margin-left: auto
 		margin-right: auto
-		width: 300px
+		margin-bottom: 3px
+		width: 395px
 
-	page-now-playing .tracks_container
-		height: calc(100% - 406px)
+	.img_container
+		display: flex
+		justify-content: center
+
+	track-list
+		height: calc(100% - 317px)

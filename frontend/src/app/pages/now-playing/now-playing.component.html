@@ -1,7 +1,7 @@
 <modal [modal_config]="modal_config" #modal></modal>
 <h3 class="page_header">Now Playing</h3>
 <div *ngIf="player_service.track" class="current_track_info">
-	<div>
+	<div class="img_container">
 		<img
 			src="{{ '/albums/' + player_service.track.album_id + '/image' }}"
 			alt="{{ player_service.track.title + ' album cover' }}"
@@ -22,11 +22,16 @@
 	</div>
 </div>
 <track-table
-	*ngIf="player_service.queue.length"
+	*ngIf="player_service.queue.length && !is_mobile"
 	[tracks]="player_service.queue"
 	[popup_menu]="popup_menu_template"
 	[show_headers]="true"
 ></track-table>
+<track-list
+	*ngIf="player_service.queue.length && is_mobile"
+	[tracks]="player_service.queue"
+	[popup_menu]="popup_menu_template"
+></track-list>
 
 <ng-template #popup_menu_template let-track="track">
 	<popup-menu #popup_menu>

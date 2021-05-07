@@ -5,6 +5,7 @@ import {ModalConfig, Track} from "../../models"
 import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
+import {UaService} from "../../services/ua.service"
 import {print} from "../../utils"
 
 @Component({
@@ -18,16 +19,19 @@ export class PlaylistsComponent implements OnInit {
 	tracks: Track[]
 	other_playlist_names: string[]
 	modal_config: ModalConfig = new ModalConfig()
+	is_mobile: boolean = false
 
 	constructor(
 		private route: ActivatedRoute,
 		private tracks_service: TracksService,
 		public playlist_service: PlaylistsService,
 		private user_service: UserService,
+		private ua_service: UaService,
 		private change_detector: ChangeDetectorRef,
 	) {}
 
 	ngOnInit() {
+		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
 		this.route.params.subscribe(params => {
 			this.name = params["name"] || ""
 			this.playlist_service
