@@ -37,7 +37,7 @@ def check_config_file() -> None:
             "exclude_paths": [],
             "host": "127.0.0.1",
             "port": 5000,
-            "secret_key": os.urandom(16),
+            "secret_key": str(os.urandom(16)),
             "ssl": False,
             "debug_mode": False,
             "use_reloader": False,

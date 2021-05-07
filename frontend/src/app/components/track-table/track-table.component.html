@@ -16,7 +16,9 @@
 		<tbody>
 			<tr
 				*cdkVirtualFor="let track of tracks"
-				[ngClass]="{playing_row: track === player_service.track}"
+				[ngClass]="{
+					playing_row: track.track_id === player_service.track?.track_id
+				}"
 			>
 				<td class="rel">
 					<ng-container
@@ -27,7 +29,7 @@
 					<play [track]="track" (play_track_event)="playing_event_handler()">
 						<div class="play_track"></div>
 						<div
-							*ngIf="track === player_service.track"
+							*ngIf="track.track_id === player_service.track?.track_id"
 							class="playing on_image"
 						>
 							<div class="playing_bar bar-1"></div>

@@ -29,7 +29,6 @@ export class PlayerService {
 		private date_pipe: DatePipe,
 	) {
 		let volume_cookie = this.cookies_service.get("jukebox-volume")
-		print(volume_cookie)
 		let volume: number
 		if (!volume_cookie) {
 			volume = this.vol
