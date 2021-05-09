@@ -2,12 +2,12 @@
 	<table *ngIf="tracks">
 		<thead *ngIf="show_headers">
 			<tr>
-				<th style="width: 22px"></th>
-				<th style="width: 52px"></th>
+				<th style="width: 22px">&nbsp;</th>
+				<th style="width: 52px">&nbsp;</th>
 				<th style="width: 40px">No.</th>
-				<th>Title</th>
-				<th>Artist</th>
-				<th>Album</th>
+				<th style="width: 30%">Title</th>
+				<th style="width: 400px">Artist</th>
+				<th style="width: 30%">Album</th>
 				<th style="width: 50px">Disc</th>
 				<th style="width: 50px">Year</th>
 				<th style="width: 70px">Length</th>
@@ -21,9 +21,11 @@
 				}"
 			>
 				<td class="rel">
-					<ng-container
-						*ngTemplateOutlet="popup_menu; context: {track: track}"
-					></ng-container>
+					<track-menu
+						[track]="track"
+						[in_playlist]="in_playlist"
+						[viewing_queue]="viewing_queue"
+					></track-menu>
 				</td>
 				<td class="rel">
 					<play [track]="track" (play_track_event)="playing_event_handler()">
@@ -45,8 +47,16 @@
 				</td>
 				<td class="number">{{ track.track_number }}</td>
 				<td>{{ track.title }}</td>
-				<td>{{ track.artist }}</td>
-				<td>{{ track.album }}</td>
+				<td>
+					<a [routerLink]="'/page/albums/' + track.artist_id">
+						{{ track.artist }}
+					</a>
+				</td>
+				<td>
+					<a [routerLink]="'/page/tracks/' + track.album_id">
+						{{ track.album }}
+					</a>
+				</td>
 				<td class="number">{{ track.disc_number }}</td>
 				<td class="number">{{ track.year }}</td>
 				<td class="number">

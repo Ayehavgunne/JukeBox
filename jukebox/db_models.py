@@ -65,7 +65,7 @@ class Album(BaseModel):
     title = CharField()
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
-    album_art_path = CharField(null=True)
+    # album_art_path = CharField(null=True)
     type = CharField(null=True)
 
     class Meta:
@@ -116,6 +116,13 @@ class AlbumDisc(BaseModel):
         }
 
 
+class AlbumImage(BaseModel):
+    album_image_id = AutoField(primary_key=True)
+    album = ForeignKeyField(Album, backref="images", unique=True)
+    small = BlobField(null=True)
+    not_found = BooleanField(default=False)
+
+
 class Track(BaseModel):
     track_id = AutoField(primary_key=True)
     title = CharField()
@@ -146,6 +153,7 @@ class Track(BaseModel):
             "album_id": self.album.album_id,
             "album_disc": self.album_disc.album_disc_id,
             "artist": self.artist.name,
+            "artist_id": self.artist.artist_id,
             "track_number": self.track_number,
             "genre": self.genre,
             "year": self.album.year,
@@ -262,6 +270,7 @@ def create_tables() -> None:
                 Album,
                 AlbumArtist,
                 AlbumDisc,
+                AlbumImage,
                 LovedTrack,
                 LovedAlbum,
                 LovedArtist,
@@ -270,10 +279,6 @@ def create_tables() -> None:
                 User,
             ]
         )
-        try:
-            User.create(username="Anthony")
-        except IntegrityError:
-            pass
 
 
 if __name__ == "__main__":

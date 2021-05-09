@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core"
+import {Component, HostListener, OnInit} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
 import {UaService} from "../../services/ua.service"
 
@@ -23,5 +23,31 @@ export class PlayerComponent implements OnInit {
 
 	toggle_volume_showing = () => {
 		this.show_volume_bar = !this.show_volume_bar
+	}
+
+	@HostListener("document:keydown", ["$event"])
+	space_handler(event: KeyboardEvent) {
+		if (this.player_service.track) {
+			if (event.code === "Space") {
+				event.preventDefault()
+				this.player_service.toggle_playing()
+			}
+			if (event.code === "ArrowLeft") {
+				event.preventDefault()
+				this.player_service.play_previous_track()
+			}
+			if (event.code === "ArrowRight") {
+				event.preventDefault()
+				this.player_service.play_next_track()
+			}
+			if (event.code === "ArrowUp") {
+				event.preventDefault()
+				this.player_service.change_volume(0.05)
+			}
+			if (event.code === "ArrowDown") {
+				event.preventDefault()
+				this.player_service.change_volume(-0.05)
+			}
+		}
 	}
 }

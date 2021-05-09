@@ -2,9 +2,8 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core"
 import {FormBuilder, FormGroup, Validators} from "@angular/forms"
 import {Router} from "@angular/router"
 import {AuthService} from "../../services/auth.service"
-import {UserService} from "../../services/user.service"
-import {CookiesService} from "../../services/cookies.service"
 import {PlaylistsService} from "../../services/playlists.service"
+import {SetupService} from "../../services/setup.service"
 import {print} from "../../utils"
 
 @Component({
@@ -20,9 +19,8 @@ export class LoginComponent implements OnInit {
 		private form_builder: FormBuilder,
 		private auth_service: AuthService,
 		private router: Router,
-		private user_service: UserService,
-		private cookies_service: CookiesService,
-		public playlist_service: PlaylistsService,
+		private setup_service: SetupService,
+		private playlist_service: PlaylistsService,
 	) {
 		this.form = this.form_builder.group({
 			username: ["", Validators.required],
@@ -36,23 +34,13 @@ export class LoginComponent implements OnInit {
 		}, 200)
 	}
 
-	login() {
+	async login() {
 		const val = this.form.value
+		this.playlist_service.current_playlist = ""
 		if (val.username && val.password) {
 			this.auth_service.login(val.username, val.password).then(async response => {
 				if (response === "Success") {
-					if (this.user_service.current_user === undefined) {
-						let user_id = Number(this.cookies_service.get("user_id") || 0)
-						let user = await this.user_service
-							.get_user_by_id(user_id)
-							.toPromise()
-						this.user_service.set_current_user(user)
-					}
-					this.playlist_service
-						.get_names(this.user_service.current_user.user_id)
-						.subscribe(names => {
-							this.playlist_service.names = names
-						})
+					await this.setup_service.setup()
 					this.router.navigateByUrl("/").then()
 				}
 			})

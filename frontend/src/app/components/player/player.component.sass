@@ -10,7 +10,7 @@
 	height: 40px
 	border-width: 20px 0 20px 40px
 	border-style: solid
-	border-color: transparent transparent transparent #bebebe
+	border-color: transparent transparent transparent var(--on-surface)
 	transition: all 100ms ease-in-out
 	float: left
 	margin-right: 14px
@@ -46,7 +46,7 @@
 	border-top: 16px solid
 	border-bottom: 16px solid
 	border-right: 28px solid
-	border-color: transparent #bebebe transparent transparent
+	border-color: transparent var(--on-surface) transparent transparent
 
 .prev::after
 	content: ""
@@ -57,7 +57,7 @@
 	border-top: 16px solid
 	border-bottom: 16px solid
 	border-right: 28px solid
-	border-color: transparent #bebebe transparent transparent
+	border-color: transparent var(--on-surface) transparent transparent
 
 .next
 	cursor: pointer
@@ -68,7 +68,7 @@
 	border-top: 16px solid
 	border-bottom: 16px solid
 	border-left: 28px solid
-	border-color: transparent transparent transparent #bebebe
+	border-color: transparent transparent transparent var(--on-surface)
 
 .next::after
 	content: ""
@@ -78,11 +78,11 @@
 	border-top: 16px solid
 	border-bottom: 16px solid
 	border-left: 28px solid
-	border-color: transparent transparent transparent #bebebe
+	border-color: transparent transparent transparent var(--on-surface)
 
 .volume_wrapper
-	background-color: rgba(31, 31, 31, 0.66)
-	box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66)
+	background-color: var(--transparent-background)
+	box-shadow: 0 0 1px 1px var(--transparent-background)
 	backdrop-filter: blur(3px)
 	-webkit-backdrop-filter: blur(3px)
 	width: 22px
@@ -97,7 +97,7 @@
 .bar
 	width: 1px
 	height: 95%
-	border-left: solid 1px #e8e6e3
+	border-left: solid 1px var(--on-surface)
 	position: absolute
 	left: 10px
 	bottom: 5px
@@ -106,18 +106,18 @@
 	vertical-align: middle
 	box-sizing: border-box
 	display: inline-block
-	background: currentColor
+	background: var(--on-surface)
 	background-clip: content-box
 	width: 1em
 	height: 1em
 	border: 0.333em solid transparent
-	border-right-color: currentColor
+	border-right-color: var(--on-surface)
 	position: relative
 	left: -0.337em
 
 .speaker.-on:before, .speaker.-on:after
 	content: ""
-	background: currentColor
+	background: var(--on-surface)
 	width: 0.1em
 	position: absolute
 
@@ -133,7 +133,7 @@
 .speaker.-off:before,
 .speaker.-off:after
 	content: ""
-	background: currentColor
+	background: var(--on-surface)
 	width: 0.1em
 	position: absolute
 	height: 1.2em
@@ -143,7 +143,7 @@
 	transform: translateX(0.333em) rotate(-45deg)
 
 .speaker.-off:before
-	background: #04233d
+	background: var(--surface)
 	left: 0.2em
 
 @media (max-width: 700px)

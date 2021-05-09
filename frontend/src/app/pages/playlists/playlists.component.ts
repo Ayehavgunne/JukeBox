@@ -6,8 +6,8 @@ import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {UaService} from "../../services/ua.service"
+import {SetupService} from "../../services/setup.service"
 import {print} from "../../utils"
-import {CookiesService} from "../../services/cookies.service"
 
 @Component({
 	selector: "playlists",
@@ -16,11 +16,7 @@ import {CookiesService} from "../../services/cookies.service"
 })
 export class PlaylistsComponent implements OnInit {
 	@ViewChild("modal") modal: ModalComponent
-	name: string = ""
-	tracks: Track[]
-	other_playlist_names: string[]
 	modal_config: ModalConfig = new ModalConfig()
-	is_mobile: boolean = false
 
 	constructor(
 		private route: ActivatedRoute,
@@ -30,65 +26,22 @@ export class PlaylistsComponent implements OnInit {
 		private ua_service: UaService,
 		private router: Router,
 		private change_detector: ChangeDetectorRef,
-		private cookies_service: CookiesService,
+		public setup_service: SetupService,
 	) {}
 
 	async ngOnInit() {
-		this.is_mobile = this.ua_service.ua_parser.getDevice().type === "mobile"
-		if (this.user_service.current_user === undefined) {
-			let user_id = Number(this.cookies_service.get("user_id") || 0)
-			if (user_id === 0) {
-				this.router.navigateByUrl("/login").then()
-			}
-			let user = await this.user_service.get_user_by_id(user_id).toPromise()
-			this.user_service.set_current_user(user)
-		}
-		this.playlist_service
-			.get_names(this.user_service.current_user.user_id)
-			.subscribe(names => {
-				this.playlist_service.names = names
-			})
-		this.route.params.subscribe(params => {
-			this.name = params["name"] || ""
+		this.route.params.subscribe(async params => {
+			await this.setup_service.setup()
+			this.playlist_service.current_playlist = params["name"] || ""
 			this.playlist_service
-				.get_tracks(this.user_service.current_user.user_id, this.name)
+				.get_tracks(
+					this.user_service.current_user.user_id,
+					this.playlist_service.current_playlist,
+				)
 				.subscribe(tracks => {
-					this.tracks = tracks
-				})
-			this.playlist_service
-				.get_names(this.user_service.current_user.user_id)
-				.subscribe(names => {
-					this.other_playlist_names = names.filter(item => {
-						return item !== this.name
-					})
+					this.playlist_service.tracks = tracks
 				})
 		})
-	}
-
-	love_this_track(track: Track) {
-		print(track)
-		this.tracks_service.change_track_love(track.track_id, true).then()
-	}
-
-	play_track_next(track: Track) {
-		print(track)
-	}
-
-	append_track_to_queue(track: Track) {
-		print(track)
-	}
-
-	async add_to_playlist(track: Track, name?: string) {
-		if (!name) {
-			name = await this.get_playlist_name()
-		}
-		this.playlist_service
-			.add_to_playlist(
-				name,
-				track.track_id,
-				this.user_service.current_user.user_id,
-			)
-			.subscribe()
 	}
 
 	async rename_playlist() {
@@ -102,7 +55,7 @@ export class PlaylistsComponent implements OnInit {
 			this.playlist_service
 				.rename_playlist(
 					this.user_service.current_user.user_id,
-					this.name,
+					this.playlist_service.current_playlist,
 					response.input,
 				)
 				.subscribe(names => {
@@ -113,7 +66,7 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	async delete_playlist() {
-		this.modal_config.modal_title = `Are you sure you want to delete playlist <span class="code">${this.name}</span>?`
+		this.modal_config.modal_title = `Are you sure you want to delete playlist <span class="code">${this.playlist_service.current_playlist}</span>?`
 		this.modal_config.show_dismiss_button = true
 		this.modal_config.show_input = false
 		this.modal.show()
@@ -121,44 +74,14 @@ export class PlaylistsComponent implements OnInit {
 		let response = await this.modal.get_response()
 		if (response.accepted) {
 			this.playlist_service
-				.delete_playlist(this.user_service.current_user.user_id, this.name)
+				.delete_playlist(
+					this.user_service.current_user.user_id,
+					this.playlist_service.current_playlist,
+				)
 				.subscribe(names => {
 					this.playlist_service.names = names
 					this.router.navigateByUrl("/").then()
 				})
 		}
-	}
-
-	async delete_from_playlist(track: Track) {
-		this.modal_config.modal_title = `Are you sure you want to delete <span class="code">${track.title}</span> from playlist <span class="code">${this.name}</span>?`
-		this.modal_config.show_dismiss_button = true
-		this.modal_config.show_input = false
-		this.modal.show()
-		this.change_detector.detectChanges()
-		let response = await this.modal.get_response()
-		if (response.accepted) {
-			this.playlist_service
-				.delete_from_playlist(
-					this.name,
-					track.track_id,
-					this.user_service.current_user.user_id,
-				)
-				.subscribe(response => {
-					if (response === "Success") {
-						let index = this.tracks.indexOf(track)
-						this.tracks.splice(index, 1)
-						this.tracks = [...this.tracks]
-					}
-				})
-		}
-	}
-
-	async get_playlist_name(): Promise<string> {
-		this.modal_config.modal_title = "Playlist Name?"
-		this.modal_config.show_dismiss_button = true
-		this.modal.show()
-		this.change_detector.detectChanges()
-		let response = await this.modal.get_response()
-		return response.input
 	}
 }

@@ -119,6 +119,12 @@ export class PlayerService {
 		}
 	}
 
+	remove_from_queue = (track: Track): void => {
+		let index = this.queue.indexOf(track)
+		this.queue.splice(index, 0)
+		this.ordered_queue.splice(index, 0)
+	}
+
 	add_next_in_queue = (track: Track): void => {
 		this.queue.splice(this.queue_index + 1, 0, track)
 		this.ordered_queue.splice(this.queue_index + 1, 0, track)
@@ -248,5 +254,16 @@ export class PlayerService {
 		this.vol = vol
 		this.audio.volume = vol
 		this.cookies_service.set("jukebox-volume", vol + "")
+	}
+
+	change_volume(diff: number) {
+		if (this.vol + diff > 1) {
+			diff = 1 - this.vol
+		} else if (this.vol + diff < 0) {
+			diff = -this.vol
+		}
+		this.vol = diff + this.vol
+		this.audio.volume = diff + this.vol
+		this.cookies_service.set("jukebox-volume", this.audio.volume + "")
 	}
 }

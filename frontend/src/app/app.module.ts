@@ -32,8 +32,13 @@ import {ScrollingModule} from "@angular/cdk/scrolling"
 import {TrackTableComponent} from "./components/track-table/track-table.component"
 import {KeepHtmlPipe} from "./pipes/keep-html.pipe"
 import {MenuToggleComponent} from "./components/menu-toggle/menu-toggle.component"
-import {LoginComponent} from "./pages/login/login.component";
-import { TrackListComponent } from './components/track-list/track-list.component'
+import {LoginComponent} from "./pages/login/login.component"
+import {TrackListComponent} from "./components/track-list/track-list.component"
+import {ShuffleComponent} from "./svgs/shuffle/shuffle.component"
+import {TrackMenuComponent} from "./components/track-menu/track-menu.component"
+import {ThemeModule} from "./modules/theme.module"
+import {dark_theme} from "./themes/dark-theme"
+import {light_theme} from "./themes/light-theme"
 
 @NgModule({
 	declarations: [
@@ -63,7 +68,9 @@ import { TrackListComponent } from './components/track-list/track-list.component
 		KeepHtmlPipe,
 		MenuToggleComponent,
 		LoginComponent,
-  TrackListComponent,
+		TrackListComponent,
+		ShuffleComponent,
+		TrackMenuComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -72,6 +79,10 @@ import { TrackListComponent } from './components/track-list/track-list.component
 		FormsModule,
 		ScrollingModule,
 		ReactiveFormsModule,
+		ThemeModule.forRoot({
+			themes: [dark_theme, light_theme],
+			active: "dark",
+		}),
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},

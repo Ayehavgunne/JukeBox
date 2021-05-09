@@ -6,10 +6,12 @@
 	text-align: right
 
 tr:hover td
-	background-color: #373737
+	background-color: var(--tertiary)
+	color: var(--on-tertiary)
 
 .playing_row
-	background-color: #696969
+	background-color: var(--secondary)
+	color: var(--on-secondary)
 
 .play_track
 	display: none
@@ -25,7 +27,7 @@ tr:hover .play_track
 	position: absolute
 	bottom: 16px
 	left: 18px
-	filter: drop-shadow(1px 1px 2px black)
+	filter: drop-shadow(1px 1px 2px #000)
 
 .playing
 	position: relative
@@ -38,7 +40,7 @@ tr:hover .play_track
 
 .on_image
 	position: absolute
-	left: calc(50% - 11px)
+	left: calc(50% - 14px)
 	bottom: calc(50% - 11px)
 	width: 24px
 
@@ -47,9 +49,9 @@ tr:hover .play_track
 	width: 6px
 	height: 28px
 	margin-right: 3px
-	background-color: #15dea5
+	background-color: var(--primary)
 	animation: bars 500ms backwards infinite ease-in-out alternate
-	box-shadow: 1px 1px 2px black
+	box-shadow: 1px 1px 2px #000
 
 .on_image > .playing_bar
 	width: 5px
@@ -81,6 +83,10 @@ table
 
 th
 	text-align: center
+	position: sticky
+	top: -1px
+	background-color: var(--background)
+	z-index: 5
 
 td
 	padding-right: 4px

@@ -9,8 +9,16 @@ import {Track} from "../models"
 export class PlaylistsService {
 	url: string = "/playlists"
 	names: string[] = []
+	current_playlist: string = ""
+	tracks: Track[]
 
 	constructor(private http: HttpClient) {}
+
+	other_names(): string[] {
+		return this.names.filter(item => {
+			return item !== this.current_playlist
+		})
+	}
 
 	get_names(user_id: number): Observable<string[]> {
 		return this.http.get<string[]>(`${this.url}/${user_id}`)

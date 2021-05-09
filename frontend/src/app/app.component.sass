@@ -1,9 +1,13 @@
+.root
+	height: 100%
+	width: 100%
+
 header
-	background: #000000
+	background: var(--header)
 	height: 56px
 	display: flex
 	align-items: center
-	box-shadow: 0 2px 5px 2px rgba(0, 0, 0, 0.26)
+	box-shadow: 0 2px 5px 2px var(--header-shadow)
 
 footer
 	position: fixed
@@ -11,8 +15,9 @@ footer
 	right: 0
 	width: 100%
 	height: 56px
-	background-color: #1d1d1d
-	border-top: 1px solid #4d4d4d
+	background-color: var(--surface)
+	color: var(--on-surface)
+	border-top: 1px solid var(--border)
 	z-index: 4
 	transition: all 500ms ease-in-out
 
@@ -31,6 +36,8 @@ nav h3
 
 main
 	width: calc(100% - 133px)
+	background-color: var(--background)
+	color: var(--on-background)
 	transition: all 500ms ease-in-out
 	overflow: auto
 
@@ -41,8 +48,9 @@ main.nav_closed
 	width: 100%
 
 nav
-	background-color: #1d1d1d
-	border-right: solid 1px #4d4d4d
+	background-color: var(--surface)
+	color: var(--on-surface)
+	border-right: solid 1px var(--border)
 	width: 133px
 	transition: all 500ms ease-in-out
 	white-space: nowrap

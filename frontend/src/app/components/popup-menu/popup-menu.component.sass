@@ -12,8 +12,9 @@
 
 .menu_container
 	position: absolute
-	background-color: rgba(31, 31, 31, 0.66)
-	box-shadow: 0 0 1px 1px rgba(31, 31, 31, 0.66)
+	background-color: var(--transparent-background)
+	box-shadow: 0 0 1px 1px var(--transparent-background)
+	color: var(--on-transparent-background)
 	backdrop-filter: blur(3px)
 	-webkit-backdrop-filter: blur(3px)
 	z-index: 5
@@ -38,7 +39,7 @@
 	width: 6px
 	height: 6px
 	margin: 2px
-	background: #fff
+	background: var(--on-background)
 	border-radius: 50%
 
 .popup_menu_item

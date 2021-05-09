@@ -1,3 +1,5 @@
+import {InjectionToken} from "@angular/core"
+
 export interface Track {
 	track_id: number
 	title: string
@@ -5,6 +7,7 @@ export interface Track {
 	album_id: number
 	album_disc: number
 	artist: string
+	artist_id: number
 	track_number: number
 	disc_number: number
 	year: number
@@ -77,4 +80,17 @@ export class ModalResponse {
 		this.accepted = accepted
 		this.input = input
 	}
+}
+
+export const THEMES = new InjectionToken("THEMES")
+export const ACTIVE_THEME = new InjectionToken("ACTIVE_THEME")
+
+export interface Theme {
+	name: string
+	properties: any
+}
+
+export interface ThemeOptions {
+	themes: Theme[]
+	active: string
 }

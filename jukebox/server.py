@@ -237,14 +237,29 @@ async def get_album(album_id: int = None) -> Response:
         return jsonify(album.to_json())
 
 
+# @app.route("/albums/<int:album_id>/image")
+# @token_required
+# async def get_album_image(album_id: int) -> Response:
+#     with database.atomic():
+#         album = Album.get(album_id)
+#         album_art_file = Path(album.album_art_path)
+#         if album_art_file.exists():
+#             return await send_file(album.album_art_path)
+#         else:
+#             return await send_file(
+#                 APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
+#                 mimetype="image/png",
+#             )
+
+
 @app.route("/albums/<int:album_id>/image")
 @token_required
 async def get_album_image(album_id: int) -> Response:
     with database.atomic():
         album = Album.get(album_id)
-        album_art_file = Path(album.album_art_path)
-        if album_art_file.exists():
-            return await send_file(album.album_art_path)
+        if len(album.images) > 0 and not album.images[0].not_found:
+            image = BytesIO(album.images[0].small)
+            return await send_file(image, mimetype="image/jpg")
         else:
             return await send_file(
                 APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
@@ -476,15 +491,15 @@ async def get_loved(love_type: str, user_id: int) -> Response:
     try:
         table = get_love_table(love_type)
     except TypeError as err:
-        return Response({"error": str(err)})
+        return jsonify({"error": str(err)})
     with database.atomic():
         loved_items = table.select().where(table.user_id == user_id)
-        if isinstance(table, LovedTrack):
-            return jsonify([loved.track for loved in loved_items])
-        if isinstance(table, LovedAlbum):
-            return jsonify([loved.album for loved in loved_items])
-        if isinstance(table, LovedArtist):
-            return jsonify([loved.artist for loved in loved_items])
+        if table == LovedTrack:
+            return jsonify([loved.track.track_id for loved in loved_items])
+        if table == LovedAlbum:
+            return jsonify([loved.album.album_id for loved in loved_items])
+        if table == LovedArtist:
+            return jsonify([loved.artist.artist_id for loved in loved_items])
 
 
 @app.route("/love/<string:love_type>/<int:user_id>/<int:loved_id>", methods=["PUT"])
@@ -497,11 +512,11 @@ async def love(love_type: str, user_id: int, loved_id: int) -> str:
     with database.atomic():
         try:
             table_call = partial(table.create, user=user_id)
-            if isinstance(table, LovedTrack):
+            if table == LovedTrack:
                 table_call(track=loved_id)
-            if isinstance(table, LovedAlbum):
+            if table == LovedAlbum:
                 table_call(album=loved_id)
-            if isinstance(table, LovedArtist):
+            if table == LovedArtist:
                 table_call(artist=loved_id)
             return "Success"
         except IntegrityError:
@@ -517,11 +532,11 @@ async def unlove(love_type: str, user_id: int, loved_id: int) -> str:
         return str(err)
     with database.atomic():
         partial_query = partial(table.delete().where, table.user == user_id)
-        if isinstance(table, LovedTrack):
+        if table == LovedTrack:
             query = partial_query(table.track == loved_id)
-        if isinstance(table, LovedAlbum):
+        if table == LovedAlbum:
             query = partial_query(table.album == loved_id)
-        if isinstance(table, LovedArtist):
+        if table == LovedArtist:
             query = partial_query(table.artist == loved_id)
         query.execute()
         return "Success"

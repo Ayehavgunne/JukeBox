@@ -1,9 +1,7 @@
 import {Component, OnInit} from "@angular/core"
 import {PlaylistsService} from "../../services/playlists.service"
-import {UserService} from "../../services/user.service"
-import {UaService} from "../../services/ua.service"
-import {CookiesService} from "../../services/cookies.service"
-import {Router} from "@angular/router"
+import {SetupService} from "../../services/setup.service"
+import {ThemeService} from "../../services/theme.service"
 
 @Component({
 	selector: "profile",
@@ -11,29 +9,14 @@ import {Router} from "@angular/router"
 	styleUrls: ["./profile.component.sass"],
 })
 export class ProfileComponent implements OnInit {
-	name: string = "Anthony"
-
 	constructor(
-		public playlist_service: PlaylistsService,
-		private user_service: UserService,
-		private ua_service: UaService,
-		private cookies_service: CookiesService,
-		private router: Router,
+		public theme_service: ThemeService,
+		private playlist_service: PlaylistsService,
+		private setup_service: SetupService,
 	) {}
 
 	async ngOnInit() {
-		if (this.user_service.current_user === undefined) {
-			let user_id = Number(this.cookies_service.get("user_id") || 0)
-			if (user_id === 0) {
-				this.router.navigateByUrl("/login").then()
-			}
-			let user = await this.user_service.get_user_by_id(user_id).toPromise()
-			this.user_service.set_current_user(user)
-		}
-		this.playlist_service
-			.get_names(this.user_service.current_user.user_id)
-			.subscribe(names => {
-				this.playlist_service.names = names
-			})
+		await this.setup_service.setup()
+		this.playlist_service.current_playlist = ""
 	}
 }

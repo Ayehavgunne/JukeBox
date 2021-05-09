@@ -63,7 +63,7 @@ export class ModalComponent implements OnInit {
 
 	@HostListener("keyup", ["$event"])
 	key_up(event: KeyboardEvent) {
-		if (event.code === "Enter") {
+		if (event.code === "Enter" || event.code === "NumpadEnter") {
 			this.okay()
 		}
 	}

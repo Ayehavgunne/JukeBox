@@ -4,43 +4,49 @@
 		<popup-menu-item (click)="rename_playlist()">Rename</popup-menu-item>
 		<popup-menu-item (click)="delete_playlist()">Delete</popup-menu-item>
 	</popup-menu>
-	{{ name }}
+	{{ playlist_service.current_playlist }}
 </h3>
 <track-table
-	*ngIf="!is_mobile"
-	[tracks]="tracks"
-	[popup_menu]="popup_menu_template"
+	*ngIf="!setup_service.is_mobile"
+	[tracks]="playlist_service.tracks"
 	[show_headers]="true"
+	[in_playlist]="true"
 ></track-table>
 <track-list
-	*ngIf="is_mobile"
-	[tracks]="tracks"
-	[popup_menu]="popup_menu_template"
+	*ngIf="setup_service.is_mobile"
+	[tracks]="playlist_service.tracks"
+	[in_playlist]="true"
 ></track-list>
 
-<ng-template #popup_menu_template let-track="track">
-	<popup-menu>
-		<popup-menu-item (click)="love_this_track(track)">Love</popup-menu-item>
-		<popup-menu-item [contains_submenu]="true">
-			Add to a playlist
-			<span class="submenu">
-				<popup-menu-item (click)="add_to_playlist(track)">
-					+ New Playlist
-				</popup-menu-item>
-				<popup-menu-item
-					*ngFor="let name of other_playlist_names"
-					(click)="add_to_playlist(track, name)"
-				>
-					{{ name }}
-				</popup-menu-item>
-			</span>
-		</popup-menu-item>
-		<popup-menu-item (click)="delete_from_playlist(track)">
-			Delete
-		</popup-menu-item>
-		<popup-menu-item (click)="play_track_next(track)">Play Next</popup-menu-item>
-		<popup-menu-item (click)="append_track_to_queue(track)">
-			Append to Queue
-		</popup-menu-item>
-	</popup-menu>
-</ng-template>
+<!--<ng-template #popup_menu_template let-track="track">-->
+<!--	<popup-menu>-->
+<!--		<popup-menu-item (click)="love_this_track(track)">Love</popup-menu-item>-->
+<!--		<popup-menu-item [contains_submenu]="true">-->
+<!--			Add to a playlist-->
+<!--			<span class="submenu">-->
+<!--				<popup-menu-item (click)="add_to_playlist(track)">-->
+<!--					+ New Playlist-->
+<!--				</popup-menu-item>-->
+<!--				<popup-menu-item-->
+<!--					*ngFor="let name of other_playlist_names"-->
+<!--					(click)="add_to_playlist(track, name)"-->
+<!--				>-->
+<!--					{{ name }}-->
+<!--				</popup-menu-item>-->
+<!--			</span>-->
+<!--		</popup-menu-item>-->
+<!--		<popup-menu-item (click)="delete_from_playlist(track)">-->
+<!--			Delete-->
+<!--		</popup-menu-item>-->
+<!--		<popup-menu-item *ngIf="setup_service.is_mobile">-->
+<!--			<a [routerLink]="'/page/tracks/' + track.album_id">Go to Album</a>-->
+<!--		</popup-menu-item>-->
+<!--		<popup-menu-item *ngIf="setup_service.is_mobile">-->
+<!--			<a [routerLink]="'/page/albums/' + track.artist_id">Go to Artist</a>-->
+<!--		</popup-menu-item>-->
+<!--		<popup-menu-item (click)="play_track_next(track)">Play Next</popup-menu-item>-->
+<!--		<popup-menu-item (click)="append_track_to_queue(track)">-->
+<!--			Append to Queue-->
+<!--		</popup-menu-item>-->
+<!--	</popup-menu>-->
+<!--</ng-template>-->

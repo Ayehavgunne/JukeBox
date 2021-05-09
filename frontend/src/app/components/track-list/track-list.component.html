@@ -6,9 +6,11 @@
 				playing_row: track.track_id === player_service.track?.track_id
 			}"
 		>
-			<ng-container
-				*ngTemplateOutlet="popup_menu; context: {track: track}"
-			></ng-container>
+			<track-menu
+				[track]="track"
+				[in_playlist]="in_playlist"
+				[viewing_queue]="viewing_queue"
+			></track-menu>
 			<play [track]="track" (play_track_event)="playing_event_handler()">
 				<div class="albumart">
 					<img
