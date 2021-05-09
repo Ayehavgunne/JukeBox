@@ -39,6 +39,7 @@ import {TrackMenuComponent} from "./components/track-menu/track-menu.component"
 import {ThemeModule} from "./modules/theme.module"
 import {dark_theme} from "./themes/dark-theme"
 import {light_theme} from "./themes/light-theme"
+import {ColorPickerModule} from "ngx-color-picker"
 
 @NgModule({
 	declarations: [
@@ -74,6 +75,7 @@ import {light_theme} from "./themes/light-theme"
 	],
 	imports: [
 		BrowserModule,
+		ColorPickerModule,
 		AppRoutingModule,
 		HttpClientModule,
 		FormsModule,

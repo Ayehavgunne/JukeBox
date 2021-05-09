@@ -27,34 +27,41 @@ export interface Album {
 	year: number
 }
 
-export interface AlbumDisc {
-	album_disc_id: number
-	album: string
-	album_id: number
-	disc_number: number
-	total_tracks: number
-}
+// export interface AlbumDisc {
+// 	album_disc_id: number
+// 	album: string
+// 	album_id: number
+// 	disc_number: number
+// 	total_tracks: number
+// }
 
 export interface Artist {
 	artist_id: number
 	name: string
 }
 
+export interface UserSettings {
+	theme_name: string
+	primary_color: string
+}
+
 export interface User {
 	user_id: number
 	username: string
+	settings: UserSettings
 }
 
 export interface UserQueryResponse {
 	error: string
 	user_id: number
 	username: string
+	settings: UserSettings
 }
 
-export interface Playlist {
-	playlist_name: string
-	user: User
-}
+// export interface Playlist {
+// 	playlist_name: string
+// 	user: User
+// }
 
 export class ModalConfig {
 	modal_title: string = "Hello"

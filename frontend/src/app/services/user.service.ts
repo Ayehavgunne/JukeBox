@@ -10,7 +10,7 @@ import {print} from "../utils"
 })
 export class UserService {
 	private url: string = "/users"
-	current_user: User
+	current_user: User | UserQueryResponse
 
 	constructor(private http: HttpClient, private cookies_service: CookiesService) {}
 
@@ -30,8 +30,16 @@ export class UserService {
 		return this.http.put<UserQueryResponse>(`${this.url}/${username}`, HttpHeaders)
 	}
 
-	set_current_user(user: User): void {
+	set_current_user(user: User | UserQueryResponse): void {
 		this.cookies_service.set("user_id", user.user_id + "")
 		this.current_user = user
+	}
+
+	update_user_settings(user: User): void {
+		this.http
+			.post<User>(`/users/${user.user_id}`, JSON.stringify(user.settings))
+			.subscribe(user => {
+				this.set_current_user(user)
+			})
 	}
 }

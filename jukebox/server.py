@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator, Type, Union
 
+import json5
 import jwt
 from peewee import DoesNotExist, IntegrityError, fn
 from quart import (
@@ -550,12 +551,15 @@ async def get_users() -> Response:
         return jsonify([user.to_json() for user in users])
 
 
-@app.route("/users/<int:user_id>")
+@app.route("/users/<int:user_id>", methods=["GET"])
 @token_required
 async def get_user_by_id(user_id: int) -> Response:
     with database.atomic():
         try:
             user = User.get(user_id=user_id)
+            if not user.settings:
+                user.settings = json.dumps(User.default_settings())
+                user.save()
         except DoesNotExist:
             return jsonify(
                 {
@@ -580,21 +584,20 @@ async def get_user_by_username(username: str) -> Response:
             )
 
 
-# @app.route("/users/<string:username>", methods=["PUT"])
-# @token_required
-# async def create_user(username: str) -> Response:
-#     with database.atomic():
-#         try:
-#             user = User.get(username=username)
-#         except DoesNotExist:
-#             return jsonify(
-#                 {
-#                     "error": None,
-#                     "user_id": User.create(username=username).user_id,
-#                     "username": username,
-#                 }
-#             )
-#         return jsonify({"error": None, **user.to_json()})
+@app.route("/users/<int:user_id>", methods=["POST"])
+@token_required
+async def update_user_settings(user_id: int) -> Response:
+    with database.atomic():
+        try:
+            # noinspection PyUnresolvedReferences
+            data = await request.get_data()
+            data = json.loads(data.decode("utf-8"))
+            user = User.get(user_id=user_id)
+            user.settings = json.dumps(data)
+            user.save()
+            return jsonify({"error": None, **user.to_json()})
+        except Exception as err:
+            return jsonify({"error": str(err), **user.to_json()})
 
 
 @app.route("/stream/<int:track_id>")

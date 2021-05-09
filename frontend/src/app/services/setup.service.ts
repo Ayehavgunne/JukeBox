@@ -7,6 +7,7 @@ import {Router} from "@angular/router"
 import {TracksService} from "./tracks.service"
 import {ArtistsService} from "./artists.service"
 import {AlbumsService} from "./albums.service"
+import {ThemeService} from "./theme.service"
 import {print} from "../utils"
 
 @Injectable({
@@ -20,6 +21,7 @@ export class SetupService {
 		public playlist_service: PlaylistsService,
 		private albums_service: AlbumsService,
 		private artists_service: ArtistsService,
+		private themes_service: ThemeService,
 		private tracks_service: TracksService,
 		private user_service: UserService,
 		private ua_service: UaService,
@@ -57,6 +59,8 @@ export class SetupService {
 			}
 			let user = await this.user_service.get_user_by_id(user_id).toPromise()
 			this.user_service.set_current_user(user)
+			this.themes_service.set_theme(user.settings.theme_name)
+			this.themes_service.set_property("--primary", user.settings.primary_color)
 		}
 	}
 

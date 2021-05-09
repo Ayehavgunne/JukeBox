@@ -1,18 +1,19 @@
+import json
 from typing import Dict, Union
 
-import peewee
 from peewee import (
     SQL,
     AutoField,
     BlobField,
     BooleanField,
     CharField,
+    DoesNotExist,
     FloatField,
     ForeignKeyField,
     IntegerField,
-    IntegrityError,
     Model,
     SqliteDatabase,
+    TextField,
 )
 from werkzeug.security import check_password_hash
 
@@ -171,6 +172,7 @@ class User(BaseModel):
     user_id = AutoField(primary_key=True)
     username = CharField(unique=True)
     password = CharField()
+    settings = TextField(null=True)
 
     class Meta:
         database = database
@@ -182,6 +184,10 @@ class User(BaseModel):
         self._authenticated = False
 
     @classmethod
+    def default_settings(cls) -> Dict[str, str]:
+        return {"theme_name": "dark", "primary_color": "#15dea5"}
+
+    @classmethod
     def authenticate(cls, **kwargs):
         username = kwargs.get("username")
         password = kwargs.get("password")
@@ -191,7 +197,7 @@ class User(BaseModel):
 
         try:
             user = cls.get(username=username)
-        except peewee.DoesNotExist:
+        except DoesNotExist:
             return None
         if not check_password_hash(user.password, password):
             return None
@@ -199,10 +205,14 @@ class User(BaseModel):
         return user
 
     def to_json(self) -> Dict[str, Union[str, int]]:
+        settings = self.settings
+        if not settings:
+            settings = json.dumps(self.default_settings())
         # noinspection PyTypeChecker
         return {
             "user_id": self.user_id,
             "username": self.username,
+            "settings": json.loads(settings),
         }
 
 

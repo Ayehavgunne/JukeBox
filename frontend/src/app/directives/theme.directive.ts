@@ -18,7 +18,7 @@ export class ThemeDirective {
 			this.update_theme(active)
 		}
 
-		this._themeService.themeChange
+		this._themeService.theme_change
 			.pipe(takeUntil(this._destroy$))
 			.subscribe((theme: Theme) => this.update_theme(theme))
 	}
