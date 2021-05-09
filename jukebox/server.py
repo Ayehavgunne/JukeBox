@@ -8,7 +8,6 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import AsyncIterator, Type, Union
 
-import json5
 import jwt
 from peewee import DoesNotExist, IntegrityError, fn
 from quart import (
@@ -66,7 +65,7 @@ def token_required(f):
                 headers={"Location": "/login", "Content-Type": "application/json"},
                 status=307,
             )
-        except (jwt.InvalidTokenError, Exception):
+        except jwt.InvalidTokenError:
             return Response(
                 response=json.dumps(invalid_msg),
                 headers={"Location": "/login", "Content-Type": "application/json"},
