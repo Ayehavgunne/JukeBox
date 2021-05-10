@@ -20,6 +20,7 @@ from quart import (
     send_from_directory,
 )
 from quart.logging import serving_handler
+from werkzeug.exceptions import BadRequestKeyError
 
 from jukebox import APP_ROOT, CONFIGS
 from jukebox.db_models import (
@@ -59,7 +60,7 @@ def token_required(f):
             token = request.cookies["jwttoken"]
             jwt.decode(token, CONFIGS["secret_key"], algorithms=["HS256"])
             return await f(*args, **kwargs)
-        except jwt.ExpiredSignatureError:
+        except (jwt.ExpiredSignatureError, BadRequestKeyError):
             return Response(
                 response=json.dumps(expired_msg),
                 headers={"Location": "/login", "Content-Type": "application/json"},
