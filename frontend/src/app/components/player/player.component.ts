@@ -10,7 +10,6 @@ import {UaService} from "../../services/ua.service"
 export class PlayerComponent implements OnInit {
 	os_show_volume: boolean = true
 	show_volume_bar: boolean = false
-	volume: number = this.player_service.volume
 
 	constructor(public player_service: PlayerService, private ua_service: UaService) {}
 
@@ -26,7 +25,7 @@ export class PlayerComponent implements OnInit {
 	}
 
 	@HostListener("document:keydown", ["$event"])
-	space_handler(event: KeyboardEvent) {
+	key_handler(event: KeyboardEvent) {
 		if (this.player_service.track) {
 			if (event.code === "Space") {
 				event.preventDefault()

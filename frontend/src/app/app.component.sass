@@ -21,7 +21,7 @@ footer
 	z-index: 4
 	transition: all 500ms ease-in-out
 
-.nav_toggle
+menu-toggle
 	width: 143px
 	float: left
 
@@ -31,7 +31,7 @@ footer.nav_closed
 h1
 	padding: 0 12px
 
-nav h3
+h3
 	margin-bottom: 5px
 
 main
@@ -40,9 +40,6 @@ main
 	color: var(--on-background)
 	transition: all 500ms ease-in-out
 	overflow: auto
-
-main h3
-	margin-top: 5px
 
 main.nav_closed
 	width: 100%
@@ -64,10 +61,10 @@ nav, main
 	float: left
 	height: calc(100% - 56px)
 
-nav ul
+ul
 	padding-left: 10px
 
-nav li
+li
 	list-style: none
 	padding-bottom: 5px
 
@@ -93,15 +90,16 @@ menu-toggle.nav_closed
 	nav
 		font-size: 1.08em
 
+	main
+		position: relative
+
 	nav, main
 		height: calc(100% - 80px)
 
 	menu-toggle
 		bottom: -23px
 		left: 0
+		width: 70px
 
 	menu-toggle.nav_closed
 		left: -64px
-
-	.nav_toggle
-		width: 70px

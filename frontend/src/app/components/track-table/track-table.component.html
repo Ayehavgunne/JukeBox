@@ -2,20 +2,82 @@
 	<table *ngIf="tracks">
 		<thead *ngIf="show_headers">
 			<tr>
-				<th style="width: 22px">&nbsp;</th>
-				<th style="width: 52px">&nbsp;</th>
-				<th style="width: 40px">No.</th>
-				<th style="width: 30%">Title</th>
-				<th style="width: 400px">Artist</th>
-				<th style="width: 30%">Album</th>
-				<th style="width: 50px">Disc</th>
-				<th style="width: 50px">Year</th>
-				<th style="width: 70px">Length</th>
+				<th style="width: 22px"></th>
+				<th style="width: 52px"></th>
+				<th
+					style="width: 40px"
+					class="sortable"
+					(click)="
+						sort('track_number', 'disc_number', 'sort_artist', 'sort_album')
+					"
+				>
+					No.
+				</th>
+				<th
+					style="width: 30%"
+					class="sortable"
+					(click)="sort('sort_title', 'sort_artist', 'sort_album')"
+				>
+					Title
+				</th>
+				<th
+					style="width: 400px"
+					class="sortable"
+					(click)="
+						sort('sort_artist', 'sort_album', 'disc_number', 'track_number')
+					"
+				>
+					Artist
+				</th>
+				<th
+					style="width: 30%"
+					class="sortable"
+					(click)="sort('sort_album', 'track_number')"
+				>
+					Album
+				</th>
+				<th
+					style="width: 50px"
+					class="sortable"
+					(click)="
+						sort(
+							'disc_number',
+							'sort_artist',
+							'sort_album',
+							'disc_number',
+							'track_number'
+						)
+					"
+				>
+					Disc
+				</th>
+				<th
+					style="width: 50px"
+					class="sortable"
+					(click)="
+						sort(
+							'year',
+							'sort_artist',
+							'sort_album',
+							'disc_number',
+							'track_number'
+						)
+					"
+				>
+					Year
+				</th>
+				<th
+					style="width: 70px"
+					class="sortable"
+					(click)="sort('length', 'sort_artist')"
+				>
+					Length
+				</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr
-				*cdkVirtualFor="let track of tracks"
+				*cdkVirtualFor="let track of tracks; let i = index"
 				[ngClass]="{
 					playing_row: track.track_id === player_service.track?.track_id
 				}"
@@ -25,6 +87,7 @@
 						[track]="track"
 						[in_playlist]="in_playlist"
 						[viewing_queue]="viewing_queue"
+						[index]="i"
 					></track-menu>
 				</td>
 				<td class="rel">

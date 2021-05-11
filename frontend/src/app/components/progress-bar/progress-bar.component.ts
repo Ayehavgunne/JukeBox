@@ -1,6 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "progress-bar",
@@ -16,7 +15,6 @@ export class ProgressBarComponent implements OnInit {
 
 	@HostListener("click", ["$event"])
 	click_handler(event: MouseEvent) {
-		print("clicked seek")
 		this.player_service.seek_percent(
 			(event.offsetX / this.bar.nativeElement.offsetWidth) * 100,
 		)

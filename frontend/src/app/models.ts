@@ -3,10 +3,13 @@ import {InjectionToken} from "@angular/core"
 export interface Track {
 	track_id: number
 	title: string
+	sort_title: string
 	album: string
+	sort_album: string
 	album_id: number
 	album_disc: number
 	artist: string
+	sort_artist: string
 	artist_id: number
 	track_number: number
 	disc_number: number
@@ -23,21 +26,15 @@ export interface Track {
 export interface Album {
 	album_id: number
 	title: string
+	sort_title: string
 	total_discs: number
 	year: number
 }
 
-// export interface AlbumDisc {
-// 	album_disc_id: number
-// 	album: string
-// 	album_id: number
-// 	disc_number: number
-// 	total_tracks: number
-// }
-
 export interface Artist {
 	artist_id: number
 	name: string
+	sort_name: string
 }
 
 export interface UserSettings {
@@ -57,11 +54,6 @@ export interface UserQueryResponse {
 	username: string
 	settings: UserSettings
 }
-
-// export interface Playlist {
-// 	playlist_name: string
-// 	user: User
-// }
 
 export class ModalConfig {
 	modal_title: string = "Hello"

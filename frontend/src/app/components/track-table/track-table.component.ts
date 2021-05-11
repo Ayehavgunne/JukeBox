@@ -1,20 +1,22 @@
 import {Component, Input, OnInit} from "@angular/core"
 import {Track} from "../../models"
 import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
+import {BaseSortable, sort_mixin} from "../../utils"
 
 @Component({
 	selector: "track-table",
 	templateUrl: "./track-table.component.html",
 	styleUrls: ["./track-table.component.sass"],
 })
-export class TrackTableComponent implements OnInit {
+export class TrackTableComponent extends sort_mixin(BaseSortable) implements OnInit {
 	@Input() tracks: Track[]
 	@Input() show_headers: boolean
 	@Input() in_playlist?: boolean
 	@Input() viewing_queue?: boolean
 
-	constructor(public player_service: PlayerService) {}
+	constructor(public player_service: PlayerService) {
+		super()
+	}
 
 	ngOnInit(): void {
 		if (this.in_playlist === undefined) {

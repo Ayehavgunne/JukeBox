@@ -3,7 +3,6 @@ import {ModalConfig} from "./models"
 import {PlaylistsService} from "./services/playlists.service"
 import {MenuToggleService} from "./services/menu-toggle.service"
 import {SetupService} from "./services/setup.service"
-import {print} from "./utils"
 
 @Component({
 	selector: "app-root",

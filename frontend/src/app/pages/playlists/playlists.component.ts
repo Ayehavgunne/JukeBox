@@ -1,13 +1,12 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core"
 import {ActivatedRoute, Router} from "@angular/router"
 import {ModalComponent} from "../../components/modal/modal.component"
-import {ModalConfig, Track} from "../../models"
+import {ModalConfig} from "../../models"
 import {TracksService} from "../../services/tracks.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {UserService} from "../../services/user.service"
 import {UaService} from "../../services/ua.service"
 import {SetupService} from "../../services/setup.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "playlists",

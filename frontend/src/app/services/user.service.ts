@@ -3,7 +3,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http"
 import {Observable} from "rxjs"
 import {UserQueryResponse, User} from "../models"
 import {CookiesService} from "./cookies.service"
-import {print} from "../utils"
 
 @Injectable({
 	providedIn: "root",

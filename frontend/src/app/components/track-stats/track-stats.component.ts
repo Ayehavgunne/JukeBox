@@ -1,6 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
 import {Track} from "../../models"
 
 @Component({
@@ -26,25 +25,16 @@ export class TrackStatsComponent implements OnInit {
 	ngOnInit(): void {}
 
 	ngAfterViewInit(): void {
-		// print("After Init!")
 		this.player_service.watch_track().subscribe(track => {
-			this.clear_slide()
-			print("change track")
 			this.track = track
-			// this.check_slide()
+			this.clear_slide()
+			this.check_slide()
 		})
 	}
 
-	ngOnChanges(): void {
-		print("changed!")
-		this.clear_slide()
-	}
-
 	check_slide = () => {
-		// print("check_slide")
 		setTimeout(() => {
 			if (this.is_overflowing(this.title_div)) {
-				print("title overflowing")
 				this.title_slide = true
 				this.title_anim_duration =
 					this.title_div.nativeElement.scrollWidth / 30 + "s"
@@ -54,7 +44,6 @@ export class TrackStatsComponent implements OnInit {
 					"px"
 			}
 			if (this.is_overflowing(this.artist_div)) {
-				print("artist overflowing")
 				this.artist_slide = true
 				this.artist_anim_duration =
 					this.artist_div.nativeElement.scrollWidth / 30 + "s"
@@ -63,32 +52,18 @@ export class TrackStatsComponent implements OnInit {
 					this.artist_div.nativeElement.offsetWidth +
 					"px"
 			}
-		}, 1000)
+		}, 100)
 	}
 
 	clear_slide = () => {
-		// print("clear_slide")
 		this.title_slide = false
 		this.title_anim_width = ""
 		this.artist_slide = false
 		this.artist_anim_width = ""
 	}
 
-	done_animating = () => {
-		// print("done_animating")
-		this.clear_slide()
-		this.check_slide()
-	}
-
 	is_overflowing = (element: ElementRef): boolean => {
 		if (element) {
-			print(
-				"overflowing?",
-				element.nativeElement,
-				element.nativeElement.offsetWidth,
-				element.nativeElement.scrollWidth,
-				element.nativeElement.offsetWidth < element.nativeElement.scrollWidth,
-			)
 			return element.nativeElement.offsetWidth < element.nativeElement.scrollWidth
 		}
 		return false

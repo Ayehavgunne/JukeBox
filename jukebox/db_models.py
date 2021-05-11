@@ -6,6 +6,7 @@ from peewee import (
     AutoField,
     BlobField,
     BooleanField,
+    Case,
     CharField,
     DoesNotExist,
     FloatField,
@@ -14,7 +15,9 @@ from peewee import (
     Model,
     SqliteDatabase,
     TextField,
+    fn,
 )
+from playhouse.hybrid import hybrid_property
 from werkzeug.security import check_password_hash
 
 from jukebox import APP_ROOT
@@ -39,11 +42,29 @@ class Artist(BaseModel):
         order_by = ("name",)
         constraints = [SQL('UNIQUE ("name" COLLATE NOCASE)')]
 
+    @hybrid_property
+    def sort_name(self):
+        return str(self.name).lower().replace("the", "", 1).strip()
+
+    @sort_name.expression
+    def sort_name(cls):
+        return Case(
+            None,
+            [
+                (
+                    fn.LOWER(fn.SUBSTR(cls.name, 1, 3)) == "the",
+                    fn.TRIM(fn.REPLACE(fn.LOWER(cls.name), "the", ""), " "),
+                ),
+            ],
+            fn.LOWER(cls.name),
+        )
+
     def to_json(self) -> Dict[str, Union[str, int]]:
         # noinspection PyTypeChecker
         return {
             "artist_id": self.artist_id,
             "name": self.name,
+            "sort_name": self.sort_name,
         }
 
 
@@ -66,7 +87,6 @@ class Album(BaseModel):
     title = CharField()
     total_discs = IntegerField(null=True)
     year = IntegerField(null=True)
-    # album_art_path = CharField(null=True)
     type = CharField(null=True)
 
     class Meta:
@@ -74,11 +94,29 @@ class Album(BaseModel):
         legacy_table_names = False
         indexes = ((("title",), True),)
 
+    @hybrid_property
+    def sort_title(self):
+        return str(self.title).lower().replace("the", "", 1).strip()
+
+    @sort_title.expression
+    def sort_title(cls):
+        return Case(
+            None,
+            [
+                (
+                    fn.LOWER(fn.SUBSTR(cls.title, 1, 3)) == "the",
+                    fn.TRIM(fn.REPLACE(fn.LOWER(cls.title), "the", ""), " "),
+                ),
+            ],
+            fn.LOWER(cls.title),
+        )
+
     def to_json(self) -> Dict[str, Union[str, int]]:
         # noinspection PyTypeChecker
         return {
             "album_id": self.album_id,
             "title": self.title,
+            "sort_title": self.sort_title,
             "total_discs": self.total_discs,
             "year": self.year,
             "type": self.type,
@@ -146,14 +184,34 @@ class Track(BaseModel):
         legacy_table_names = False
         indexes = ((("title", "album", "file_path"), True),)
 
+    @hybrid_property
+    def sort_title(self):
+        return str(self.title).lower().replace("the", "", 1).strip()
+
+    @sort_title.expression
+    def sort_title(cls):
+        return Case(
+            None,
+            [
+                (
+                    fn.LOWER(fn.SUBSTR(cls.title, 1, 3)) == "the",
+                    fn.TRIM(fn.REPLACE(fn.LOWER(cls.title), "the", ""), " "),
+                ),
+            ],
+            fn.LOWER(cls.title),
+        )
+
     def to_json(self) -> Dict[str, Union[str, int]]:
         return {
             "track_id": self.track_id,
             "title": self.title,
+            "sort_title": self.sort_title,
             "album": self.album.title,
+            "sort_album": self.album.sort_title,
             "album_id": self.album.album_id,
             "album_disc": self.album_disc.album_disc_id,
             "artist": self.artist.name,
+            "sort_artist": self.artist.sort_name,
             "artist_id": self.artist.artist_id,
             "track_number": self.track_number,
             "genre": self.genre,

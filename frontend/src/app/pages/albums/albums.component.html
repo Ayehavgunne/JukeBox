@@ -1,4 +1,4 @@
-<h3 class="page_header">Albums</h3>
+<h3>Albums</h3>
 <ul>
 	<li *ngIf="selected_artist">
 		<a [routerLink]="['/page/artists/', selected_artist.artist_id]">
@@ -7,7 +7,7 @@
 	</li>
 	<li *ngFor="let album of albums">
 		<a [routerLink]="['/page/tracks/', album.album_id]">
-			<div class="albumart">
+			<div>
 				<img
 					src="{{ '/albums/' + album.album_id + '/image' }}"
 					alt="{{ 'image of album ' + album.title }}"

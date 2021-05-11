@@ -1,22 +1,21 @@
 <modal [modal_config]="modal_config" #modal></modal>
-<h3 class="page_header">Now Playing</h3>
-<div *ngIf="player_service.track" class="current_track_info">
-	<div class="img_container">
+<h3>Now Playing</h3>
+<div *ngIf="player_service.track" id="current_track_info">
+	<div id="img_container">
 		<img
 			src="{{ '/albums/' + player_service.track.album_id + '/image' }}"
 			alt="{{ player_service.track.title + ' album cover' }}"
-			class="large"
 		/>
 	</div>
-	<div class="track_title">
+	<div id="track_title">
 		<music></music>
 		{{ player_service.track.title }}
 	</div>
-	<div class="album_title">
+	<div id="album_title">
 		<disc></disc>
 		{{ player_service.track.album }}
 	</div>
-	<div class="artist_name">
+	<div id="artist_name">
 		<user></user>
 		{{ player_service.track.artist }}
 	</div>

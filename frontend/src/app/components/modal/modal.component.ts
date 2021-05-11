@@ -8,7 +8,6 @@ import {
 	ViewChild,
 } from "@angular/core"
 import {ModalConfig, ModalResponse} from "../../models"
-import {print} from "../../utils"
 
 @Component({
 	selector: "modal",

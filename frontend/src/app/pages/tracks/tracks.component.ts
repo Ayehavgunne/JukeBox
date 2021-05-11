@@ -6,7 +6,6 @@ import {PlaylistsService} from "../../services/playlists.service"
 import {ModalComponent} from "../../components/modal/modal.component"
 import {PopupMenuComponent} from "../../components/popup-menu/popup-menu.component"
 import {SetupService} from "../../services/setup.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "tracks",

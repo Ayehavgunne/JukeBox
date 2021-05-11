@@ -6,7 +6,6 @@ import {ModalComponent} from "../modal/modal.component"
 import {SetupService} from "../../services/setup.service"
 import {PlayerService} from "../../services/player.service"
 import {TracksService} from "../../services/tracks.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "track-menu",
@@ -18,6 +17,7 @@ export class TrackMenuComponent implements OnInit {
 	@Input() track: Track
 	@Input() in_playlist?: boolean
 	@Input() viewing_queue?: boolean
+	@Input() index?: number = 0
 	modal_config: ModalConfig = new ModalConfig()
 	love_label: string = "Love"
 	already_loved: boolean
@@ -67,7 +67,9 @@ export class TrackMenuComponent implements OnInit {
 	}
 
 	remove_from_queue() {
-		this.player_service.remove_from_queue(this.track)
+		if (this.index) {
+			this.player_service.remove_from_queue(this.index)
+		}
 	}
 
 	async add_to_playlist(name?: string) {

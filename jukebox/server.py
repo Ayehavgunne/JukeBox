@@ -293,8 +293,8 @@ async def get_tracks() -> Response:
             .switch(Track)
             .join(Album)
             .order_by(
-                fn.Lower(Artist.name),
-                fn.Lower(Album.title),
+                Artist.sort_name,
+                Album.sort_title,
                 Track.disc_number,
                 Track.track_number,
             )
@@ -322,14 +322,6 @@ async def get_track_image(track_id: int) -> Response:
                 APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
                 mimetype="image/png",
             )
-
-
-@app.route("/genres")
-@token_required
-async def get_genres() -> Response:
-    with database.atomic():
-        genres = Track.select(Track.genre).distinct().order_by(fn.Lower(Track.genre))
-        return jsonify(genres)
 
 
 @app.route("/genres/<string:genre>")

@@ -1,6 +1,5 @@
 import {Component, HostListener, Input, OnInit} from "@angular/core"
 import {PlayerService} from "../../services/player.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "volume-dot",
@@ -18,7 +17,6 @@ export class VolumeDotComponent implements OnInit {
 		this.volume = this.player_service.volume
 	}
 
-	@HostListener("touchstart")
 	@HostListener("mousedown")
 	async drag_start() {
 		document.querySelector("body")!.classList.add("noselect")
@@ -26,7 +24,6 @@ export class VolumeDotComponent implements OnInit {
 		this.active = true
 	}
 
-	@HostListener("document:touchend")
 	@HostListener("document:mouseup")
 	async drag_end() {
 		document.querySelector("body")!.classList.remove("noselect")
@@ -34,23 +31,13 @@ export class VolumeDotComponent implements OnInit {
 		this.active = false
 	}
 
-	@HostListener("document:touchmove", ["$event"])
 	@HostListener("document:mousemove", ["$event"])
 	async drag(event: MouseEvent | TouchEvent) {
 		if (this.active) {
 			event.preventDefault()
 			let parent_bounds = this.parent.getBoundingClientRect()
 			let new_volume, client_y
-			switch (event.type) {
-				case "touchmove":
-					client_y = (event as TouchEvent).touches[0].clientY
-					break
-				case "mousemove":
-					client_y = (event as MouseEvent).clientY
-					break
-				default:
-					return
-			}
+			client_y = (event as MouseEvent).clientY
 			new_volume =
 				(parent_bounds.height - (client_y - parent_bounds.top)) /
 				parent_bounds.height

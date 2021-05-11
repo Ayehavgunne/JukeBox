@@ -3,7 +3,6 @@ import {PlaylistsService} from "../../services/playlists.service"
 import {SetupService} from "../../services/setup.service"
 import {ThemeService} from "../../services/theme.service"
 import {UserService} from "../../services/user.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "profile",

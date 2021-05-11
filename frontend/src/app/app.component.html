@@ -9,29 +9,33 @@
 				<a
 					routerLink="/"
 					(click)="menu_toggle_service.toggle_nav(setup_service.is_mobile)"
-					>Home</a
 				>
+					Home
+				</a>
 			</li>
 			<li>
 				<a
 					routerLink="/page/profile"
 					(click)="menu_toggle_service.toggle_nav(setup_service.is_mobile)"
-					>Profile</a
 				>
+					Profile
+				</a>
 			</li>
 			<li>
 				<a
 					routerLink="/page/now_playing"
 					(click)="menu_toggle_service.toggle_nav(setup_service.is_mobile)"
-					>Now Playing</a
 				>
+					Now Playing
+				</a>
 			</li>
 			<li>
 				<a
 					routerLink="/page/settings"
 					(click)="menu_toggle_service.toggle_nav(setup_service.is_mobile)"
-					>Settings</a
 				>
+					Settings
+				</a>
 			</li>
 			<li>
 				<h3>Library</h3>
@@ -42,8 +46,9 @@
 							(click)="
 								menu_toggle_service.toggle_nav(setup_service.is_mobile)
 							"
-							>Tracks</a
 						>
+							Tracks
+						</a>
 					</li>
 					<li>
 						<a
@@ -51,8 +56,9 @@
 							(click)="
 								menu_toggle_service.toggle_nav(setup_service.is_mobile)
 							"
-							>Albums</a
 						>
+							Albums
+						</a>
 					</li>
 					<li>
 						<a
@@ -60,8 +66,9 @@
 							(click)="
 								menu_toggle_service.toggle_nav(setup_service.is_mobile)
 							"
-							>Artists</a
 						>
+							Artists
+						</a>
 					</li>
 				</ul>
 			</li>
@@ -86,7 +93,7 @@
 		<router-outlet></router-outlet>
 	</main>
 	<footer>
-		<menu-toggle class="nav_toggle"></menu-toggle>
+		<menu-toggle></menu-toggle>
 		<player></player>
 	</footer>
 </div>

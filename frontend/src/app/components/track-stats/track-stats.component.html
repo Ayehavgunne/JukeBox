@@ -1,18 +1,20 @@
-<div
-	[ngClass]="{track_wrapper: true, slide: title_slide}"
-	[ngStyle]="{animationDuration: title_anim_duration, width: title_anim_width}"
-	#title_div
->
-	<div class="slider" #title_slider (transitionend)="done_animating()">
+<div class="track_wrapper" #title_div>
+	<div
+		class="slider"
+		#title_slider
+		[ngClass]="{slide: title_slide}"
+		[ngStyle]="{animationDuration: title_anim_duration, width: title_anim_width}"
+	>
 		{{ track?.title || "" }}
 	</div>
 </div>
-<div
-	[ngClass]="{track_wrapper: true, small: true, slide: title_slide}"
-	[ngStyle]="{animationDuration: artist_anim_duration, width: artist_anim_width}"
-	#artist_div
->
-	<div class="slider" #artist_slider (transitionend)="done_animating()">
+<div class="track_wrapper small" #artist_div>
+	<div
+		class="slider"
+		#artist_slider
+		[ngClass]="{slide: title_slide}"
+		[ngStyle]="{animationDuration: artist_anim_duration, width: artist_anim_width}"
+	>
 		{{ track?.artist || "" }}
 	</div>
 </div>

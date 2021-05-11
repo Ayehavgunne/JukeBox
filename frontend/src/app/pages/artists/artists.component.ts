@@ -5,7 +5,6 @@ import {ArtistsService} from "../../services/artists.service"
 import {ModalComponent} from "../../components/modal/modal.component"
 import {PlaylistsService} from "../../services/playlists.service"
 import {SetupService} from "../../services/setup.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "artists",

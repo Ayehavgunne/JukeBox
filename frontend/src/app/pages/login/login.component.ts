@@ -4,7 +4,6 @@ import {Router} from "@angular/router"
 import {AuthService} from "../../services/auth.service"
 import {PlaylistsService} from "../../services/playlists.service"
 import {SetupService} from "../../services/setup.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "login",

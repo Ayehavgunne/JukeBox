@@ -5,7 +5,6 @@ import {ModalConfig} from "../../models"
 import {PlaylistsService} from "../../services/playlists.service"
 import {PlayerService} from "../../services/player.service"
 import {SetupService} from "../../services/setup.service"
-import {print} from "../../utils"
 
 @Component({
 	selector: "now-playing",

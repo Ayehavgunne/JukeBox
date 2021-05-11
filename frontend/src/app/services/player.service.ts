@@ -4,7 +4,6 @@ import {DatePipe} from "@angular/common"
 import {Track} from "../models"
 import {CookiesService} from "./cookies.service"
 import {TracksService} from "./tracks.service"
-import {print} from "../utils"
 
 @Injectable({
 	providedIn: "root",
@@ -41,7 +40,7 @@ export class PlayerService {
 		this.add_event_listeners(this.audio)
 	}
 
-	add_source(track: Track) {
+	add_source(track: Track): void {
 		if (this.preloaded_audio) {
 			this.audio.src = URL.createObjectURL(this.preloaded_audio)
 		} else {
@@ -113,16 +112,16 @@ export class PlayerService {
 
 	set_queue = (tracks: Track[]): void => {
 		this.queue = tracks
-		this.ordered_queue = tracks
+		this.ordered_queue = [...tracks]
 		if (this.track) {
 			this.queue_index = this.queue.indexOf(this.track)
 		}
 	}
 
-	remove_from_queue = (track: Track): void => {
-		let index = this.queue.indexOf(track)
-		this.queue.splice(index, 0)
-		this.ordered_queue.splice(index, 0)
+	remove_from_queue = (index: number): void => {
+		this.queue.splice(index, 1)
+		this.queue = [...this.queue]
+		// this.ordered_queue.splice(index, 1)
 	}
 
 	add_next_in_queue = (track: Track): void => {
@@ -131,8 +130,8 @@ export class PlayerService {
 	}
 
 	append_to_queue = (tracks: Track[]): void => {
-		this.queue.concat(tracks)
-		this.ordered_queue.concat(tracks)
+		this.queue = this.queue.concat(tracks)
+		this.ordered_queue = this.ordered_queue.concat(tracks)
 	}
 
 	current_time(): string {
@@ -150,7 +149,7 @@ export class PlayerService {
 		this.audio.currentTime = time
 	}
 
-	seek_percent(percent: number) {
+	seek_percent(percent: number): void {
 		if (this.track) {
 			this.audio.currentTime = (percent / 100) * this.track.length
 		}
@@ -229,11 +228,11 @@ export class PlayerService {
 		}
 	}
 
-	timeupdate_handler = () => {
+	timeupdate_handler = (): void => {
 		this.percent_complete = (this.seek / this.total_time) * 100
 	}
 
-	add_event_listeners = (audio: HTMLAudioElement) => {
+	add_event_listeners = (audio: HTMLAudioElement): void => {
 		audio.removeEventListener("play", this.play_handler)
 		audio.addEventListener("play", this.play_handler)
 		audio.removeEventListener("pause", this.pause_handler)

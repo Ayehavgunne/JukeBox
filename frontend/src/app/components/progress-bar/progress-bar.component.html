@@ -1,5 +1,5 @@
-<div class="current_time">{{ player_service.current_time() }}</div>
-<div class="total_time">{{ player_service.total_time * 1000 | date: "mm:ss" }}</div>
+<div id="current_time">{{ player_service.current_time() }}</div>
+<div id="total_time">{{ player_service.total_time * 1000 | date: "mm:ss" }}</div>
 <div id="progress_bar" #bar>
-	<progress-dot [parent]="bar"></progress-dot>
+	<progress-dot></progress-dot>
 </div>
