@@ -1,0 +1,31 @@
+\:host
+	float: right
+	width: calc(100% - 593px)
+	padding-top: 18px
+	padding-bottom: 13px
+	cursor: pointer
+
+#progress_bar
+	height: 1px
+	border-bottom: solid 1px var(--on-surface)
+
+#current_time
+	float: left
+	margin-top: 5px
+
+#total_time
+	float: right
+	margin-top: 5px
+
+@media (max-width: 700px)
+	\:host
+		float: right
+		width: calc(100% - 65px)
+		clear: left
+		padding-left: 8px
+		padding-right: 8px
+
+	#current_time, #total_time
+		margin-top: 0
+		position: relative
+		bottom: 30px

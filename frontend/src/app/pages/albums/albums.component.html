@@ -1,0 +1,19 @@
+<h3>Albums</h3>
+<ul>
+	<li *ngIf="selected_artist">
+		<a [routerLink]="['/page/artists/', selected_artist.artist_id]">
+			All tracks by {{ selected_artist.name }}
+		</a>
+	</li>
+	<li *ngFor="let album of albums">
+		<a [routerLink]="['/page/tracks/', album.album_id]">
+			<div>
+				<img
+					src="{{ '/albums/' + album.album_id + '/image' }}"
+					alt="{{ 'image of album ' + album.title }}"
+				/>
+			</div>
+			<div class="name">{{ album.title }}</div>
+		</a>
+	</li>
+</ul>

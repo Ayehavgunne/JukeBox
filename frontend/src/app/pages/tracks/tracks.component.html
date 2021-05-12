@@ -1,0 +1,8 @@
+<modal [modal_config]="modal_config" #modal></modal>
+<h3>Tracks</h3>
+<track-table
+	*ngIf="!setup_service.is_mobile"
+	[tracks]="tracks"
+	[show_headers]="true"
+></track-table>
+<track-list *ngIf="setup_service.is_mobile" [tracks]="tracks"></track-list>

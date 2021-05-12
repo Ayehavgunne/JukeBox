@@ -1,0 +1,34 @@
+<modal [modal_config]="modal_config" #modal></modal>
+<h3>Now Playing</h3>
+<div *ngIf="player_service.track" id="current_track_info">
+	<div id="img_container">
+		<img
+			src="{{ '/albums/' + player_service.track.album_id + '/image' }}"
+			alt="{{ player_service.track.title + ' album cover' }}"
+		/>
+	</div>
+	<div id="track_title">
+		<music></music>
+		{{ player_service.track.title }}
+	</div>
+	<div id="album_title">
+		<disc></disc>
+		{{ player_service.track.album }}
+	</div>
+	<div id="artist_name">
+		<user></user>
+		{{ player_service.track.artist }}
+	</div>
+	<!--	<div><shuffle></shuffle></div>-->
+</div>
+<track-table
+	*ngIf="player_service.queue.length && !setup_service.is_mobile"
+	[tracks]="player_service.queue"
+	[show_headers]="true"
+	[viewing_queue]="true"
+></track-table>
+<track-list
+	*ngIf="player_service.queue.length && setup_service.is_mobile"
+	[tracks]="player_service.queue"
+	[viewing_queue]="true"
+></track-list>

@@ -1,0 +1,19 @@
+<modal [modal_config]="modal_config" #modal></modal>
+<h3>
+	<popup-menu>
+		<popup-menu-item (click)="rename_playlist()">Rename</popup-menu-item>
+		<popup-menu-item (click)="delete_playlist()">Delete</popup-menu-item>
+	</popup-menu>
+	{{ playlist_service.current_playlist }}
+</h3>
+<track-table
+	*ngIf="!setup_service.is_mobile"
+	[tracks]="playlist_service.tracks"
+	[show_headers]="true"
+	[in_playlist]="true"
+></track-table>
+<track-list
+	*ngIf="setup_service.is_mobile"
+	[tracks]="playlist_service.tracks"
+	[in_playlist]="true"
+></track-list>

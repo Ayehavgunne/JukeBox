@@ -1,0 +1,131 @@
+<cdk-virtual-scroll-viewport itemSize="60" *ngIf="tracks">
+	<table *ngIf="tracks">
+		<thead *ngIf="show_headers">
+			<tr>
+				<th style="width: 22px"></th>
+				<th style="width: 52px"></th>
+				<th
+					style="width: 40px"
+					class="sortable"
+					(click)="
+						sort('track_number', 'disc_number', 'sort_artist', 'sort_album')
+					"
+				>
+					No.
+				</th>
+				<th
+					style="width: 30%"
+					class="sortable"
+					(click)="sort('sort_title', 'sort_artist', 'sort_album')"
+				>
+					Title
+				</th>
+				<th
+					style="width: 400px"
+					class="sortable"
+					(click)="
+						sort('sort_artist', 'sort_album', 'disc_number', 'track_number')
+					"
+				>
+					Artist
+				</th>
+				<th
+					style="width: 30%"
+					class="sortable"
+					(click)="sort('sort_album', 'track_number')"
+				>
+					Album
+				</th>
+				<th
+					style="width: 50px"
+					class="sortable"
+					(click)="
+						sort(
+							'disc_number',
+							'sort_artist',
+							'sort_album',
+							'disc_number',
+							'track_number'
+						)
+					"
+				>
+					Disc
+				</th>
+				<th
+					style="width: 50px"
+					class="sortable"
+					(click)="
+						sort(
+							'year',
+							'sort_artist',
+							'sort_album',
+							'disc_number',
+							'track_number'
+						)
+					"
+				>
+					Year
+				</th>
+				<th
+					style="width: 70px"
+					class="sortable"
+					(click)="sort('length', 'sort_artist')"
+				>
+					Length
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr
+				*cdkVirtualFor="let track of tracks; let i = index"
+				[ngClass]="{
+					playing_row: track.track_id === player_service.track?.track_id
+				}"
+			>
+				<td class="rel">
+					<track-menu
+						[track]="track"
+						[in_playlist]="in_playlist"
+						[viewing_queue]="viewing_queue"
+						[index]="i"
+					></track-menu>
+				</td>
+				<td class="rel">
+					<play [track]="track" (play_track_event)="playing_event_handler()">
+						<div class="play_track"></div>
+						<div
+							*ngIf="track.track_id === player_service.track?.track_id"
+							class="playing on_image"
+						>
+							<div class="playing_bar bar-1"></div>
+							<div class="playing_bar bar-2"></div>
+							<div class="playing_bar bar-3"></div>
+						</div>
+						<img
+							src="{{ '/albums/' + track.album_id + '/image' }}"
+							alt="{{ track.title + ' album art' }}"
+							class="small"
+						/>
+					</play>
+				</td>
+				<td class="number">{{ track.track_number }}</td>
+				<td>{{ track.title }}</td>
+				<td>
+					<a [routerLink]="'/page/albums/' + track.artist_id">
+						{{ track.artist }}
+					</a>
+				</td>
+				<td>
+					<a [routerLink]="'/page/tracks/' + track.album_id">
+						{{ track.album }}
+					</a>
+				</td>
+				<td class="number">{{ track.disc_number }}</td>
+				<td class="number">{{ track.year }}</td>
+				<td class="number">
+					{{ track.length * 1000 | date: "mm:ss" }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</cdk-virtual-scroll-viewport>

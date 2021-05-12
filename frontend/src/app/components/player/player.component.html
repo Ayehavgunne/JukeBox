@@ -1,0 +1,23 @@
+<div id="prev" (click)="player_service.play_previous_track()"></div>
+<play>
+	<div class="play" [ngClass]="{playing: !player_service.paused}"></div>
+</play>
+<div id="next" (click)="player_service.play_next_track()"></div>
+<track-stats></track-stats>
+<div id="background" *ngIf="show_volume_bar" (click)="toggle_volume_showing()"></div>
+<div *ngIf="os_show_volume" id="volume">
+	<div
+		id="speaker"
+		[ngClass]="{
+			'-on': player_service.volume > 0,
+			'-off': player_service.volume === 0
+		}"
+		(click)="toggle_volume_showing()"
+	></div>
+	<div *ngIf="show_volume_bar" id="wrapper">
+		<div id="bar" #bar>
+			<volume-dot [parent]="bar"></volume-dot>
+		</div>
+	</div>
+</div>
+<progress-bar></progress-bar>

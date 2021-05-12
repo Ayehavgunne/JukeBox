@@ -1,0 +1,168 @@
+\:host
+	padding-left: 10px
+	padding-top: 8px
+	padding-right: 10px
+	display: block
+
+.play
+	cursor: pointer
+	width: 28px
+	height: 40px
+	border-width: 20px 0 20px 40px
+	border-style: solid
+	border-color: transparent transparent transparent var(--on-surface)
+	transition: all 100ms ease-in-out
+	float: left
+	margin-right: 14px
+
+.playing
+	border-style: double
+	border-width: 0 0 0 40px
+
+#volume
+	float: right
+	width: 28px
+	margin-left: 10px
+	margin-top: 6px
+	cursor: pointer
+	z-index: 5
+
+#background
+	position: fixed
+	width: 1000%
+	height: 1000%
+	top: 0
+	left: 0
+
+#prev
+	cursor: pointer
+	float: left
+	position: relative
+	margin-top: 4px
+	margin-right: 42px
+	border-top: 16px solid
+	border-bottom: 16px solid
+	border-right: 28px solid
+	border-color: transparent var(--on-surface) transparent transparent
+
+#prev::after
+	content: ""
+	display: block
+	position: absolute
+	left: 28px
+	bottom: -16px
+	border-top: 16px solid
+	border-bottom: 16px solid
+	border-right: 28px solid
+	border-color: transparent var(--on-surface) transparent transparent
+
+#next
+	cursor: pointer
+	float: left
+	position: relative
+	margin-top: 4px
+	margin-right: 32px
+	border-top: 16px solid
+	border-bottom: 16px solid
+	border-left: 28px solid
+	border-color: transparent transparent transparent var(--on-surface)
+
+#next::after
+	content: ""
+	display: block
+	position: absolute
+	bottom: -16px
+	border-top: 16px solid
+	border-bottom: 16px solid
+	border-left: 28px solid
+	border-color: transparent transparent transparent var(--on-surface)
+
+#wrapper
+	background-color: var(--transparent-background)
+	box-shadow: 0 0 1px 1px var(--transparent-background)
+	backdrop-filter: blur(3px)
+	-webkit-backdrop-filter: blur(3px)
+	width: 22px
+	height: 200px
+	position: relative
+	bottom: 218px
+	right: 3px
+
+#bar
+	width: 1px
+	height: 95%
+	border-left: solid 1px var(--on-surface)
+	position: absolute
+	left: 10px
+	bottom: 5px
+
+#speaker
+	vertical-align: middle
+	box-sizing: border-box
+	display: inline-block
+	background: var(--on-surface)
+	background-clip: content-box
+	width: 1em
+	height: 1em
+	border: 0.333em solid transparent
+	border-right-color: var(--on-surface)
+	position: relative
+	left: -0.337em
+
+#speaker.-on:before, #speaker.-on:after
+	content: ""
+	background: var(--on-surface)
+	width: 0.1em
+	position: absolute
+
+#speaker.-on:before
+	height: 0.333em
+	right: -0.533em
+
+#speaker.-on:after
+	height: 0.667em
+	right: -0.733em
+	top: -50%
+
+#speaker.-off:before,
+#speaker.-off:after
+	content: ""
+	background: var(--on-surface)
+	width: 0.1em
+	position: absolute
+	height: 1.2em
+	margin-top: -0.333em
+	top: -0.1em
+	left: 0.1em
+	transform: translateX(0.333em) rotate(-45deg)
+
+#speaker.-off:before
+	background: var(--surface)
+	left: 0.2em
+
+@media (max-width: 700px)
+	\:host
+		padding: 0
+
+	#wrapper
+		position: absolute
+		bottom: 68px
+		right: 19px
+
+	#speaker
+		transform: scale(1.5)
+
+	#prev
+		margin-top: 0
+		margin-right: 15px
+		transform: scale(0.6)
+
+	#next
+		margin-top: 0
+		margin-right: 10px
+		transform: scale(0.6)
+
+	.play
+		margin-top: -4px
+		margin-right: -2px
+		transform: scale(0.6)

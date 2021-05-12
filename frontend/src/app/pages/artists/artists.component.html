@@ -1,0 +1,27 @@
+<ng-container *ngIf="artists">
+	<h3>Artists</h3>
+	<ul>
+		<li *ngFor="let artist of artists">
+			<a [routerLink]="['/page/albums/', artist.artist_id]">
+				<div>
+					<img
+						src="{{ '/artists/' + artist.artist_id + '/image' }}"
+						alt="{{ artist.name }}"
+					/>
+				</div>
+				<div class="name">{{ artist.name }}</div>
+			</a>
+		</li>
+	</ul>
+</ng-container>
+
+<ng-container *ngIf="selected_artist">
+	<modal [modal_config]="modal_config" #modal></modal>
+	<h3>{{ selected_artist.name }}</h3>
+	<track-table
+		*ngIf="!setup_service.is_mobile"
+		[tracks]="tracks"
+		[show_headers]="true"
+	></track-table>
+	<track-list *ngIf="setup_service.is_mobile" [tracks]="tracks"></track-list>
+</ng-container>

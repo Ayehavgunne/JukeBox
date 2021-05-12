@@ -1,0 +1,39 @@
+\:host
+	margin-left: 10px
+	float: left
+	width: 215px
+	white-space: nowrap
+
+@keyframes show-text
+	0%
+		transform: translateX(0%)
+	40%
+		transform: translateX(-100%)
+	50%
+		transform: translateX(-100%)
+	90%
+		transform: translateX(0%)
+	100%
+		transform: translateX(0%)
+
+.track_wrapper
+	font-size: 1.15em
+	overflow: hidden
+
+.slider
+	animation-fill-mode: forwards
+	animation-timing-function: linear
+	animation-iteration-count: infinite
+	animation-delay: 1.5s
+	position: relative
+
+.small
+	font-size: 0.75em
+
+.slide
+	animation-name: show-text
+
+@media (max-width: 700px)
+	\:host
+		width: calc(100% - 199px)
+		font-size: .9em

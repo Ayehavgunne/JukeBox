@@ -1,0 +1,82 @@
+<!--<popup-menu>-->
+<!--	<popup-menu-item-->
+<!--		(click)="sort('track_number', 'disc_number', 'sort_artist', 'sort_album')"-->
+<!--	>-->
+<!--		Sort No.-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item (click)="sort('sort_title', 'sort_artist', 'sort_album')">-->
+<!--		Sort Title-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item-->
+<!--		(click)="sort('sort_artist', 'sort_album', 'disc_number', 'track_number')"-->
+<!--	>-->
+<!--		Sort Artist-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item (click)="sort('sort_album', 'track_number')">-->
+<!--		Sort Album-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item-->
+<!--		(click)="-->
+<!--			sort(-->
+<!--				'disc_number',-->
+<!--				'sort_artist',-->
+<!--				'sort_album',-->
+<!--				'disc_number',-->
+<!--				'track_number'-->
+<!--			)-->
+<!--		"-->
+<!--	>-->
+<!--		Sort Disc-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item-->
+<!--		(click)="-->
+<!--			sort('year', 'sort_artist', 'sort_album', 'disc_number', 'track_number')-->
+<!--		"-->
+<!--	>-->
+<!--		Sort Year-->
+<!--	</popup-menu-item>-->
+<!--	<popup-menu-item (click)="sort('length', 'sort_artist')">-->
+<!--		Sort Length-->
+<!--	</popup-menu-item>-->
+<!--</popup-menu>-->
+<cdk-virtual-scroll-viewport itemSize="60" *ngIf="tracks">
+	<ul *ngIf="tracks">
+		<li
+			*cdkVirtualFor="let track of tracks; let i = index"
+			[ngClass]="{
+				playing_row: track.track_id === player_service.track?.track_id
+			}"
+		>
+			<track-menu
+				[track]="track"
+				[in_playlist]="in_playlist"
+				[viewing_queue]="viewing_queue"
+				[index]="i"
+			></track-menu>
+			<play [track]="track" (play_track_event)="playing_event_handler()">
+				<div class="albumart">
+					<img
+						src="{{ '/albums/' + track.album_id + '/image' }}"
+						alt="{{ track.title + ' album art' }}"
+						class="small"
+					/>
+					<div class="play_track"></div>
+					<div
+						*ngIf="track.track_id === player_service.track?.track_id"
+						class="playing on_image"
+					>
+						<div class="playing_bar bar-1"></div>
+						<div class="playing_bar bar-2"></div>
+						<div class="playing_bar bar-3"></div>
+					</div>
+				</div>
+				<div class="info">
+					<div class="title">
+						{{ track.track_number }} - {{ track.title }}
+					</div>
+					<div class="artist">{{ track.artist }} - {{ track.album }}</div>
+				</div>
+			</play>
+		</li>
+	</ul>
+</cdk-virtual-scroll-viewport>

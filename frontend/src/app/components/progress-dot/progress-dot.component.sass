@@ -1,0 +1,21 @@
+\:host
+	display: contents
+
+#progress_dot
+	position: relative
+	display: block
+	bottom: 4px
+	left: 0
+	transform: translateX(-5px)
+	border-radius: 50%
+	background-color: var(--primary)
+	width: 10px
+	height: 10px
+	cursor: pointer
+	transition: transform 100ms ease-in-out, left 250ms linear
+
+@media (max-width: 700px)
+	#progress_dot
+		width: 15px
+		height: 15px
+		bottom: 7px
