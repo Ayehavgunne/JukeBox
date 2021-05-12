@@ -1,0 +1,18 @@
+<h4>Current Theme: {{ theme_service.theme | titlecase }}</h4>
+<h4>Choose a different theme</h4>
+<ul>
+	<li
+		*ngFor="let theme of theme_service.themes"
+		(click)="theme_service.set_theme(theme.name)"
+	>
+		{{ theme.name | titlecase }}
+	</li>
+</ul>
+<h4>Choose you primary color</h4>
+<div
+	id="color_picker"
+	[(colorPicker)]="primary_color"
+	[style.background]="primary_color"
+	(colorPickerChange)="change_color_handler($event)"
+	(colorPickerSelect)="select_color_handler($event)"
+></div>

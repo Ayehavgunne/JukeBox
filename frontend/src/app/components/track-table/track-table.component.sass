@@ -1,0 +1,100 @@
+\:host
+	float: left
+	height: calc(100% - 26px)
+
+.number
+	text-align: right
+
+tr:hover td
+	background-color: var(--tertiary)
+	color: var(--on-tertiary)
+
+.playing_row
+	background-color: var(--secondary)
+	color: var(--on-secondary)
+
+.play_track
+	display: none
+
+tr:hover .play_track
+	display: block
+	width: 18px
+	height: 16px
+	box-sizing: border-box
+	border-style: solid
+	border-width: 14px 0 14px 22px
+	border-color: transparent transparent transparent #bebebe
+	position: absolute
+	bottom: 16px
+	left: 18px
+	filter: drop-shadow(1px 1px 2px #000)
+
+.playing
+	position: relative
+	right: 2px
+
+.small
+	width: 50px
+	height: 50px
+	margin-top: 5px
+
+.on_image
+	position: absolute
+	left: 18px
+	bottom: 18px
+	width: 24px
+
+.playing_bar
+	float: left
+	width: 6px
+	height: 28px
+	margin-right: 3px
+	background-color: var(--primary)
+	animation: bars 500ms backwards infinite ease-in-out alternate
+	box-shadow: 1px 1px 2px #000
+
+.on_image > .playing_bar
+	width: 5px
+	height: 22px
+
+.bar-1
+	animation-delay: 100ms
+
+.bar-2
+	animation-delay: 200ms
+
+.bar-3
+	animation-delay: 300ms
+
+@keyframes bars
+	0%
+		transform: scaleY(0.5)
+
+	100%
+		transform: scaleY(1)
+
+.rel
+	position: relative
+
+table
+	float: left
+	width: 100%
+	border-collapse: collapse
+
+th
+	text-align: center
+	position: sticky
+	top: -1px
+	background-color: var(--background)
+	z-index: 5
+
+.sortable
+	cursor: pointer
+
+td
+	padding-right: 4px
+	padding-left: 4px
+	height: 60px
+
+cdk-virtual-scroll-viewport
+	height: 100%

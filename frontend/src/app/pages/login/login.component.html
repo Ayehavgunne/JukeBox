@@ -1,0 +1,23 @@
+<div class="container">
+	<form [formGroup]="form">
+		<fieldset>
+			<legend>Login</legend>
+			<div class="form-field">
+				<label>Username:</label>
+				<input
+					#username_input
+					name="username"
+					formControlName="username"
+					type="text"
+				/>
+			</div>
+			<div class="form-field">
+				<label>Password:</label>
+				<input name="password" formControlName="password" type="password" />
+			</div>
+		</fieldset>
+		<div class="form-buttons">
+			<button class="button button-primary" (click)="login()">Login</button>
+		</div>
+	</form>
+</div>

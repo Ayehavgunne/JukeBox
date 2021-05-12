@@ -1,8 +1,10 @@
 import asyncio
 import mimetypes
+import os
 import sys
 from functools import partial
 from pathlib import Path
+from typing import Optional
 
 import aiohttp
 import discogs_client
@@ -16,6 +18,7 @@ from jukebox.db_models import (
     Album,
     AlbumArtist,
     AlbumDisc,
+    AlbumImage,
     Artist,
     ArtistImage,
     ArtistInfoMismatches,
@@ -36,6 +39,8 @@ def check_config_file() -> None:
             "exclude_paths": [],
             "host": "127.0.0.1",
             "port": 5000,
+            "secret_key": str(os.urandom(16)),
+            "ssl": False,
             "debug_mode": False,
             "use_reloader": False,
             "logging": {
@@ -81,9 +86,16 @@ class MusicFile:
         self.mimetype = mimetype
         self.codec = metadata["#codec"].value
         self.bitrate = metadata["#bitrate"].value
-        self.album_art_path = (
+        self.album_art: Optional[bytes] = None
+        album_art_path = Path(
             f"{'/'.join(file.parts[:-1]).replace('/', '', 1)}/artwork.jpeg"
         )
+        if album_art_path.exists():
+            self.album_art = album_art_path.read_bytes()
+        else:
+            self.album_art = (
+                metadata["artwork"].value.raw if metadata["artwork"] else None
+            )
         self._metadata = metadata
         self._file = file
 
@@ -103,7 +115,7 @@ def scan_files() -> None:
     extensions = CONFIGS["extensions"]
     songs = []
     existing_files = [track.file_path for track in Track.select()]
-    # remove tracks that no longer exist in the file system
+    # TODO: remove tracks that no longer exist in the file system
     for music_folder in music_folders:
         for song_file in [
             file for file in Path(music_folder).rglob("*") if file.suffix in extensions
@@ -128,7 +140,6 @@ def scan_files() -> None:
                     title=song.album,
                     total_discs=song.total_discs,
                     year=song.year,
-                    album_art_path=song.album_art_path,
                 )
             except IntegrityError:
                 album = Album.get(title=song.album)
@@ -144,6 +155,14 @@ def scan_files() -> None:
                     album=album,
                     total_tracks=song.total_tracks,
                     disc_number=song.disc_number,
+                )
+            except IntegrityError:
+                album_disc = AlbumDisc.get(album=album)
+            try:
+                AlbumImage.create(
+                    album=album,
+                    small=song.album_art,
+                    not_found=not song.album_art,
                 )
             except IntegrityError:
                 album_disc = AlbumDisc.get(album=album)

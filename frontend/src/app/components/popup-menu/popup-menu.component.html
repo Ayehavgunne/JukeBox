@@ -1,0 +1,11 @@
+<div *ngIf="showing" class="background" (click)="close()"></div>
+<div (click)="show_toggle()">
+	<div class="menu_button">
+		<div class="circle"></div>
+		<div class="circle"></div>
+		<div class="circle"></div>
+	</div>
+</div>
+<div *ngIf="showing" class="container">
+	<ng-content></ng-content>
+</div>

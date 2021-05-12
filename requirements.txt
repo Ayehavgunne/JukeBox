@@ -5,3 +5,5 @@ peewee
 aiohttp
 python3-discogs-client
 pillow
+pyjwt
+werkzeug
