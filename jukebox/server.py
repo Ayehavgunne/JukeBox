@@ -44,36 +44,42 @@ check_config_file()
 app = Quart(__name__)
 
 
-def token_required(f):
-    @wraps(f)
-    async def verify(*args, **kwargs):
-        invalid_msg = {
-            "message": "Invalid token. Registeration and / or authentication required.",
-            "authenticated": False,
-        }
-        expired_msg = {
-            "message": "Expired token. Reauthentication required.",
-            "authenticated": False,
-        }
+def auth(redirect: bool = False):
+    def wrapper(f):
+        @wraps(f)
+        async def verify(*args, **kwargs):
+            invalid_msg = {
+                "message": "Invalid token. Registeration and / or authentication required.",
+                "authenticated": False,
+            }
+            expired_msg = {
+                "message": "Expired token. Reauthentication required.",
+                "authenticated": False,
+            }
 
-        try:
-            token = request.cookies["jwttoken"]
-            jwt.decode(token, CONFIGS["secret_key"], algorithms=["HS256"])
-            return await f(*args, **kwargs)
-        except (jwt.ExpiredSignatureError, BadRequestKeyError):
-            return Response(
-                response=json.dumps(expired_msg),
-                headers={"Location": "/login", "Content-Type": "application/json"},
-                status=307,
-            )
-        except jwt.InvalidTokenError:
-            return Response(
-                response=json.dumps(invalid_msg),
-                headers={"Location": "/login", "Content-Type": "application/json"},
-                status=307,
-            )
+            try:
+                token = request.cookies["jwttoken"]
+                jwt.decode(token, CONFIGS["secret_key"], algorithms=["HS256"])
+                return await f(*args, **kwargs)
+            except (jwt.ExpiredSignatureError, BadRequestKeyError):
+                msg = expired_msg
+            except jwt.InvalidTokenError:
+                msg = invalid_msg
+            if redirect:
+                return Response(
+                    response=json.dumps(msg),
+                    headers={"Location": "/login", "Content-Type": "application/json"},
+                    status=307,
+                )
+            else:
+                body = await f(*args, **kwargs)
+                response = await make_response(body)
+                response.status_code = 401
+                return response
 
-    return verify
+        return verify
+
+    return wrapper
 
 
 if CONFIGS["logging"]["enabled"]:
@@ -95,7 +101,7 @@ async def get_images() -> None:
 
 @app.route("/")
 @app.route("/page/<path:_>")
-@token_required
+@auth(redirect=True)
 async def root(_: str = None) -> Response:
     return await send_from_directory(APP_ROOT / "frontend" / "dist", "index.html")
 
@@ -144,14 +150,14 @@ async def login_authenticate() -> Response:
 
 
 @app.route("/task/get_artist_images")
-@token_required
+@auth()
 async def get_images() -> str:
     asyncio.create_task(get_artist_images())
     return "Success"
 
 
 @app.route("/task/scan_files")
-@token_required
+@auth()
 async def update_files() -> str:
     loop = asyncio.get_running_loop()
     loop.run_in_executor(None, scan_files)
@@ -159,7 +165,7 @@ async def update_files() -> str:
 
 
 @app.route("/artists")
-@token_required
+@auth()
 async def get_artists() -> Response:
     with database.atomic():
         artists = Artist.select().order_by(fn.Lower(Artist.name))
@@ -167,7 +173,7 @@ async def get_artists() -> Response:
 
 
 @app.route("/artists/<int:artist_id>")
-@token_required
+@auth()
 async def get_artist(artist_id: int) -> Response:
     with database.atomic():
         artist = Artist.get(artist_id)
@@ -175,7 +181,7 @@ async def get_artist(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/image")
-@token_required
+@auth()
 async def get_artist_image(artist_id: int) -> Response:
     with database.atomic():
         artist = Artist.get(artist_id)
@@ -190,7 +196,7 @@ async def get_artist_image(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/albums")
-@token_required
+@auth()
 async def get_artist_albums(artist_id: int) -> Response:
     with database.atomic():
         albums = (
@@ -203,7 +209,7 @@ async def get_artist_albums(artist_id: int) -> Response:
 
 
 @app.route("/artists/<int:artist_id>/tracks")
-@token_required
+@auth()
 async def get_artist_tracks(artist_id: int) -> Response:
     with database.atomic():
         albums = (
@@ -223,7 +229,7 @@ async def get_artist_tracks(artist_id: int) -> Response:
 
 
 @app.route("/albums")
-@token_required
+@auth()
 async def get_albums() -> Response:
     with database.atomic():
         albums = Album.select().order_by(fn.Lower(Album.title))
@@ -231,30 +237,15 @@ async def get_albums() -> Response:
 
 
 @app.route("/albums/<int:album_id>")
-@token_required
+@auth()
 async def get_album(album_id: int = None) -> Response:
     with database.atomic():
         album = Album.get(album_id)
         return jsonify(album.to_json())
 
 
-# @app.route("/albums/<int:album_id>/image")
-# @token_required
-# async def get_album_image(album_id: int) -> Response:
-#     with database.atomic():
-#         album = Album.get(album_id)
-#         album_art_file = Path(album.album_art_path)
-#         if album_art_file.exists():
-#             return await send_file(album.album_art_path)
-#         else:
-#             return await send_file(
-#                 APP_ROOT / "frontend" / "dist" / "assets" / "generic_album.png",
-#                 mimetype="image/png",
-#             )
-
-
 @app.route("/albums/<int:album_id>/image")
-@token_required
+@auth()
 async def get_album_image(album_id: int) -> Response:
     with database.atomic():
         album = Album.get(album_id)
@@ -269,7 +260,7 @@ async def get_album_image(album_id: int) -> Response:
 
 
 @app.route("/albums/<int:album_id>/tracks")
-@token_required
+@auth()
 async def get_albums_tracks(album_id: int) -> Response:
     with database.atomic():
         tracks = (
@@ -283,7 +274,7 @@ async def get_albums_tracks(album_id: int) -> Response:
 
 
 @app.route("/tracks")
-@token_required
+@auth()
 async def get_tracks() -> Response:
     with database.atomic():
         tracks = (
@@ -303,7 +294,7 @@ async def get_tracks() -> Response:
 
 
 @app.route("/tracks/<int:track_id>")
-@token_required
+@auth()
 async def get_track(track_id: int) -> Response:
     with database.atomic():
         track = Track.get(int(track_id))
@@ -325,7 +316,7 @@ async def get_track_image(track_id: int) -> Response:
 
 
 @app.route("/genres/<string:genre>")
-@token_required
+@auth()
 async def get_tracks_by_genre(genre: str) -> Response:
     with database.atomic():
         tracks = [
@@ -335,7 +326,7 @@ async def get_tracks_by_genre(genre: str) -> Response:
 
 
 @app.route("/playlists/<int:user_id>")
-@token_required
+@auth()
 async def get_playlist_names(user_id: int) -> Response:
     with database.atomic():
         playlists = (
@@ -348,7 +339,7 @@ async def get_playlist_names(user_id: int) -> Response:
 
 
 @app.route("/playlists/<int:user_id>/<string:playlist_name>", methods=["GET"])
-@token_required
+@auth()
 async def get_playlist_tracks(user_id: int, playlist_name: str) -> Response:
     with database.atomic():
         tracks = (
@@ -361,7 +352,7 @@ async def get_playlist_tracks(user_id: int, playlist_name: str) -> Response:
 
 
 @app.route("/playlists/<int:user_id>/<string:playlist_name>", methods=["DELETE"])
-@token_required
+@auth()
 async def delete_track_from_playlist(user_id: int, playlist_name: str) -> Response:
     with database.atomic():
         query = Playlist.delete().where(
@@ -380,7 +371,7 @@ async def delete_track_from_playlist(user_id: int, playlist_name: str) -> Respon
 @app.route(
     "/playlists/<int:user_id>/<string:old_playlist_name>/<string:new_playlist_name>"
 )
-@token_required
+@auth()
 async def rename_playlist(
     user_id: int, old_playlist_name: str, new_playlist_name: str
 ) -> Response:
@@ -404,7 +395,7 @@ async def rename_playlist(
     "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>",
     methods=["PUT"],
 )
-@token_required
+@auth()
 async def alter_playlists(playlist_name: str, track_id: int, user_id: int) -> str:
     with database.atomic():
         try:
@@ -435,7 +426,7 @@ async def alter_playlists(playlist_name: str, track_id: int, user_id: int) -> st
     "/playlists/<string:playlist_name>/<int:track_id>/<int:user_id>",
     methods=["DELETE"],
 )
-@token_required
+@auth()
 async def delete_from_playlist(playlist_name: str, track_id: int, user_id: int) -> str:
     with database.atomic():
         result = Playlist.select().where(
@@ -479,7 +470,7 @@ def get_love_table(
 
 
 @app.route("/love/<string:love_type>/<int:user_id>", methods=["GET"])
-@token_required
+@auth()
 async def get_loved(love_type: str, user_id: int) -> Response:
     try:
         table = get_love_table(love_type)
@@ -496,7 +487,7 @@ async def get_loved(love_type: str, user_id: int) -> Response:
 
 
 @app.route("/love/<string:love_type>/<int:user_id>/<int:loved_id>", methods=["PUT"])
-@token_required
+@auth()
 async def love(love_type: str, user_id: int, loved_id: int) -> str:
     try:
         table = get_love_table(love_type)
@@ -517,7 +508,7 @@ async def love(love_type: str, user_id: int, loved_id: int) -> str:
 
 
 @app.route("/love/<string:love_type>/<int:user_id>/<int:loved_id>", methods=["DELETE"])
-@token_required
+@auth()
 async def unlove(love_type: str, user_id: int, loved_id: int) -> str:
     try:
         table = get_love_table(love_type)
@@ -536,7 +527,7 @@ async def unlove(love_type: str, user_id: int, loved_id: int) -> str:
 
 
 @app.route("/users")
-@token_required
+@auth()
 async def get_users() -> Response:
     with database.atomic():
         users = User.select()
@@ -544,7 +535,7 @@ async def get_users() -> Response:
 
 
 @app.route("/users/<int:user_id>", methods=["GET"])
-@token_required
+@auth()
 async def get_user_by_id(user_id: int) -> Response:
     with database.atomic():
         try:
@@ -564,7 +555,7 @@ async def get_user_by_id(user_id: int) -> Response:
 
 
 @app.route("/users/<string:username>", methods=["GET"])
-@token_required
+@auth()
 async def get_user_by_username(username: str) -> Response:
     with database.atomic():
         try:
@@ -577,7 +568,7 @@ async def get_user_by_username(username: str) -> Response:
 
 
 @app.route("/users/<int:user_id>", methods=["POST"])
-@token_required
+@auth()
 async def update_user_settings(user_id: int) -> Response:
     with database.atomic():
         try:
@@ -593,7 +584,7 @@ async def update_user_settings(user_id: int) -> Response:
 
 
 @app.route("/stream/<int:track_id>")
-@token_required
+@auth()
 async def stream(track_id: int) -> Response:
     with database.atomic():
         track = Track.get(track_id)
@@ -637,7 +628,7 @@ async def stream(track_id: int) -> Response:
 @app.route("/get/<int:track_id>")
 @app.route("/get/<int:track_id>/<int:range_start>")
 @app.route("/get/<int:track_id>/<int:range_start>/<int:range_end>")
-@token_required
+@auth()
 async def get(
     track_id: int, range_start: int = None, range_end: int = None
 ) -> Response:
